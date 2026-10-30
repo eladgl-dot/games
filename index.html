@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>משחקי לימוד</title>
+<meta name="theme-color" content="#8e5cff">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
 :root{
   --pink:#ff5fa2; --purple:#8e5cff; --blue:#35b6ff; --green:#2fd67b; --yellow:#ffd23f; --orange:#ff9140;
@@ -16,7 +21,6 @@ body{margin:0;min-height:100vh;font-family:var(--font);color:var(--ink);
 main{max-width:760px;margin:0 auto;padding:28px 16px 48px}
 h1{margin:0 0 6px;text-align:center;color:#fff;font-size:clamp(28px,6vw,44px);text-shadow:0 3px 0 rgba(58,42,99,.35)}
 .sub{text-align:center;color:#fff;opacity:.95;margin:0 0 26px}
-h2{display:inline-block;margin:0 0 14px;padding:6px 20px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:22px;box-shadow:0 3px 0 rgba(58,42,99,.3)}
 .grid{display:grid;gap:14px}
 a.game{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:22px;background:var(--card);color:var(--ink);text-decoration:none;
   box-shadow:0 6px 0 rgba(58,42,99,.25);transition:transform .12s}
@@ -25,60 +29,25 @@ a.game:hover,a.game:focus-visible{transform:translateY(-3px);outline:3px solid v
 .t{font-size:20px;font-weight:bold}
 .d{font-size:14px;opacity:.8;margin-top:2px}
 .new{margin-inline-start:auto;background:var(--green);color:#fff;border-radius:999px;padding:3px 12px;font-size:13px}
-</style>
+.pill{display:inline-block;margin:0 0 18px;padding:8px 18px;border-radius:999px;background:#fff;color:var(--ink);font-weight:bold;text-decoration:none;box-shadow:0 4px 0 rgba(58,42,99,.3)}
+.pill:hover,.pill:focus-visible{outline:3px solid var(--yellow)}
+a.grade{justify-content:center;text-align:center;flex-direction:column;gap:6px;padding:28px 18px}
+a.grade .big{font-size:56px;line-height:1}
+a.grade .t{font-size:28px}
+.install{display:block;margin:26px auto 0;border:0;border-radius:999px;background:var(--yellow);color:var(--ink);font:bold 18px var(--font);padding:12px 26px;box-shadow:0 5px 0 rgba(58,42,99,.35);cursor:pointer}
+.install[hidden]{display:none}
+.soon{opacity:.75}</style>
 </head>
 <body>
 <main>
   <h1>🎮 משחקי לימוד</h1>
-  <p class="sub">בחרו משחק והתחילו להרפתקה!</p>
-  <section id="grade2">
-    <h2>כיתה ב'</h2>
-    <div class="grid">
-      <a class="game" href="words-b-animals/">
-        <span class="icon" style="background:var(--green)">🐱</span>
-        <span><div class="t">הרפתקת המילים: חיות</div><div class="d">אנגלית · 20 מילים · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-      <a class="game" href="words-b-colors/">
-        <span class="icon" style="background:var(--pink)">🎨</span>
-        <span><div class="t">הרפתקת המילים: צבעים וצורות</div><div class="d">אנגלית · 20 מילים · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-      <a class="game" href="words-b-food/">
-        <span class="icon" style="background:var(--orange)">🍎</span>
-        <span><div class="t">הרפתקת המילים: אוכל</div><div class="d">אנגלית · 20 מילים · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-      <a class="game" href="words-b-home/">
-        <span class="icon" style="background:var(--blue)">🏠</span>
-        <span><div class="t">הרפתקת המילים: משפחה ובית</div><div class="d">אנגלית · 20 מילים · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-      <a class="game" href="words-b-body/">
-        <span class="icon" style="background:var(--purple)">👕</span>
-        <span><div class="t">הרפתקת המילים: גוף ובגדים</div><div class="d">אנגלית · 20 מילים · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-    </div>
-  </section>
-  <section id="grade6" style="margin-top:28px">
-    <h2>כיתה ו'</h2>
-    <div class="grid">
-      <a class="game" href="math-adventure/">
-        <span class="icon" style="background:var(--blue)">➗</span>
-        <span><div class="t">הרפתקת המתמטיקה</div><div class="d">שברים, עשרוניים וגיאומטריה · 30 באוקטובר 2026</div></span>
-        <span class="new">חדש</span>
-      </a>
-      <a class="game" href="words-adventure/">
-        <span class="icon" style="background:var(--pink)">🔤</span>
-        <span><div class="t">הרפתקת המילים</div><div class="d">אנגלית · 28 באוקטובר 2026</div></span>
-      </a>
-      <a class="game" href="smichut/">
-        <span class="icon" style="background:var(--purple)">📖</span>
-        <span><div class="t">משחק הסמיכות</div><div class="d">עברית · 25 באוקטובר 2026</div></span>
-      </a>
-    </div>
-  </section>
+  <p class="sub">באיזו כיתה אתם?</p>
+  <div class="grid">
+      <a class="game grade" href="grade2/"><span class="big">🌈</span><span class="t">כיתה ב'</span><span class="d">5 משחקי אנגלית</span></a>
+      <a class="game grade" href="grade6/"><span class="big">🚀</span><span class="t">כיתה ו'</span><span class="d">מתמטיקה, אנגלית ועברית</span></a>
+  </div>
+  <button class="install" id="installBtn" hidden>📲 התקנה</button>
 </main>
+<script src="pwa.js"></script>
 </body>
 </html>

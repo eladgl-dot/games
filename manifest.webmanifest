@@ -1,0 +1,17 @@
+{
+  "name": "משחקי לימוד",
+  "short_name": "משחקי לימוד",
+  "description": "משחקי לימוד לכיתות ב' ו-ו'",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#8e5cff",
+  "theme_color": "#8e5cff",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
