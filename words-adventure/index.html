@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<title>הרפתקת המילים - 28 באוקטובר 2026</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+  --bg1: #1e40af; --bg2: #06b6d4;
+  --ink: #2a1b5c; --good: #22c55e; --bad: #ef4444; --gold: #ffc414; --tile: #efe9ff;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; min-height: 100vh; padding: 10px 10px 40px;
+  font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); text-align: center;
+  background: linear-gradient(160deg, var(--bg1), var(--bg2), #a78bfa, var(--bg1));
+  background-size: 300% 300%; animation: bgmove 20s ease infinite;
+}
+body.girl { --bg1: #d6249f; --bg2: #ff9ac8; }
+body.boy { --bg1: #1e40af; --bg2: #06b6d4; }
+@keyframes bgmove { 0%,100% {background-position: 0% 50%} 50% {background-position: 100% 50%} }
+.wrap { max-width: 460px; margin: 0 auto; }
+.hidden { display: none !important; }
+h1 { color: #fff; font-size: 1.6em; margin: 6px 0 8px; text-shadow: 0 3px 0 rgba(0,0,0,.25); }
+
+/* top bar */
+#top { position: sticky; top: 0; z-index: 15; background: rgba(30,20,80,.55); backdrop-filter: blur(6px); border-radius: 18px; padding: 6px; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; margin-bottom: 6px; }
+#who { display: inline-flex; background: rgba(255,255,255,.92); border-radius: 999px; padding: 3px; box-shadow: 0 3px 0 rgba(0,0,0,.18); }
+#who button { margin: 0; padding: 5px 14px; font-size: .95em; background: transparent; color: var(--ink); box-shadow: none; }
+#who button.on { background: #7c3aed; color: #fff; }
+.chip { background: rgba(255,255,255,.93); border-radius: 999px; padding: 5px 12px; font-weight: 700; font-size: .95em; box-shadow: 0 3px 0 rgba(0,0,0,.15); }
+.chip.pop { animation: pop .5s; }
+@keyframes pop { 50% { transform: scale(1.3); } }
+.chip.btn { cursor: pointer; border: 0; font-family: inherit; color: var(--ink); margin: 0; }
+
+button {
+  font-family: inherit; font-size: 1.1em; font-weight: 800; border: none; cursor: pointer;
+  border-radius: 16px; padding: 10px 18px; margin: 5px; color: #fff;
+  background: #7c3aed; box-shadow: 0 5px 0 #4c1d95; transition: transform .1s;
+}
+button:active { transform: translateY(4px); box-shadow: 0 1px 0 #4c1d95; }
+button:disabled { opacity: .5; cursor: default; }
+button.green { background: var(--good); box-shadow: 0 5px 0 #15803d; }
+button.gold { background: var(--gold); color: #5a3d00; box-shadow: 0 5px 0 #c99700; }
+button.grey { background: #94a3b8; box-shadow: 0 5px 0 #64748b; }
+button.big { font-size: 1.3em; padding: 13px 30px; }
+
+.card { background: #fff; border-radius: 26px; padding: 18px 12px 20px; box-shadow: 0 10px 0 rgba(0,0,0,.18), 0 18px 36px rgba(0,0,0,.2); }
+
+/* ---------- 3D map ---------- */
+.scene { perspective: 760px; perspective-origin: 50% 70%; padding: 10px 0 30px; margin-top: -170%; }
+.plane {
+  position: relative; width: 100%; aspect-ratio: 2 / 7.5;
+  transform: rotateX(40deg); transform-origin: 50% 100%; transform-style: preserve-3d;
+  border-radius: 40px; border: 6px solid #3f9d3f;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,.18) 0 8%, transparent 9%),
+    radial-gradient(circle at 80% 55%, rgba(255,255,255,.14) 0 10%, transparent 11%),
+    linear-gradient(180deg, #8be28b, #4fbf5a 60%, #3da84a);
+  box-shadow: 0 30px 0 #2d7a36, 0 40px 40px rgba(0,0,0,.35);
+}
+.plane svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* things stand upright on the ground: they pivot on their bottom edge so nothing sinks into the grass */
+.upright { position: absolute; transform: translate3d(-50%, -100%, 2px) rotateX(-40deg); transform-origin: 50% 100%; }
+.deco { line-height: 1; pointer-events: none; filter: drop-shadow(0 5px 2px rgba(0,0,0,.25)); }
+.deco.sway { animation: sway 3s ease-in-out infinite alternate; }
+@keyframes sway { from { transform: translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(-5deg); } to { transform: translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(5deg); } }
+@keyframes bob { 0%,100% { transform: translate3d(-50%,-100%,2px) rotateX(-40deg); } 50% { transform: translate3d(-50%,-100%,2px) rotateX(-40deg) translateY(-9px); } }
+@keyframes bosswig { 0%,100% { transform: translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(-6deg) scale(1); } 50% { transform: translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(6deg) scale(1.08); } }
+.stand { display: flex; flex-direction: column; align-items: center; animation: bob 2s ease-in-out infinite; }
+.stand.boss { animation: bosswig 1.6s ease-in-out infinite; }
+.stand.locked { animation: none; }
+.node {
+  width: 80px; height: 80px; border-radius: 50%; border: 4px solid #fff; margin: 0; padding: 0; cursor: pointer;
+  font-size: 2em; font-weight: 900; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.35);
+  background: radial-gradient(circle at 35% 30%, #ffe08a, #ff9f1c);
+  box-shadow: 0 9px 0 #b86a00, 0 16px 14px rgba(0,0,0,.3);
+}
+.node:active { transform: translateY(4px); }
+.node.done { background: radial-gradient(circle at 35% 30%, #86efac, #16a34a); box-shadow: 0 9px 0 #0f6a30, 0 16px 14px rgba(0,0,0,.3); }
+.node.cur { animation: ringglow 1.3s ease-out infinite; }
+@keyframes ringglow { from { box-shadow: 0 9px 0 #b86a00, 0 16px 14px rgba(0,0,0,.3), 0 0 0 0 rgba(255,255,255,.95); } to { box-shadow: 0 9px 0 #b86a00, 0 16px 14px rgba(0,0,0,.3), 0 0 0 26px rgba(255,255,255,0); } }
+.node.locked { width: 70px; height: 70px; background: none; border: 0; box-shadow: none; font-size: 3.4em; cursor: default; filter: drop-shadow(0 6px 3px rgba(0,0,0,.35)); }
+.node.boss { width: 120px; height: 120px; background: none; border: 0; box-shadow: none; font-size: 5.4em; line-height: 1; filter: drop-shadow(0 8px 5px rgba(0,0,0,.4)); }
+.node.boss.locked { font-size: 4em; }
+.nstars { background: #fff; border-radius: 999px; padding: 0 10px; margin-bottom: 8px; font-size: 1.15em; line-height: 1.6; white-space: nowrap; box-shadow: 0 3px 0 rgba(0,0,0,.25); letter-spacing: 1px; }
+.nstars b { color: #ffb800; } .nstars i { color: #d4d4d8; font-style: normal; }
+.you { font-size: 2.6em; line-height: 1; margin-bottom: 4px; animation: hover 1.2s ease-in-out infinite; pointer-events: none; filter: drop-shadow(0 6px 3px rgba(0,0,0,.3)); }
+@keyframes hover { 50% { transform: translateY(-10px); } }
+#mapBtns { margin: 4px 0 0; position: relative; z-index: 6; }
+#banner { position: relative; z-index: 6; }
+#banner { margin-bottom: 8px; padding: 12px; font-weight: 700; }
+
+/* ---------- stage ---------- */
+#stage { position: relative; padding-top: 14px; }
+#stageHead { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 4px; }
+#backMap { margin: 0; padding: 6px 14px; font-size: .95em; }
+#dots { font-size: 1.9em; direction: ltr; letter-spacing: 2px; line-height: 1; }
+#dots span { display: inline-block; color: #fff; text-shadow: 0 0 2px #7a6fa5, 0 0 2px #7a6fa5, 1px 1px 0 #7a6fa5, -1px -1px 0 #7a6fa5; }
+#dots span.gold { color: #ffc414; text-shadow: 0 0 2px #b88400, 1px 1px 0 #c99700, -1px -1px 0 #c99700; }
+#dots span.pop { animation: starpop .7s; }
+#talk, #bossRow { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 4px 0 8px; }
+#pav { font-size: 4.2em; line-height: 1.1; filter: drop-shadow(0 6px 3px rgba(0,0,0,.2)); animation: idle 2.4s ease-in-out infinite; }
+#pav.hop { animation: hop .6s; }
+#pav.shake { animation: shake .4s; }
+@keyframes idle { 50% { transform: translateY(-6px) rotate(-3deg); } }
+@keyframes hop { 30% { transform: translateY(-30px) scale(1.2); } 60% { transform: translateY(0) scale(.95); } }
+@keyframes shake { 25% {transform: translateX(-8px) rotate(-6deg)} 75% {transform: translateX(8px) rotate(6deg)} }
+.bub { position: relative; background: #fff; border: 3px solid #7c3aed; border-radius: 20px; padding: 8px 14px; min-height: 2.4em; max-width: 240px; font-weight: 700; text-align: right; box-shadow: 0 4px 0 #cbbdf5; animation: bubin .3s; }
+.bub::before { content: ""; position: absolute; right: -15px; top: 50%; margin-top: -11px; border: 11px solid transparent; border-left: 12px solid #7c3aed; border-right: 0; }
+.bub::after { content: ""; position: absolute; right: -9px; top: 50%; margin-top: -8px; border: 8px solid transparent; border-left: 9px solid #fff; border-right: 0; }
+.bub.boss { border-color: #b3175f; box-shadow: 0 4px 0 #f5b8d6; background: #fff0f7; }
+.bub.boss::before { border-left-color: #b3175f; } .bub.boss::after { border-left-color: #fff0f7; }
+@keyframes bubin { from { transform: scale(.6); opacity: 0; } }
+#boss { font-size: 4em; line-height: 1.1; animation: bossw 1.6s ease-in-out infinite; filter: drop-shadow(0 6px 3px rgba(0,0,0,.25)); }
+@keyframes bossw { 0%,100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg) scale(1.08); } }
+#bossHp { font-size: 1.3em; margin-bottom: 4px; letter-spacing: 3px; }
+#pemoji { font-size: 2.6em; }
+#ptext { font-size: 2em; font-weight: 800; margin: 2px 0 10px; }
+#word { direction: ltr; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin: 8px 0 12px; }
+.part { display: flex; gap: 5px; }
+.tile {
+  width: var(--tw, 40px); height: calc(var(--tw, 40px) * 1.3); border-radius: 11px; padding: 0; min-width: 0; background: var(--tile); border: 3px solid #cbbdf5; box-shadow: 0 4px 0 #cbbdf5;
+  font-size: calc(var(--tw, 40px) * .6); font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; color: var(--ink);
+}
+.tile.given { background: #fff; border-color: #ddd; box-shadow: 0 4px 0 #ddd; }
+input.tile { padding: 0; font-family: inherit; outline: none; caret-color: transparent; }
+input.tile:focus { border-color: #7c3aed; background: #fff; transform: translateY(-3px); box-shadow: 0 7px 0 #7c3aed; }
+.tile.ok { background: var(--good); border-color: #15803d; box-shadow: 0 4px 0 #15803d; color: #fff; animation: jump .4s; }
+.tile.hint { background: var(--gold); border-color: #d99a00; box-shadow: 0 4px 0 #d99a00; }
+.tile.wrong { background: #ffd4d4; border-color: var(--bad); animation: tshake .35s; }
+@keyframes tshake { 25% {transform: translateX(-6px)} 75% {transform: translateX(6px)} }
+@keyframes jump { 50% { transform: translateY(-10px); } }
+@media (max-width: 400px) { .tile { border-width: 2px; } }
+#quiz { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 10px; }
+#quiz button.optb { margin: 0; font-size: 1.2em; padding: 14px 6px; background: #efe9ff; color: var(--ink); box-shadow: 0 5px 0 #cbbdf5; }
+#quiz button.optb.right { background: var(--good); color: #fff; box-shadow: 0 5px 0 #15803d; animation: jump .4s; }
+#quiz button.optb.bad { background: #ffd4d4; color: #999; box-shadow: 0 5px 0 var(--bad); animation: tshake .35s; }
+#msg { min-height: 1.8em; font-size: 1.2em; font-weight: 800; margin-top: 4px; }
+
+/* ---------- overlays ---------- */
+.ov { position: fixed; inset: 0; background: rgba(20,10,60,.65); z-index: 20; display: flex; align-items: center; justify-content: center; padding: 14px; overflow-y: auto; }
+.modal { background: #fff; border-radius: 28px; padding: 20px 16px; width: 100%; max-width: 400px; box-shadow: 0 10px 0 rgba(0,0,0,.2); animation: modalin .35s; }
+@keyframes modalin { from { transform: scale(.7); opacity: 0; } }
+.modal h2 { margin: 4px 0 8px; }
+#eoAv { font-size: 4em; animation: idle 2s ease-in-out infinite; }
+#eoStars { font-size: 3em; letter-spacing: 6px; direction: ltr; }
+#eoStars span { display: inline-block; color: #cbbdf5; }
+#eoStars span.lit { color: var(--gold); animation: starpop .7s; text-shadow: 0 3px 0 #c99700; }
+@keyframes starpop { 0% { transform: scale(0) rotate(-180deg); } 60% { transform: scale(1.8) rotate(20deg); } 100% { transform: scale(1) rotate(0); } }
+#eoTally { font-size: 1.3em; font-weight: 800; margin: 8px 0; }
+#eoNote { min-height: 1.5em; font-weight: 700; }
+.avgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 10px 0; }
+.avcard { background: #f3edff; border: 3px solid transparent; border-radius: 18px; padding: 8px 2px; font-size: 2.6em; cursor: pointer; font-family: inherit; box-shadow: 0 4px 0 #cbbdf5; margin: 0; color: var(--ink); }
+.avcard small { display: block; font-size: .3em; font-weight: 700; }
+.avcard.sel { border-color: #7c3aed; background: #fff; }
+.avcard.lock { opacity: .55; cursor: default; filter: grayscale(1); }
+#party { position: fixed; inset: 0; z-index: 25; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px;
+  background: linear-gradient(120deg, #ff0080, #7928ca, #0070f3, #00dfd8, #ff0080); background-size: 400% 400%; animation: bgmove var(--bgs, 6s) linear infinite; }
+#party::before { content: ""; position: absolute; inset: -60%; animation: spin var(--spin, 9s) linear infinite;
+  background: conic-gradient(from 0deg, rgba(255,255,255,.35) 0 6deg, transparent 6deg 40deg, rgba(255,255,255,.3) 40deg 46deg, transparent 46deg 90deg, rgba(255,255,255,.35) 90deg 96deg, transparent 96deg 150deg, rgba(255,255,255,.3) 150deg 156deg, transparent 156deg 220deg, rgba(255,255,255,.35) 220deg 226deg, transparent 226deg 360deg); }
+#party.crazy { animation: bgmove var(--bgs, 6s) linear infinite, hue 2.5s linear infinite; }
+@keyframes hue { to { filter: hue-rotate(360deg); } }
+#partyNote { position: relative; max-width: 420px; background: rgba(0,0,0,.38); color: #fff; border-radius: 16px; padding: 8px 14px; margin-bottom: 12px; font-weight: 700; line-height: 1.5; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#partyTitle { position: relative; color: #fff; font-size: 2.1em; font-weight: 900; text-shadow: 0 4px 0 rgba(0,0,0,.3); animation: pop 1s infinite; margin-bottom: 10px; }
+#pgrid { position: relative; display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: center; max-width: 480px; }
+.dancer { font-size: var(--dsz, 3.8em); line-height: 1.1; filter: drop-shadow(0 8px 4px rgba(0,0,0,.35)); animation: dance1 var(--dance, .55s) ease-in-out infinite alternate; }
+.dancer:nth-child(3n+2) { animation-name: dance2; } .dancer:nth-child(3n) { animation-name: dance3; }
+.dancer { position: relative; }
+.fbub { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); width: max-content; max-width: 150px; z-index: 4;
+  background: #fff; color: var(--ink); border-radius: 14px; padding: 5px 10px; font-size: 13px; line-height: 1.3; font-weight: 700; text-align: center; filter: none; box-shadow: 0 3px 0 rgba(0,0,0,.25); }
+.fbub::after { content: ""; position: absolute; top: 100%; left: 50%; margin-left: -6px; border: 6px solid transparent; border-top-color: #fff; border-bottom: 0; }
+.dancer.say .fbub { display: block; animation: bubin .3s; }
+@keyframes dance1 { to { transform: translateY(-26px) rotate(-10deg); } }
+@keyframes dance2 { to { transform: translateY(-14px) rotate(12deg) scale(1.15); } }
+@keyframes dance3 { from { transform: scale(.9) rotate(-14deg); } to { transform: translateY(-20px) scale(1.2) rotate(14deg); } }
+.note { position: absolute; bottom: -50px; font-size: 2em; animation: rise 5s linear infinite; pointer-events: none; }
+@keyframes rise { to { transform: translateY(-115vh) rotate(40deg); } }
+#partyClose { position: relative; margin-top: 18px; }
+#eoWin { margin-top: 10px; background: #fff8dc; border-radius: 18px; padding: 10px; font-weight: 700; }
+canvas#fx { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+  <div id="top">
+    <div id="who"><button data-g="boy">👦 בן</button><button data-g="girl">👧 בת</button></div>
+    <div class="chip" id="chipStars">⭐ <span id="tally">0</span>/<span id="maxStars">30</span></div>
+    <div class="chip" id="chipNext"></div>
+    <div class="chip" id="chipSkips">🤷 <span id="skipsLeft">2</span></div>
+    <button class="chip btn" id="avBtn" title="החלף אווטאר">🐱</button>
+    <button class="chip btn" id="partyTop" title="מסיבת חברים">🎉</button>
+    <button class="chip btn" id="newBtn" title="הרפתקה חדשה">🔄</button>
+  </div>
+  <h1>🗺️ הרפתקת המילים</h1>
+
+  <section class="card hidden" id="start">
+    <h2 data-b="בחר חבר להרפתקה!" data-g="בחרי חבר להרפתקה!"></h2>
+    <div class="avgrid" id="startGrid"></div>
+    <p>כל 6 כוכבים תקבלו חבר חדש ✨</p>
+  </section>
+
+  <section class="hidden" id="map">
+    <div id="banner" class="card hidden">
+      🏆 כל הכבוד! סיימתם את ההרפתקה!<br>
+      אפשר לחזור לשלבים ולאסוף עוד כוכבים, או להתחיל הרפתקה חדשה.<br>
+      <button class="green" id="bannerNew">🆕 הרפתקה חדשה</button>
+    </div>
+    <div id="mapBtns"><button class="gold" id="partyBtn">🎉 מסיבת חברים</button></div>
+    <div class="scene"><div class="plane" id="plane"><svg id="road" viewBox="0 0 400 1500" preserveAspectRatio="none"></svg></div></div>
+  </section>
+
+  <section class="card hidden" id="stage">
+    <div id="stageHead"><button class="grey" id="backMap">🗺️ למפה</button><div id="dots"></div></div>
+    <div id="bossRow" class="hidden"><div id="boss">🐙</div><div class="bub boss" id="bossBubble"></div></div>
+    <div id="bossHp" class="hidden"></div>
+    <div id="talk"><div id="pav"></div><div class="bub" id="bubble"></div></div>
+    <div id="pemoji"></div>
+    <div id="ptext"></div>
+    <div id="word"></div>
+    <div id="quiz" class="hidden"></div>
+    <div>
+      <button class="gold" id="speakBtn">🔊 השמע</button>
+      <button class="grey" id="skipBtn"></button>
+      <button class="green hidden" id="nextQ">הבאה ➜</button>
+    </div>
+    <div id="msg"></div>
+  </section>
+</div>
+
+<div class="ov hidden" id="endOv"><div class="modal">
+  <div id="eoAv"></div>
+  <h2 id="eoTitle"></h2>
+  <div id="eoStars"><span>★</span><span>★</span><span>★</span></div>
+  <div id="eoTally"></div>
+  <div id="eoNote"></div>
+  <div id="eoNew" class="hidden"></div>
+  <div id="eoWin" class="hidden">
+    🏆 כל הכבוד! סיימתם את כל השלבים וניצחתם את התמנון!<br>
+    אפשר לחזור לשלבים ולאסוף עוד כוכבים, או להתחיל הרפתקה חדשה.<br>
+    <button class="gold" id="winMap">🗺️ חזרה לשלבים</button>
+    <button class="green" id="winNew">🆕 הרפתקה חדשה</button>
+    <button id="winParty">🎉 מסיבה!</button>
+  </div>
+  <div id="eoBtns" class="hidden">
+    <button class="grey" id="eoMap">🗺️ למפה</button>
+    <button class="gold" id="eoAgain">🔁 עוד פעם</button>
+    <button class="green" id="eoNext">שלב הבא ➜</button>
+  </div>
+</div></div>
+
+<div class="ov hidden" id="avOv"><div class="modal">
+  <h2 data-b="בחר חבר" data-g="בחרי חבר"></h2>
+  <div class="avgrid" id="avGrid"></div>
+  <button class="grey" id="avClose">סגור</button>
+</div></div>
+
+<div id="party" class="hidden">
+  <div id="partyTitle">🎉 מסיבת חברים! 🎉</div>
+  <div id="partyNote"></div>
+  <div id="pgrid"></div>
+  <button class="grey" id="partyClose">⏹ סגור</button>
+</div>
+
+<script>
+// ============================================================
+//  רשימת המילים של ההרפתקה  /  Word list for the adventure game
+//
+//  כדי להחליף מילים: ערכו את השורות למטה ושמרו, ואז רעננו את הדף.
+//  To change words: edit the lines below, save, and refresh the page.
+//
+//  - מותר בין 8 ל-20 מילים (stages, stars and friends adjust by themselves)
+//  - english = המילה באנגלית (אפשר גם שתי מילים, למשל "in fact")
+//  - hebrew  = התרגום בעברית
+//  - emoji   = אימוג'י שמתאים למילה (לא חובה; אם חסר יופיע 📝)
+//  - כל שורה מסתיימת בפסיק, חוץ מהאחרונה
+// ============================================================
+window.WORDS = [
+  { english: "in addition", hebrew: "בנוסף",       emoji: "➕" },
+  { english: "develop",     hebrew: "לפתח",        emoji: "🌱" },
+  { english: "protect",     hebrew: "להגן",        emoji: "🛡️" },
+  { english: "difference",  hebrew: "שוני / הבדל",  emoji: "🔍" },
+  { english: "enjoy",       hebrew: "ליהנות",      emoji: "🎉" },
+  { english: "remember",    hebrew: "לזכור",       emoji: "🧠" },
+  { english: "challenge",   hebrew: "אתגר",        emoji: "🏔️" },
+  { english: "in fact",     hebrew: "למעשה",       emoji: "💡" },
+  { english: "imagine",     hebrew: "לדמיין",      emoji: "🦄" },
+  { english: "invite",      hebrew: "להזמין",      emoji: "💌" }
+];
+</script>
+<script>
+// ---------- data ----------
+const MIN_WORDS = 8, MAX_WORDS = 20;
+const WORDS = (window.WORDS || []).slice(0, MAX_WORDS).map(w => ({ english: String(w.english || "").trim(), hebrew: String(w.hebrew || "").trim(), emoji: w.emoji || "📝" })).filter(w => w.english && w.hebrew);
+if (WORDS.length < MIN_WORDS) {
+  document.querySelector(".wrap").innerHTML = '<div class="card"><h2>😕 חסרות מילים</h2><p>צריך לפחות ' + MIN_WORDS + ' מילים ברשימת המילים (יש כרגע ' + WORDS.length + ').</p></div>';
+  throw new Error("word list needs " + MIN_WORDS + "-" + MAX_WORDS + " words");
+}
+const AVATARS = [
+  { e: "🐱", n: "חתולי" }, { e: "🐶", n: "כלבלב" }, { e: "🐼", n: "פנדה" },
+  { e: "🦊", n: "שועלי" }, { e: "🐰", n: "ארנבון" }, { e: "🐯", n: "נמר" },
+  { e: "🦄", n: "חד־קרן" }, { e: "🐲", n: "דרקוני" }, { e: "🐻", n: "דובי" },
+  { e: "🐨", n: "קואלה" }, { e: "🐸", n: "צפרדעון" }, { e: "🐵", n: "קופיף" },
+  { e: "🐧", n: "פינגווין" }, { e: "🐹", n: "אוגר" }
+];
+const START_AV = 3, PER_AV = 6, STARS_MAX = 3, KEY = "advState1";
+const N = WORDS.length, TOTAL_MAX = N * STARS_MAX;
+const FRIENDS = Math.min(AVATARS.length, START_AV + Math.floor(TOTAL_MAX / PER_AV));   // finishing with all stars unlocks everyone
+const SIG = WORDS.map(w => w.english).join("|");                                        // a new word list = a new adventure
+const HARD_FROM = Math.round(N * .7), MID_FROM = Math.round(N * .3);                    // difficulty ramp scales with N
+const VH = (N > 12 ? 175 : 150) * N, K = VH / 100;                                                        // map height in svg units, per %
+// a lopsided winding road: uneven gaps that grow toward the top, x wandering left and right
+const NODE_Y = WORDS.map((_, i) => +(96 - 82 * Math.pow(i / (N - 1), 1.12)).toFixed(1));
+const NODE_X = (() => {
+  const r = rng(5);
+  return WORDS.map((_, i) => i === N - 1 ? 50 : Math.round(Math.max(16, Math.min(84, 50 + 30 * Math.sin(i * 1.05 + .6) + (r() - .5) * 14))));
+})();
+const BOSS = { e: "🐙", n: "תמנון המילים" };
+const $ = id => document.getElementById(id);
+
+// ---------- state ----------
+let gender = "boy";
+try { gender = localStorage.getItem("gender") || "boy"; } catch (e) {}
+const gt = (b, g) => gender === "girl" ? g : b;
+let S = null;                       // {order, best, skips, avatar}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function freshState() { return { sig: SIG, best: Array(N).fill(-1), skips: 2, avatar: null, finished: false }; }
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && s.sig === SIG && s.best.length === N) return Object.assign(freshState(), s);
+  } catch (e) {}
+  return freshState();
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const total = () => S.best.reduce((a, b) => a + Math.max(0, b), 0);
+const unlockedAv = (t = total()) => Math.min(FRIENDS, START_AV + Math.floor(t / PER_AV));
+const isOpen = s => s === 0 || S.best[s - 1] >= 0;
+const curStage = () => { const i = S.best.findIndex(b => b < 0); return i < 0 ? N - 1 : i; };
+
+// ---------- sound / voice / confetti ----------
+let audio;
+function beep(freq, dur = 0.12, type = "sine", delay = 0) {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = 0.08;
+    o.connect(g); g.connect(audio.destination);
+    const t = audio.currentTime + delay;
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const sndOk = () => beep(700, .1), sndBad = () => beep(150, .2, "sawtooth");
+const sndWin = () => [523, 659, 784, 1046].forEach((f, i) => beep(f, .18, "triangle", i * .1));
+function womanVoice() {
+  const en = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+  const female = /zira|jenny|aria|samantha|susan|hazel|karen|victoria|moira|tessa|libby|sonia|serena|fiona|allison|ava|google us english|female|woman/i;
+  const male = /david|mark|guy|daniel|george|james|ryan|alex|fred|\bmale\b/i;
+  return en.find(v => female.test(v.name) && /en[-_]US/i.test(v.lang)) || en.find(v => female.test(v.name)) || en.find(v => !male.test(v.name));
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text || (word && word.english));
+  u.lang = "en-US"; u.rate = 0.8; u.pitch = 1.1;
+  const v = womanVoice(); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+const cv = $("fx"), cx = cv.getContext("2d");
+let bits = [];
+function sizeCanvas() { cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener("resize", sizeCanvas); sizeCanvas();
+function confetti(n = 120) {
+  const colors = ["#ff4fa3", "#ffc414", "#22c55e", "#0ea5e9", "#7c3aed", "#ff6b6b"];
+  const was = bits.length;
+  for (let i = 0; i < n; i++) bits.push({ x: innerWidth / 2, y: innerHeight / 2.5, vx: (Math.random() - .5) * 16, vy: Math.random() * -14 - 3, s: 5 + Math.random() * 7, c: colors[i % 6], r: Math.random() * 6 });
+  if (!was) loop();
+}
+function loop() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+  bits.forEach(b => { b.x += b.vx; b.y += b.vy; b.vy += .4; b.r += .2; cx.save(); cx.translate(b.x, b.y); cx.rotate(b.r); cx.fillStyle = b.c; cx.fillRect(-b.s / 2, -b.s / 2, b.s, b.s * .6); cx.restore(); });
+  bits = bits.filter(b => b.y < innerHeight + 20);
+  if (bits.length) requestAnimationFrame(loop); else cx.clearRect(0, 0, cv.width, cv.height);
+}
+const pulse = el => { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); };
+
+// ---------- gender / top bar ----------
+function applyGender() {
+  document.body.classList.remove("boy", "girl"); document.body.classList.add(gender);
+  document.querySelectorAll("[data-b]").forEach(el => el.textContent = gt(el.dataset.b, el.dataset.g));
+  document.querySelectorAll("#who button").forEach(b => b.classList.toggle("on", b.dataset.g === gender));
+  updateSkipBtn();
+}
+document.querySelectorAll("#who button").forEach(b => b.addEventListener("click", () => {
+  gender = b.dataset.g; try { localStorage.setItem("gender", gender); } catch (e) {}
+  applyGender();
+}));
+function updateTop() {
+  const t = total(), un = unlockedAv(t);
+  $("tally").textContent = t; $("maxStars").textContent = TOTAL_MAX;
+  $("chipNext").textContent = un >= FRIENDS ? "🎉 כל החברים נפתחו!" : "🎁 עוד " + (PER_AV - t % PER_AV) + "⭐ לחבר חדש";
+  $("skipsLeft").textContent = S.skips;
+  $("avBtn").textContent = S.avatar || "🐱";
+  updateSkipBtn();
+}
+function updateSkipBtn() {
+  if (!S) return;
+  $("skipBtn").textContent = gt("🤷 לא יודע", "🤷 לא יודעת") + " (" + S.skips + ")";
+  $("skipBtn").disabled = S.skips <= 0 || solved;
+}
+
+// ---------- screens ----------
+function show(id) { ["start", "map", "stage"].forEach(x => $(x).classList.toggle("hidden", x !== id)); }
+function route() {
+  updateTop();
+  if (!S.avatar) { buildAvGrid($("startGrid"), true); show("start"); }
+  else renderMap();
+}
+
+// ---------- avatars ----------
+function buildAvGrid(box, startOnly) {
+  box.innerHTML = "";
+  const un = unlockedAv(), list = startOnly ? AVATARS.slice(0, START_AV) : AVATARS.slice(0, FRIENDS);
+  list.forEach((a, i) => {
+    const b = document.createElement("button");
+    b.className = "avcard" + (a.e === S.avatar ? " sel" : "") + (i >= un ? " lock" : "");
+    b.innerHTML = (i < un ? a.e : "🔒") + "<small>" + (i < un ? a.n : "ב-" + ((i - START_AV + 1) * PER_AV) + "⭐") + "</small>";
+    if (i < un) b.addEventListener("click", () => {
+      S.avatar = a.e; save(); updateTop(); $("avOv").classList.add("hidden");
+      if (startOnly) { confetti(60); renderMap(); } else if (!$("stage").classList.contains("hidden")) $("pav").textContent = S.avatar;
+      else renderMap();
+    });
+    box.appendChild(b);
+  });
+}
+$("avBtn").addEventListener("click", () => { if (!S.avatar) return; buildAvGrid($("avGrid")); $("avOv").classList.remove("hidden"); });
+$("avClose").addEventListener("click", () => $("avOv").classList.add("hidden"));
+$("newBtn").addEventListener("click", () => {
+  if (!confirm("להתחיל הרפתקה חדשה? ההתקדמות תימחק והמילים יתערבבו מחדש.")) return;
+  S = freshState(); save(); route();
+});
+
+// ---------- map ----------
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function curvePath(pts) {
+  let d = "M" + pts[0][0] + "," + pts[0][1];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += " C" + (p1[0] + (p2[0] - p0[0]) / 6) + "," + (p1[1] + (p2[1] - p0[1]) / 6) + " " + (p2[0] - (p3[0] - p1[0]) / 6) + "," + (p2[1] - (p3[1] - p1[1]) / 6) + " " + p2[0] + "," + p2[1];
+  }
+  return d;
+}
+function drawRoad() {
+  const r = rng(11), pts = [[200, VH]];
+  NODE_X.forEach((x, i) => {
+    const p = [x * 4, NODE_Y[i] * K];
+    if (i > 0) { const q = pts[pts.length - 1]; pts.push([Math.max(50, Math.min(350, (q[0] + p[0]) / 2 + (r() - .5) * 110)), (q[1] + p[1]) / 2 + (r() - .5) * 24]); }
+    pts.push(p);
+  });
+  pts.push([200, 130 * K / 10]);
+  const d = curvePath(pts);
+  $("road").innerHTML =
+    '<path d="' + d + '" fill="none" stroke="#7a5230" stroke-width="64" stroke-linecap="round" transform="translate(0,14)"/>' +
+    '<path d="' + d + '" fill="none" stroke="#c99a62" stroke-width="64" stroke-linecap="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="#ecd2a2" stroke-width="46" stroke-linecap="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="4" stroke-dasharray="14 14" stroke-linecap="round"/>' +
+    NODE_X.map((x, i) => '<ellipse cx="' + x * 4 + '" cy="' + NODE_Y[i] * K + '" rx="42" ry="15" fill="rgba(0,0,0,.3)"/>').join("");
+  return $("road").querySelectorAll("path")[1];
+}
+const DECOS = [["🌲", 2.8, 1], ["🌳", 2.8, 1], ["🌴", 2.8, 1], ["🌲", 3.4, 1], ["🌸", 1.5, 1], ["🌼", 1.5, 1], ["🌷", 1.5, 1], ["🌻", 1.9, 1], ["🍄", 1.4, 0], ["🪨", 1.8, 0],
+  ["🏠", 2.8, 0], ["⛺", 2.4, 0], ["🐇", 1.7, 0], ["🦋", 1.3, 1], ["⛰️", 3.8, 0], ["🐿️", 1.6, 0], ["🌺", 1.5, 1], ["🪵", 1.6, 0], ["🎈", 2.2, 1], ["🛖", 2.6, 0]];
+function addDeco(plane, x, y, e, size, sway, r) {
+  const d = document.createElement("div");
+  d.className = "upright deco" + (sway ? " sway" : "");
+  d.style.cssText = "left:" + x + "%;top:" + y + "%;font-size:" + size + "em;animation-delay:" + (-r() * 3) + "s;animation-duration:" + (2.4 + r() * 2.5) + "s";
+  d.textContent = e; plane.appendChild(d);
+}
+function renderMap() {
+  show("map");
+  const plane = $("plane");
+  plane.style.aspectRatio = "400 / " + VH;
+  $("road").setAttribute("viewBox", "0 0 400 " + VH);
+  document.querySelector(".scene").style.perspective = Math.round(VH * .507) + "px";
+  document.querySelector(".scene").style.marginTop = "-" + (VH / 400 * 45) + "%";
+  const road = drawRoad();
+  plane.querySelectorAll(".upright").forEach(e => e.remove());
+  const len = road.getTotalLength(), pts = [];
+  for (let l = 0; l <= len; l += 18) { const p = road.getPointAtLength(l); pts.push([p.x, p.y]); }
+  const r = rng(42), items = [];
+  const free = (x, y, rd, id) => !pts.some(p => Math.hypot(p[0] - x * 4, p[1] - y * K) < rd) && !items.some(it => Math.hypot((it.x - x) * 4, (it.y - y) * K) < id) && !(y < 22 && x > 22 && x < 78);
+  for (let k = 0, t = 0; k < 2 && t < 400; t++) {
+    const x = 16 + r() * 68, y = 14 + r() * 80;
+    if (!free(x, y, 120, 170)) continue;
+    items.push({ x, y }); k++;
+    $("road").insertAdjacentHTML("beforeend", '<ellipse cx="' + x * 4 + '" cy="' + y * K + '" rx="62" ry="34" fill="#4fb3ff" stroke="#bfe6ff" stroke-width="6"/><ellipse cx="' + (x * 4 - 14) + '" cy="' + (y * K - 6) + '" rx="26" ry="9" fill="rgba(255,255,255,.45)"/>');
+    addDeco(plane, x, y, "🦆", 1.8, 1, r);
+  }
+  for (let t = 0, n = 0; n < 95 && t < 1500; t++) {
+    const x = 4 + r() * 92, y = 3 + r() * 94;
+    if (!free(x, y, 64, 52)) continue;
+    const k = DECOS[Math.floor(r() * DECOS.length)];
+    items.push({ x, y }); n++;
+    addDeco(plane, x, y, k[0], (k[1] * (.85 + r() * .4)).toFixed(2), k[2], r);
+  }
+  addDeco(plane, 50, 7, "🏰", 9, 0, r);
+  const cur = curStage();
+  for (let i = 0; i < N; i++) {
+    const open = isOpen(i), b = Math.max(0, S.best[i]), boss = i === N - 1;
+    const w = document.createElement("div");
+    w.className = "upright stand" + (!open ? " locked" : "") + (boss ? " boss" : "");
+    w.style.left = NODE_X[i] + "%"; w.style.top = NODE_Y[i] + "%";
+    const n = document.createElement("button");
+    n.className = "node" + (S.best[i] >= 0 ? " done" : "") + (!open ? " locked" : "") + (boss ? " boss" : "") + (open && i === cur ? " cur" : "");
+    n.textContent = !open ? "🔒" : boss ? BOSS.e : i + 1;
+    if (open && i === cur) w.insertAdjacentHTML("beforeend", '<span class="you">' + S.avatar + "</span>");
+    if (open) w.insertAdjacentHTML("beforeend", '<span class="nstars">' + "<b>★</b>".repeat(b) + "<i>★</i>".repeat(STARS_MAX - b) + "</span>");
+    w.appendChild(n);
+    if (open) n.addEventListener("click", () => startStage(i));
+    plane.appendChild(w);
+  }
+  $("banner").classList.toggle("hidden", !S.finished);
+  updateTop();
+  setTimeout(() => { const y = plane.querySelector(".you"); if (y) y.scrollIntoView({ block: "center", behavior: "smooth" }); }, 100);
+}
+$("bannerNew").addEventListener("click", newAdventure);
+function newAdventure() { S = freshState(); save(); route(); }
+
+// ---------- stage ----------
+const TYPES = ["e2h", "h2e", "letters"], BOSS_TYPES = ["h2e", "letters", "letters"];
+let st = null, word = null, solved = false, slots = [], mistakes = 0;
+const isBoss = s => s === N - 1;
+const types = () => st.boss ? BOSS_TYPES : TYPES;
+function startStage(s) {
+  st = { s, q: 0, stars: [], boss: isBoss(s), words: shuffle(WORDS.slice()).slice(0, 3) };   // 3 different random words
+  show("stage");
+  $("pav").textContent = S.avatar;
+  $("bossRow").classList.toggle("hidden", !st.boss);
+  $("bossHp").classList.toggle("hidden", !st.boss);
+  window.scrollTo(0, 0);
+  renderQuestion();
+}
+function renderDots(popIdx) {
+  $("dots").innerHTML = [0, 1, 2].map(i => '<span class="' + (st.stars[i] === 1 ? "gold" : "") + (i === popIdx ? " pop" : "") + '">★</span>').join("");
+  if (st.boss) {
+    const hits = st.stars.reduce((a, b) => a + b, 0);
+    $("bossHp").textContent = "❤️".repeat(3 - hits) + "🤍".repeat(hits);
+  }
+}
+function say(t) { const b = $("bubble"); b.textContent = t; b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; }
+function bossSay(t) { const b = $("bossBubble"); b.textContent = t; b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; }
+function renderQuestion() {
+  solved = false; mistakes = 0;
+  word = st.words[st.q];
+  $("msg").textContent = ""; $("nextQ").classList.add("hidden"); $("skipBtn").classList.remove("hidden");
+  $("quiz").innerHTML = ""; $("word").innerHTML = "";
+  const type = types()[st.q], hard = st.boss || st.s >= HARD_FROM, mid = st.s >= MID_FROM;
+  $("quiz").classList.toggle("hidden", type === "letters");
+  $("word").classList.toggle("hidden", type !== "letters");
+  $("speakBtn").classList.toggle("hidden", type === "h2e");
+  $("ptext").dir = type === "e2h" ? "ltr" : "rtl";
+  renderDots(); updateSkipBtn();
+  if (st.boss) bossSay(["אני תמנון המילים! 🐙 אף אחד לא מנצח אותי!", "חה חה, עוד לא ניצחת!", "אוי... אני נחלש! 😵"][st.q]);
+  if (type === "letters") {
+    $("pemoji").textContent = word.emoji; $("ptext").textContent = word.hebrew;
+    say(gt("השלם את האותיות החסרות ✍️", "השלימי את האותיות החסרות ✍️"));
+    buildLetters(hard ? "hard" : mid ? "normal" : "easy");
+  } else {
+    const e2h = type === "e2h";
+    $("pemoji").textContent = "❓"; $("ptext").textContent = e2h ? word.english : word.hebrew;
+    say(e2h ? "מה פירוש המילה הזאת בעברית?" : "איך אומרים את זה באנגלית?");
+    buildQuiz(e2h, hard ? 6 : 4);
+    if (e2h) setTimeout(() => speak(), 300);
+  }
+}
+function buildQuiz(e2h, count) {
+  const opts = shuffle(shuffle(WORDS.filter(w => w !== word)).slice(0, count - 1).concat(word));
+  opts.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "optb"; b.dir = e2h ? "rtl" : "ltr"; b.dataset.ans = o === word ? "1" : "";
+    b.textContent = e2h ? o.hebrew : o.english;
+    b.addEventListener("click", () => {
+      if (solved || b.disabled) return;
+      if (o === word) { b.classList.add("right"); done(mistakes === 0); }
+      else { mistakes++; sndBad(); b.classList.add("bad"); b.disabled = true; avatarReact("shake"); say(gt("אופס! נסה שוב 💪", "אופס! נסי שוב 💪")); if (st.boss) bossSay("חה חה, טעית! 😈"); }
+    });
+    $("quiz").appendChild(b);
+  });
+}
+function buildLetters(level) {
+  slots = [];
+  const letters = word.english.replace(/ /g, "");
+  const hide = level === "hard" ? letters.length - 1 : Math.round(letters.length * (level === "normal" ? 2 / 3 : 1 / 3));
+  const pool = [...Array(letters.length).keys()].filter(i => level !== "hard" || i > 0);
+  const hideSet = new Set(shuffle(pool).slice(0, hide));
+  let n = 0;
+  word.english.split(" ").forEach(part => {
+    const p = document.createElement("div"); p.className = "part";
+    for (const ch of part) {
+      const hidden = hideSet.has(n);
+      const t = document.createElement(hidden ? "input" : "div");
+      t.classList.add("tile");
+      const slot = { ch: ch.toLowerCase(), el: t, done: !hidden };
+      if (!hidden) { t.classList.add("given"); t.textContent = ch; }
+      else {
+        t.type = "text"; t.maxLength = 2; t.autocomplete = "off"; t.autocapitalize = "none"; t.spellcheck = false;
+        t.addEventListener("input", () => onType(slot));
+        t.addEventListener("keydown", e => onKey(e, slot));
+        t.addEventListener("focus", () => t.select());
+      }
+      slots.push(slot); p.appendChild(t); n++;
+    }
+    $("word").appendChild(p);
+  });
+  fitTiles();
+  focusNext(-1);
+  setTimeout(() => speak(), 300);
+}
+// shrink the tiles so the longest word part always fits inside the card
+function fitTiles() {
+  const box = $("word"), avail = box.clientWidth;
+  if (!avail || !box.children.length) return;
+  const longest = Math.max(...[...box.children].map(p => p.children.length));
+  const size = Math.max(20, Math.min(40, Math.floor((avail - (longest - 1) * 5) / longest) - 6));
+  box.style.setProperty("--tw", size + "px");
+}
+addEventListener("resize", fitTiles);
+function focusNext(from) {
+  const i = slots.findIndex((s, k) => k > from && !s.done);
+  const j = i >= 0 ? i : slots.findIndex(s => !s.done);
+  if (j >= 0) slots[j].el.focus();
+}
+function onType(slot) {
+  const v = slot.el.value.slice(-1).toLowerCase();
+  slot.el.value = "";
+  if (!v || solved) return;
+  const at = slots.indexOf(slot);
+  if (v === slot.ch) {
+    slot.done = true; slot.el.value = slot.ch.toUpperCase(); slot.el.readOnly = true; slot.el.classList.add("ok"); sndOk();
+    if (slots.every(s => s.done)) done(mistakes === 0); else focusNext(at);
+  } else {
+    mistakes++; sndBad(); avatarReact("shake");
+    slot.el.value = v.toUpperCase(); slot.el.classList.remove("wrong"); void slot.el.offsetWidth; slot.el.classList.add("wrong");
+    setTimeout(() => { if (!slot.done) { slot.el.value = ""; slot.el.classList.remove("wrong"); } }, 450);
+    say(gt("כמעט! נסה אות אחרת 💪", "כמעט! נסי אות אחרת 💪"));
+    if (st.boss) bossSay("חה חה, טעית! 😈");
+  }
+}
+function onKey(e, slot) {
+  const at = slots.indexOf(slot);
+  if (e.key === "Backspace" || e.key === "ArrowRight") {
+    e.preventDefault();
+    for (let k = at - 1; k >= 0; k--) if (!slots[k].done) { slots[k].el.focus(); break; }
+  } else if (e.key === "ArrowLeft") { e.preventDefault(); focusNext(at); }
+}
+function avatarReact(cls) {
+  const a = $("pav"); a.classList.remove("hop", "shake"); void a.offsetWidth; a.classList.add(cls);
+  setTimeout(() => a.classList.remove(cls), 700);
+}
+function done(star, skipped) {
+  solved = true;
+  $("skipBtn").classList.add("hidden");
+  st.stars[st.q] = star ? 1 : 0;
+  $("pemoji").textContent = word.emoji;
+  renderDots(star ? st.q : undefined); updateSkipBtn();
+  if (star) {
+    sndWin(); avatarReact("hop"); confetti(30);
+    say(skipped ? gt("בסדר, עכשיו אתה יודע! ⭐", "בסדר, עכשיו את יודעת! ⭐") : gt(["וואו! קיבלת כוכב ⭐", "אלוף! עוד כוכב ⭐", "מדהים! כוכב ⭐"][st.q], ["וואו! קיבלת כוכב ⭐", "אלופה! עוד כוכב ⭐", "מדהים! כוכב ⭐"][st.q]));
+    if (st.boss) bossSay("אאוץ'! 😵");
+  } else {
+    sndOk(); say("נכון! אבל בלי כוכב הפעם 🙂");
+  }
+  if (types()[st.q] === "h2e") $("msg").innerHTML = "<span dir='ltr'>" + word.english + "</span>";
+  $("speakBtn").classList.remove("hidden");
+  speak();
+  $("nextQ").textContent = st.q >= 2 ? "סיום שלב 🏁" : "הבאה ➜";
+  $("nextQ").classList.remove("hidden"); $("nextQ").focus();
+}
+$("skipBtn").addEventListener("click", () => {
+  if (solved || S.skips <= 0) return;
+  S.skips--; save(); updateTop();
+  document.querySelectorAll("#quiz .optb").forEach(b => { b.disabled = true; if (b.dataset.ans) b.classList.add("right"); });
+  slots.filter(s => !s.done).forEach(s => { s.done = true; s.el.value = s.ch.toUpperCase(); s.el.readOnly = true; s.el.classList.add("hint"); });
+  done(true, true);
+});
+$("speakBtn").addEventListener("click", () => { speak(); if (!solved) focusNext(-1); });
+$("nextQ").addEventListener("click", () => { st.q++; if (st.q >= 3) finishStage(); else renderQuestion(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden")) $("nextQ").click(); });
+$("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
+
+// ---------- end of stage ----------
+function finishStage() {
+  const earned = st.stars.reduce((a, b) => a + b, 0);
+  const prevBest = Math.max(0, S.best[st.s]), before = total();
+  S.best[st.s] = Math.min(STARS_MAX, Math.max(S.best[st.s], earned));
+  const after = total(), gained = after - before;
+  const justFinished = !S.finished && S.best.every(b => b >= 0);
+  if (justFinished) S.finished = true;
+  save();
+  const newAv = unlockedAv(after) > unlockedAv(before) ? AVATARS[unlockedAv(after) - 1] : null;
+
+  $("eoAv").textContent = st.boss ? BOSS.e : S.avatar;
+  $("eoTitle").textContent = st.boss
+    ? (earned === 3 ? "ניצחת את תמנון המילים! 🏆" : earned > 0 ? "התמנון נחלש! 💪" : "התמנון ניצח הפעם...")
+    : earned === 3 ? "שלב מושלם! 🎉" : earned > 0 ? "כל הכבוד!" : gt("נסה שוב, אתה יכול!", "נסי שוב, את יכולה!");
+  const spans = [...$("eoStars").children];
+  spans.forEach(sp => sp.classList.remove("lit"));
+  $("eoTally").textContent = "⭐ " + before + " / " + TOTAL_MAX;
+  $("eoNote").textContent = ""; $("eoNew").classList.add("hidden"); $("eoBtns").classList.add("hidden"); $("eoWin").classList.add("hidden");
+  $("eoNext").classList.toggle("hidden", st.s >= N - 1);
+  $("endOv").classList.remove("hidden");
+
+  spans.forEach((sp, i) => { if (i < earned) setTimeout(() => { sp.classList.add("lit"); beep(600 + i * 150, .25, "triangle"); }, 600 + i * 700); });
+  const t0 = 600 + earned * 700 + 300;
+  setTimeout(() => {
+    const dur = 900, start = performance.now();
+    (function tick(now) {
+      const p = Math.min(1, (now - start) / dur);
+      $("eoTally").textContent = "⭐ " + Math.round(before + gained * p) + " / " + TOTAL_MAX;
+      if (p < 1) requestAnimationFrame(tick);
+      else {
+        pulse($("eoTally")); updateTop(); pulse($("chipStars"));
+        $("eoNote").textContent = gained > 0 ? "+" + gained + (earned > prevBest && prevBest > 0 ? " · שיא חדש! 🏅" : "")
+          : (prevBest > 0 ? "השיא שלך נשאר " + prevBest + "⭐" : "");
+        if (earned === 3) { confetti(160); sndWin(); }
+        if (newAv) {
+          $("eoNew").classList.remove("hidden");
+          $("eoNew").innerHTML = '<div style="font-size:3em">' + newAv.e + '</div><b>חבר חדש נפתח: ' + newAv.n + '! 🎁</b><br>';
+          const yes = document.createElement("button"); yes.className = "green"; yes.textContent = "שחק איתו!";
+          yes.onclick = () => { S.avatar = newAv.e; save(); updateTop(); yes.remove(); };
+          $("eoNew").appendChild(yes);
+          confetti(200); sndWin();
+        }
+        if (justFinished) { $("eoWin").classList.remove("hidden"); confetti(300); setTimeout(() => confetti(300), 700); sndWin(); }
+        else $("eoBtns").classList.remove("hidden");
+      }
+    })(start);
+  }, t0);
+}
+$("eoMap").addEventListener("click", () => { $("endOv").classList.add("hidden"); renderMap(); });
+$("eoAgain").addEventListener("click", () => { $("endOv").classList.add("hidden"); startStage(st.s); });
+$("eoNext").addEventListener("click", () => { $("endOv").classList.add("hidden"); startStage(st.s + 1); });
+$("winMap").addEventListener("click", () => { $("endOv").classList.add("hidden"); renderMap(); });
+$("winNew").addEventListener("click", () => { $("endOv").classList.add("hidden"); newAdventure(); });
+$("winParty").addEventListener("click", openParty);
+
+// ---------- friends party ----------
+// every friend adds a layer of music and a notch of craziness
+const MEL  = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
+const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
+const ARP  = [523, 659, 784, 1046];
+let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+const SAYS = {
+  "🐱": ["מיאו מיאו! 💕", "איזה כיף! 😻", "פורר... פורר... 🎶", "בואו נרקוד עד הבוקר! 🌙"],
+  "🐶": ["הב הב! איזה כיף! 🐾", "מכשכש בזנב מרוב שמחה! 🐕", "בואו נרוץ ונרקוד! 🦴", "הב! הב! עוד שיר! 🎵"],
+  "🐼": ["יאמי, במבוק ומסיבה! 🎋", "פנדות יודעות לרקוד! 💃", "חיבוק קבוצתי! 🤗", "מתגלגלים מרוב שמחה! 🐼"],
+  "🦊": ["ערמומי, אבל גם מתוק! 🦊✨", "בואו נעשה חיבוק קבוצתי! 🧡", "מי רוצה לרקוד איתי? 💃", "זנב מסתובב, מסיבה בשיא! 🌀"],
+  "🐰": ["קפיץ קפיץ קפיץ! 🥕", "אוזניים למעלה, מסיבה בשיא! 🎉", "אוהב גזר ומסיבות! 🥕💕", "בום-בום-קפיצה! 🐇"],
+  "🐯": ["גררררר! כיף ענק! 🐯", "פסים של שמחה! 🎊", "נמר של מסיבות! 😎", "רוואר! עוד מוזיקה! 🎸"],
+  "🦄": ["נוצצים בכל מקום! ✨🌈", "קשת מעל הראש שלי! 🌈", "קסם של מסיבה! 🪄", "מפזר גליטר על כולם! 💖"],
+  "🐲": ["בום! מסיבת אש! 🔥", "מפיח קונפטי! 🎊", "גם דרקון יכול להיות חמוד! 💖", "ראו אותי מרקד! 🐉"]
+};
+function partyTick() {
+  const i = partyStep++ % 16, n = partyLvl + 3;           // layers: lvl 0..5 = the old 3..8 friends
+  if (MEL[i]) beep(MEL[i], .2, "triangle");
+  if (BASS[i]) beep(BASS[i], .25, "sine");
+  if (i % 4 === 0) beep(80, .1, "square");
+  if (i % 2 === 1) beep(2400, .03, "square");
+  if (n >= 4 && i % 2 === 0) beep(7000, .02, "square");                               // hi-hat
+  if (n >= 5 && MEL[i] && i % 4 === 0) beep(MEL[i] * 1.25, .2, "triangle");            // harmony
+  if (n >= 6) beep(ARP[i % 4] * 2, .08, "sine");                                       // fast arpeggio
+  if (n >= 7 && i % 8 === 4) { beep(220, .1, "sawtooth"); beep(3000, .05, "square"); } // snare
+  if (n >= 8 && Math.random() < .5) beep(1500 + Math.random() * 1500, .06, "triangle"); // sparkles
+}
+function openParty() {
+  const un = unlockedAv(), n = un, p = $("party");
+  const grid = $("pgrid"); grid.innerHTML = "";
+  AVATARS.slice(0, un).forEach((a, i) => {
+    const d = document.createElement("div"); d.className = "dancer"; d.dataset.e = a.e;
+    d.innerHTML = '<span>' + a.e + '</span><div class="fbub"></div>';
+    d.style.animationDelay = (-i * .17) + "s"; grid.appendChild(d);
+  });
+  const k = partyLvl = FRIENDS > START_AV ? Math.round((n - START_AV) / (FRIENDS - START_AV) * 5) : 0;   // wildness 0..5, whatever the friend count
+  p.style.setProperty("--dsz", n > 9 ? "2.6em" : n > 6 ? "3.2em" : "3.8em");
+  p.style.setProperty("--dance", Math.max(.22, .6 - k * .08) + "s");
+  p.style.setProperty("--spin", Math.max(2.5, 9 - k * 1.3) + "s");
+  p.style.setProperty("--bgs", Math.max(2, 6 - k * .8) + "s");
+  p.classList.toggle("crazy", k >= 4);
+  $("partyNote").innerHTML = "💡 המסיבה משתפרת עם כל חבר חדש! יותר חברים = יותר ריקודים, אורות ומוזיקה.<br>" +
+    "רמת הפראות: " + "🔥".repeat(k + 1) + "⚪".repeat(5 - k) +
+    (n < FRIENDS ? "<br>עוד " + (PER_AV - total() % PER_AV) + "⭐ לחבר הבא!" : "<br>🎊 כל החברים כאן - זו המסיבה הכי פרועה!");
+  p.querySelectorAll(".note").forEach(x => x.remove());
+  for (let i = 0; i < 8 + Math.min(n, 10) * 3; i++) {
+    const e = document.createElement("div"); e.className = "note"; e.textContent = ["🎵", "🎶", "✨", "🎈"][i % 4];
+    e.style.left = (Math.random() * 94) + "%"; e.style.animationDelay = (-Math.random() * 5) + "s"; e.style.animationDuration = Math.max(2.2, 7 - k * .8 + Math.random() * 2) + "s";
+    p.appendChild(e);
+  }
+  p.classList.remove("hidden");
+  partyStep = 0; clearInterval(partyTimer); partyTimer = setInterval(partyTick, 250 - k * 24);
+  clearInterval(partyFx); if (k >= 1) partyFx = setInterval(() => confetti(20 + k * 12), Math.max(700, 3200 - k * 450));
+  confetti(150);
+  // friends roam further and faster as the party gets wilder, and keep chatting
+  clearInterval(partyMoveT); clearInterval(partySayT);
+  const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
+  setTimeout(() => {
+    dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const move = () => dancers.forEach(d => {
+      const h = d._home, R = 30 + k * 55;
+      const dx = clamp((Math.random() * 2 - 1) * R, 8 - h.l, innerWidth - 8 - h.r);
+      const dy = clamp((Math.random() * 2 - 1) * R, 80 - h.t, innerHeight - 8 - h.b);
+      d.style.translate = dx + "px " + dy + "px";
+      d.style.rotate = k >= 2 ? ((Math.random() * 2 - 1) * k * 12) + "deg" : "0deg";
+    });
+    move(); partyMoveT = setInterval(move, T);
+  }, 120);
+  const sayOne = () => {
+    for (let c = 0; c < 1 + Math.floor(k / 2); c++) {
+      const d = dancers[Math.floor(Math.random() * dancers.length)], lines = SAYS[d.dataset.e];
+      d.querySelector(".fbub").textContent = lines[Math.floor(Math.random() * lines.length)];
+      d.classList.add("say"); setTimeout(() => d.classList.remove("say"), 2300);
+    }
+  };
+  sayOne(); partySayT = setInterval(sayOne, Math.max(900, 2600 - k * 350));
+}
+function closeParty() { clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT); partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden"); }
+$("partyBtn").addEventListener("click", openParty);
+$("partyTop").addEventListener("click", openParty);
+$("partyClose").addEventListener("click", closeParty);
+
+// ---------- go ----------
+S = load();
+applyGender();
+route();
+</script>
+</body>
+</html>

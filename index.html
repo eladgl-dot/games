@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>משחקי לימוד</title>
+<style>
+:root{
+  --pink:#ff5fa2; --purple:#8e5cff; --blue:#35b6ff; --green:#2fd67b; --yellow:#ffd23f; --orange:#ff9140;
+  --ink:#3a2a63; --card:#ffffffee;
+  --font:"Varela Round","Arial Rounded MT Bold","Comic Sans MS","Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:var(--font);color:var(--ink);
+  background:linear-gradient(160deg,var(--purple) 0%,var(--pink) 55%,var(--orange) 100%);background-attachment:fixed}
+main{max-width:760px;margin:0 auto;padding:28px 16px 48px}
+h1{margin:0 0 6px;text-align:center;color:#fff;font-size:clamp(28px,6vw,44px);text-shadow:0 3px 0 rgba(58,42,99,.35)}
+.sub{text-align:center;color:#fff;opacity:.95;margin:0 0 26px}
+h2{display:inline-block;margin:0 0 14px;padding:6px 20px;border-radius:999px;background:var(--yellow);color:var(--ink);font-size:22px;box-shadow:0 3px 0 rgba(58,42,99,.3)}
+.grid{display:grid;gap:14px}
+a.game{display:flex;align-items:center;gap:16px;padding:16px 18px;border-radius:22px;background:var(--card);color:var(--ink);text-decoration:none;
+  box-shadow:0 6px 0 rgba(58,42,99,.25);transition:transform .12s}
+a.game:hover,a.game:focus-visible{transform:translateY(-3px);outline:3px solid var(--yellow)}
+.icon{flex:none;width:60px;height:60px;border-radius:18px;display:grid;place-items:center;font-size:32px;color:#fff}
+.t{font-size:20px;font-weight:bold}
+.d{font-size:14px;opacity:.8;margin-top:2px}
+.new{margin-inline-start:auto;background:var(--green);color:#fff;border-radius:999px;padding:3px 12px;font-size:13px}
+</style>
+</head>
+<body>
+<main>
+  <h1>🎮 משחקי לימוד</h1>
+  <p class="sub">בחרו משחק והתחילו להרפתקה!</p>
+  <section>
+    <h2>כיתה ו'</h2>
+    <div class="grid">
+      <a class="game" href="math-adventure/">
+        <span class="icon" style="background:var(--blue)">➗</span>
+        <span><div class="t">הרפתקת המתמטיקה</div><div class="d">שברים, עשרוניים וגיאומטריה · 30 באוקטובר 2026</div></span>
+        <span class="new">חדש</span>
+      </a>
+      <a class="game" href="words-adventure/">
+        <span class="icon" style="background:var(--pink)">🔤</span>
+        <span><div class="t">הרפתקת המילים</div><div class="d">אנגלית · 28 באוקטובר 2026</div></span>
+      </a>
+      <a class="game" href="smichut/">
+        <span class="icon" style="background:var(--purple)">📖</span>
+        <span><div class="t">משחק הסמיכות</div><div class="d">עברית · 25 באוקטובר 2026</div></span>
+      </a>
+    </div>
+  </section>
+</main>
+</body>
+</html>

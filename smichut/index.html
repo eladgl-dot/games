@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>משחק הסמיכות</title>
+<style>
+:root{
+  --pink:#ff5fa2; --purple:#8e5cff; --blue:#35b6ff; --green:#2fd67b; --yellow:#ffd23f; --orange:#ff9140; --red:#ff4d5e;
+  --ink:#3a2a63; --card:#ffffffee;
+  --font:"Varela Round","Arial Rounded MT Bold","Comic Sans MS","Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;font-family:var(--font);color:var(--ink);user-select:none;-webkit-user-select:none}
+body{
+  background:linear-gradient(135deg,#ffd1f0,#c9b8ff,#b8ecff,#d3ffd9);
+  background-size:300% 300%;animation:bgmove 14s ease infinite;
+}
+@keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.bg span{position:absolute;font-size:34px;opacity:.4;animation:float 9s ease-in-out infinite}
+.bg span.k2{animation-name:drift;animation-timing-function:linear}
+.bg span.k3{animation-name:spin;animation-timing-function:linear}
+.bg span.k4{animation-name:bounce;animation-timing-function:ease-in-out}
+@keyframes drift{0%{transform:translateX(-30px) rotate(-10deg)}50%{transform:translateX(60px) rotate(10deg)}100%{transform:translateX(-30px) rotate(-10deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-50px) scale(1.15)}60%{transform:translateY(0) scale(.9)}}
+.bg i{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffffff22);border:2px solid #fff8;animation:rise 12s linear infinite}
+@keyframes rise{to{transform:translateY(-115vh) translateX(30px)}}
+.mbtn:nth-child(odd){animation:wiggle 3.5s ease-in-out infinite}
+.mbtn:nth-child(even){animation:wiggle 3.5s ease-in-out infinite reverse}
+@keyframes wiggle{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg) scale(1.02)}}
+h1{animation:bob 2.5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px) scale(1.03)}}
+.card .phrase{animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{text-shadow:0 0 14px #ff5fa2aa;transform:scale(1.04)}}
+.chip{animation:bob 2.6s ease-in-out infinite}
+.plus{animation:spin 4s linear infinite}
+/* מסך הסבר */
+#learn{overflow-y:auto;gap:12px;padding:2px 2px 12px}
+.lsec{background:var(--card);border-radius:26px;padding:14px;box-shadow:0 8px 0 #8e5cff22,0 12px 24px #8e5cff33;animation:slidein .5s backwards}
+.lsec h2{margin:0 0 6px;font-size:23px;color:var(--purple);display:flex;align-items:center;gap:8px}
+.lsec h2 .em{font-size:34px;display:inline-block;animation:bounce 2.2s infinite}
+.lsec p{margin:6px 0;font-size:18px;line-height:1.5}
+.ex{display:flex;align-items:center;gap:10px;background:#f6f0ff;border-radius:18px;padding:8px 12px;margin:8px 0;font-size:19px;line-height:1.4}
+.ex .em{font-size:36px;flex:none;animation:float 3s ease-in-out infinite}
+.ex b{color:var(--pink)}
+.ex u{text-decoration-color:var(--blue);text-decoration-thickness:3px}
+.ex.bad{background:#ffe9ec}
+.ex.good{background:#e0ffee}
+.tag{display:inline-block;border-radius:10px;padding:0 8px;color:#fff;font-weight:bold;font-size:16px}
+.t1{background:var(--blue)}.t2{background:var(--pink)}
+.arrow{display:inline-block;animation:nudge 1.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(-8px)}}
+.lgo{border:0;border-radius:99px;background:linear-gradient(135deg,#2fd67b,#19b062);color:#fff;font-size:22px;font-weight:bold;padding:14px;box-shadow:0 6px 0 #0003;animation:pulse .7s infinite alternate}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-28px) rotate(8deg)}}
+#app{position:relative;z-index:1;height:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;padding:10px 16px 14px}
+#top{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:6px 0}
+.pill{background:#fff;border-radius:999px;padding:6px 14px;font-size:18px;font-weight:bold;box-shadow:0 4px 0 #0001,0 6px 14px #8e5cff33;display:flex;align-items:center;gap:6px}
+#scorePill.fire{background:linear-gradient(90deg,#ffe259,#ff9140);animation:pulse .6s infinite alternate}
+@keyframes pulse{to{transform:scale(1.07)}}
+#combo{font-size:15px;color:var(--orange);min-width:44px;text-align:center}
+.iconbtn{border:0;background:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;box-shadow:0 4px 0 #0001;cursor:pointer}
+button{font-family:inherit;cursor:pointer;transition:transform .12s}
+button:active:not(:disabled){transform:scale(.95)}
+.screen{display:none;flex:1;flex-direction:column;min-height:0;animation:slidein .45s cubic-bezier(.2,.9,.3,1.2)}
+.screen.on{display:flex}
+@keyframes slidein{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+h1{margin:6px 0 2px;font-size:34px;text-align:center;color:var(--purple);text-shadow:0 3px 0 #fff}
+.sub{text-align:center;margin:0 0 12px;font-size:17px}
+.menu-grid{display:flex;flex-direction:column;gap:12px;overflow:auto;padding:4px 2px 8px}
+.mbtn{border:0;border-radius:24px;padding:14px 16px;color:#fff;font-size:21px;font-weight:bold;display:flex;align-items:center;gap:14px;text-align:right;box-shadow:0 7px 0 #0003,0 12px 20px #0002}
+.mbtn small{display:block;font-size:14px;font-weight:normal;opacity:.95}
+.mbtn .em{font-size:40px;animation:float 4s ease-in-out infinite}
+.m1{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.m2{background:linear-gradient(135deg,#ff5fa2,#ff3d7f)}
+.m3{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.m5{background:linear-gradient(135deg,#8e5cff,#6a3df0)}
+.m6{background:linear-gradient(135deg,#00c2c7,#0891b2)}
+.m7{background:linear-gradient(135deg,#ff6bd6,#c13cff)}
+.tfree{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.tcomp{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+.opt.small{font-size:20px;padding:12px 10px;line-height:1.3}
+.card .q{font-size:24px;font-weight:bold;margin:8px 0;line-height:1.35}
+.m4{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+#progress{height:12px;background:#fff9;border-radius:99px;overflow:hidden;margin:4px 0 6px}
+#bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));border-radius:99px;transition:width .4s}
+#qinfo{text-align:center;font-size:15px;margin-bottom:6px}
+#stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0;position:relative}
+.card{background:var(--card);border-radius:28px;padding:20px 14px;text-align:center;box-shadow:0 8px 0 #8e5cff22,0 14px 28px #8e5cff33;touch-action:pan-y}
+.card .emoji{font-size:64px;line-height:1.1;display:block;animation:float 3.5s ease-in-out infinite}
+.card .phrase{font-size:38px;font-weight:bold;margin-top:6px}
+.card .ask{font-size:19px;margin-bottom:4px}
+.chips{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0}
+.chip{background:#f1e9ff;border-radius:16px;padding:8px 14px;font-size:26px;font-weight:bold}
+.chip small{display:block;font-size:12px;font-weight:normal;opacity:.7}
+.plus{font-size:26px;font-weight:bold;color:var(--pink)}
+.swipehint{font-size:13px;opacity:.7;text-align:center}
+.row{display:flex;gap:12px}
+.big{flex:1;border:0;border-radius:22px;padding:18px 6px;font-size:21px;font-weight:bold;color:#fff;box-shadow:0 6px 0 #0003}
+.yes{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.no{background:linear-gradient(135deg,#ff6b7a,#ff3d55)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{border:0;border-radius:20px;background:#fff;color:var(--ink);padding:14px 10px;font-size:27px;font-weight:bold;box-shadow:0 6px 0 #8e5cff33,0 8px 16px #0001;border:3px solid transparent}
+.opt.right{background:#c8ffdf;border-color:var(--green);animation:pop .5s}
+.opt.wrong{background:#ffd3d8;border-color:var(--red)}
+.opt:disabled,.big:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.08)}}
+#tip{display:none;background:#fff6c9;border:3px dashed var(--orange);border-radius:20px;padding:10px 12px;font-size:17px;text-align:center;animation:slidein .3s}
+#tip.show{display:block}
+#tip.good{background:#d8ffe8;border-color:var(--green)}
+#next{display:none;border:0;border-radius:99px;background:var(--purple);color:#fff;font-size:20px;font-weight:bold;padding:12px 30px;align-self:center;box-shadow:0 5px 0 #0003}
+#next.show{display:block}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-14px)}40%{transform:translateX(14px)}60%{transform:translateX(-10px)}80%{transform:translateX(10px)}}
+#flash{position:fixed;inset:0;background:var(--red);opacity:0;pointer-events:none;z-index:50}
+#flash.on{animation:flash .45s}
+@keyframes flash{0%{opacity:.35}100%{opacity:0}}
+.floatpts{position:fixed;z-index:60;font-size:34px;font-weight:bold;color:var(--green);text-shadow:0 2px 0 #fff,0 0 8px #fff;pointer-events:none;animation:up 1s ease-out forwards}
+.floatpts.bad{color:var(--red);font-size:44px}
+@keyframes up{from{opacity:1;transform:translateY(0) scale(.7)}to{opacity:0;transform:translateY(-120px) scale(1.3)}}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+#end{align-items:center;justify-content:center;text-align:center;gap:8px}
+#stars{font-size:62px;letter-spacing:6px}
+#stars span{display:inline-block;animation:pop .7s backwards}
+#endMsg{font-size:34px;font-weight:bold;color:var(--pink);text-shadow:0 3px 0 #fff}
+.endbtns{display:flex;gap:12px;margin-top:14px;width:100%}
+.endbtns .big{font-size:19px;padding:15px 4px}
+.again{background:linear-gradient(135deg,#8e5cff,#5c7bff)}
+.home{background:linear-gradient(135deg,#ff9140,#ff6a2f)}
+@media (max-height:640px){.card .emoji{font-size:44px}.card .phrase{font-size:30px}.opt{font-size:22px;padding:10px 8px}h1{font-size:28px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+.f{display:inline}.m{display:none}
+body.boy .m{display:inline}body.boy .f{display:none}
+body.boy{background:linear-gradient(135deg,#bfe0ff,#8fb8ff,#9fe0ff,#c6f3ff);background-size:300% 300%}
+.gtoggle{display:flex;background:#fff;border-radius:99px;padding:3px;box-shadow:0 4px 0 #0001}
+.gtoggle button{border:0;background:transparent;border-radius:99px;width:38px;height:34px;font-size:20px;opacity:.55}
+.gtoggle button.on{background:linear-gradient(135deg,#ffd1f0,#ff9ad0);opacity:1}
+body.boy .gtoggle button.on{background:linear-gradient(135deg,#9fd0ff,#4f9bff)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow:auto;padding:8px 2px 10px;align-content:start}
+.tile{position:relative;border:0;border-radius:26px;padding:30px 6px 10px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;box-shadow:0 7px 0 #0003,0 12px 20px #0002;animation:wiggle 3.6s ease-in-out infinite}
+.tile:nth-child(even){animation-direction:reverse}
+.tile.wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:14px;padding:12px;font-size:20px}
+.tile.wide .tt{text-align:right}
+.tile .em{font-size:48px;line-height:1.1;animation:float 4s ease-in-out infinite}
+.tile.wide .em{font-size:40px}
+.tile b{font-size:19px;line-height:1.2}
+.tile small{display:block;font-size:13px;opacity:.95;font-weight:normal}
+.diff{position:absolute;top:8px;inset-inline-start:8px;background:#fff;color:var(--ink);border-radius:99px;padding:2px 9px;font-size:12px;font-weight:bold}
+.hotdiff{background:linear-gradient(90deg,#ffe259,#ff6a2f);color:#7a1d00;animation:pulse .6s infinite alternate}
+.cnt{margin-top:4px;background:#0003;border-radius:99px;padding:1px 10px;font-size:13px;font-weight:bold}
+.tile.hot{box-shadow:0 7px 0 #0003,0 0 22px 4px #ff9140}
+.c0{background:linear-gradient(135deg,#8e5cff,#6a3df0)}
+.c1{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.c2{background:linear-gradient(135deg,#ff5fa2,#ff3d7f)}
+.c3{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.c4{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+.c6{background:linear-gradient(135deg,#00c2c7,#0891b2)}
+.c7{background:linear-gradient(135deg,#ff6bd6,#c13cff)}
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<div id="flash"></div>
+<canvas id="confetti"></canvas>
+
+<div id="app">
+  <div id="top">
+    <div class="pill" id="scorePill">⭐ <span id="score">0</span></div>
+    <div id="combo"></div>
+    <div class="gtoggle"><button id="gGirl" aria-label="בת">👧</button><button id="gBoy" aria-label="בן">👦</button></div>
+    <button class="iconbtn" id="mute" aria-label="צליל">🔊</button>
+    <button class="iconbtn" id="homeBtn" aria-label="תפריט">🏠</button>
+  </div>
+
+  <!-- תפריט -->
+  <div class="screen on" id="menu">
+    <h1>🌈 משחק הסמיכות 🌈</h1>
+    <p class="sub"><span class="f">בחרי משחק והתחילי לצבור כוכבים!</span><span class="m">בחר משחק והתחל לצבור כוכבים!</span></p>
+    <div class="tiles">
+      <button class="tile wide c0" id="learnBtn"><span class="em">📖</span><span class="tt"><b>הסבר על סמיכות</b><small><span class="f">למדי</span><span class="m">למד</span> את החוקים עם דוגמאות</small></span></button>
+      <button class="tile c1" data-mode="1"><span class="diff">😊 קל</span><span class="em">⚡</span><b>הזיהוי המהיר</b><small>סמיכות או שם ותואר?</small><span class="cnt" data-cnt="1"></span></button>
+      <button class="tile c2" data-mode="2"><span class="diff">🙂 בינוני</span><span class="em">🔍</span><b>איפה ה' הידיעה?</b><small>ה' מצטרפת רק לסומך</small><span class="cnt" data-cnt="2"></span></button>
+      <button class="tile c3" data-mode="3"><span class="diff">🙂 בינוני</span><span class="em">🧩</span><b>מרכיבים סמיכות</b><small>שינויי צורה בנסמך</small><span class="cnt" data-cnt="3"></span></button>
+      <button class="tile c6" data-mode="4"><span class="diff">🤔 קשה</span><span class="em">✂️</span><b>איזה סוג סמיכות?</b><small>דבוקה או פרודה</small><span class="cnt" data-cnt="4"></span></button>
+      <button class="tile c7 hot" data-mode="5"><span class="diff hotdiff">🔥 הכי קשה</span><span class="em">🎓</span><b>שאלות על החוקים</b><small>הגדרות והסברים</small><span class="cnt" data-cnt="5"></span></button>
+      <button class="tile c4" data-mode="0"><span class="diff">🎲 הפתעה</span><span class="em">🎲</span><b>מיקס אקראי</b><small>קצת מכל משחק</small><span class="cnt" data-cnt="0"></span></button>
+    </div>
+  </div>
+
+  <!-- הסבר -->
+  <div class="screen" id="learn">
+    <h1>📖 הכול על סמיכות 📖</h1>
+
+    <div class="lsec" style="animation-delay:.1s">
+      <h2><span class="em">🧱</span>מה זה סמיכות?</h2>
+      <p>סמיכות היא שני שמות עצם שמתחברים ליחידה אחת. המילה הראשונה נקראת <span class="tag t1">נסמך</span> והמילה השנייה נקראת <span class="tag t2">סומך</span>.</p>
+      <div class="ex"><span class="em">🏫</span><span><span class="tag t1">בית</span> <span class="tag t2">ספר</span><br>מקום שבו לומדים</span></div>
+      <div class="ex"><span class="em">🎂</span><span><span class="tag t1">עוגת</span> <span class="tag t2">שוקולד</span><br>עוגה שעשויה משוקולד</span></div>
+      <p>הסומך מוסיף מידע על הנסמך, ובסמיכות דבוקה אי אפשר להכניס מילה באמצע ביניהם.</p>
+    </div>
+
+    <div class="lsec" style="animation-delay:.2s">
+      <h2><span class="em">🧬</span>שני סוגי סמיכות</h2>
+      <p>צירוף סמיכות הוא חיבור של שני שמות עצם או יותר ליחידה אחת משמעותית. יש שני סוגים עיקריים:</p>
+      <p><span class="tag t1">סמיכות דבוקה</span>: צירוף ישיר שבו הנסמך בא לפני הסומך, בלי המילה "של".</p>
+      <div class="ex good"><span class="em">🍎</span><span><b>פירות האילן</b><br><b>בית אב</b><br><b>דלת הבית</b>, <b>ילדי הגן</b></span></div>
+      <p><span class="tag t2">סמיכות פרודה</span>: צירוף שבו מופיעה המילה "של" בין שני השמות.</p>
+      <div class="ex good"><span class="em">🍲</span><span><b>תבשיל <u>של</u> עדשים</b><br><b>גל <u>של</u> אבנים</b><br><b>הדלת <u>של</u> הבית</b>, <b>הילדים <u>של</u> הגן</b></span></div>
+      <p>💡 אפשר להפוך מצורה לצורה: <b>הדלת של הבית</b> <span class="arrow">←</span> <b>דלת הבית</b>. כשמחברים, הנסמך חוזר לצורתו הרגילה (ילדים ← ילדי, שמלה ← שמלת).</p>
+    </div>
+
+    <div class="lsec" style="animation-delay:.3s">
+      <h2><span class="em">🕵️</span>סמיכות או שם ותואר?</h2>
+      <p><b>שם ותואר:</b> המילה השנייה היא תואר. היא מתארת איך הדבר נראה או איך הוא, ומתאימה לשם העצם במין ובמספר.</p>
+      <div class="ex bad"><span class="em">🏠</span><span><b>בית גדול</b><br>גדול הוא תואר ← אפשר לומר "בית גדול מאוד"</span></div>
+      <div class="ex bad"><span class="em">🧒</span><span><b>ילדים חכמים</b><br>שניהם זכר רבים ← התאמה מלאה</span></div>
+      <p><b>סמיכות:</b> שני שמות עצם, ואין התאמה ביניהם.</p>
+      <div class="ex good"><span class="em">🍦</span><span><b>גלידת וניל</b><br>גלידה (נקבה) + וניל (זכר) ← אין התאמה</span></div>
+      <p>💡 <b>בדיקה קלה:</b> <span class="f">נסי</span><span class="m">נסה</span> להוסיף "מאוד". "בית גדול מאוד" נשמע טוב, אז זה שם ותואר. "בית ספר מאוד" לא נשמע טוב, אז זו סמיכות.</p>
+    </div>
+
+    <div class="lsec" style="animation-delay:.4s">
+      <h2><span class="em">🔍</span>איפה ה' הידיעה?</h2>
+      <p>בסמיכות ה' הידיעה מצטרפת <b>רק לסומך</b> (המילה השנייה). אף פעם לא לנסמך.</p>
+      <div class="ex good"><span class="em">👗</span><span>שמלת <u>ה</u>שבת ✅<br>לא: <s>השמלת שבת</s> ולא: <s>השמלת השבת</s></span></div>
+      <div class="ex good"><span class="em">🔑</span><span>מפתח <u>ה</u>דלת ✅</span></div>
+      <p>בשם ותואר זה שונה: ה' הידיעה באה על <b>שתי</b> המילים.</p>
+      <div class="ex"><span class="em">🏠</span><span><u>ה</u>בית <u>ה</u>גדול ✅</span></div>
+    </div>
+
+    <div class="lsec" style="animation-delay:.55s">
+      <h2><span class="em">🧩</span>איך הנסמך משתנה?</h2>
+      <p>בסמיכות הסיומת של הנסמך לפעמים משתנה:</p>
+      <div class="ex"><span class="em">👗</span><span><b>נקבה ביחיד שנגמרת ב-ה'</b><br>ה' הופכת ל-ת' <span class="arrow">←</span><br>שמלה ← שמלת שבת<br>כיתה ← כיתת הילדים</span></div>
+      <div class="ex"><span class="em">🧒</span><span><b>רבים זכרים (־ים)</b><br>־ים הופכת ל־י <span class="arrow">←</span><br>ילדים ← ילדי הגן<br>פרחים ← פרחי השדה</span></div>
+      <div class="ex"><span class="em">👟</span><span><b>צורת זוג (־יים)</b><br>נעליים ← נעלי ספורט<br>משקפיים ← משקפי שמש</span></div>
+      <div class="ex"><span class="em">📓</span><span><b>רבים נקבות (־ות)</b><br>לא משתנה: מחברות הכיתה</span></div>
+      <div class="ex"><span class="em">⚽</span><span><b>זכר ביחיד</b><br>לא משתנה: כדור רגל, חדר שינה</span></div>
+    </div>
+
+    <button class="lgo" id="learnGo">🎮 <span class="f">בואי</span><span class="m">בוא</span> נשחק!</button>
+  </div>
+
+  <!-- משחק -->
+  <div class="screen" id="game">
+    <div id="progress"><div id="bar"></div></div>
+    <div id="qinfo"></div>
+    <div id="stage"></div>
+  </div>
+
+  <!-- סיום -->
+  <div class="screen" id="end">
+    <div id="stars"></div>
+    <div id="endMsg"></div>
+    <div style="font-size:20px" id="endStats"></div>
+    <div class="endbtns">
+      <button class="big again" id="again">🔁 <span class="f">שחקי</span><span class="m">שחק</span> שוב</button>
+      <button class="big home" id="toMenu">🏠 לתפריט</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ===================== נתונים ===================== */
+
+/* משחק 1: [ביטוי, סמיכות?, אימוג'י] — 30 סמיכויות + 30 שם ותואר */
+const G1 = [
+  ["בית ספר",true,"🏫"],["ילדי הגן",true,"🧒"],["עוגת שוקולד",true,"🎂"],["שמלת שבת",true,"👗"],
+  ["כדור סל",true,"🏀"],["גן חיות",true,"🦁"],["מחברת חשבון",true,"📓"],["מורת הכיתה",true,"👩‍🏫"],
+  ["ספר שירים",true,"📖"],["דלת הבית",true,"🚪"],["שולחן אוכל",true,"🍽️"],["מפתח הדלת",true,"🔑"],
+  ["גלידת וניל",true,"🍦"],["פרחי הגינה",true,"🌸"],["תלמידי הכיתה",true,"🎒"],["חדר שינה",true,"🛏️"],
+  ["מי הים",true,"🌊"],["שעון יד",true,"⌚"],["ארון בגדים",true,"👕"],["חולצת כותנה",true,"👚"],
+  ["כובע צמר",true,"🧢"],["נעלי ספורט",true,"👟"],["ציפורי הגן",true,"🐦"],["מסעדת דגים",true,"🐟"],
+  ["שעון קיר",true,"🕰️"],["עץ תפוחים",true,"🌳"],["חלון הכיתה",true,"🪟"],["ניידת משטרה",true,"🚓"],
+  ["מגדל המים",true,"🗼"],["קופסת צבעים",true,"🖍️"],
+  ["בית גדול",false,"🏠"],["ילדים חכמים",false,"🧒"],["עוגה טעימה",false,"🍰"],["שמלה יפה",false,"👗"],
+  ["כדור אדום",false,"🔴"],["גן ירוק",false,"🌳"],["מחברת חדשה",false,"📓"],["מורה נחמדה",false,"👩‍🏫"],
+  ["ספר מעניין",false,"📖"],["דלת סגורה",false,"🚪"],["שולחן עגול",false,"⚪"],["מפתח קטן",false,"🔑"],
+  ["גלידה קרה",false,"🍦"],["פרחים צבעוניים",false,"🌺"],["תלמידות שקטות",false,"🤫"],["חדר נקי",false,"✨"],
+  ["מים קרים",false,"💧"],["שעון יקר",false,"💎"],["ארון גבוה",false,"🗄️"],["חולצה כחולה",false,"👕"],
+  ["כובע חם",false,"🧣"],["נעליים נוחות",false,"🥿"],["ציפורים קטנות",false,"🐤"],["מסעדה מצוינת",false,"🍕"],
+  ["יום קר",false,"❄️"],["עץ גבוה",false,"🌲"],["חלון פתוח",false,"🌬️"],["מכונית מהירה",false,"🏎️"],
+  ["מגדל ישן",false,"🏰"],["קופסה כבדה",false,"📦"],
+  ["דלת הכיתה",true,"🚪"],["תיק הילד",true,"🎒"],["כיסא המורה",true,"🪑"],["כלב השכנים",true,"🐕"],
+  ["גג הבית",true,"🏠"],["שער הגן",true,"⛩️"],["ספר המורה",true,"📘"],["צבעי הילדה",true,"🎨"],
+  ["מחברת התלמיד",true,"📓"],["עיני הילד",true,"👀"],["ידי הסבתא",true,"🤲"],["נעלי הילדים",true,"👞"],
+  ["תמונת המשפחה",true,"🖼️"],["פרחי השדה",true,"🌼"],["גלי הים",true,"🌊"],["שמיכת פוך",true,"🛌"],
+  ["ארוחת ערב",true,"🍽️"],["ארוחת צהריים",true,"🥪"],["קערת מרק",true,"🥣"],["כוס חלב",true,"🥛"],
+  ["בקבוק מים",true,"💧"],["מיץ תפוזים",true,"🍊"],["סלט ירקות",true,"🥗"],["מרק עוף",true,"🍲"],
+  ["מורה דרך",true,"🧭"],["בית חולים",true,"🏥"],["בית קפה",true,"☕"],["סוס ים",true,"🌊"],
+  ["כלב ים",true,"🦭"],["מכונת כביסה",true,"🧺"],
+  ["דלת ירוקה",false,"🟩"],["תיק כבד",false,"🏋️"],["כיסא נוח",false,"🛋️"],["כלב נאה",false,"🐶"],
+  ["גג אדום",false,"🔺"],["שער פתוח",false,"🚧"],["ספר עבה",false,"📚"],["צבעים בהירים",false,"🌈"],
+  ["מחברת דקה",false,"📄"],["עיניים כחולות",false,"👁️"],["ידיים קטנות",false,"🖐️"],["נעליים חדשות",false,"👠"],
+  ["תמונה יפה",false,"🖼️"],["פרחים ריחניים",false,"💐"],["גלים גבוהים",false,"🌊"],["שמיכה חמה",false,"🛏️"],
+  ["ארוחה טעימה",false,"😋"],["קערה עמוקה",false,"🥣"],["כוס שבורה",false,"💔"],["בקבוק ריק",false,"🍾"],
+  ["מיץ מתוק",false,"🧃"],["סלט טרי",false,"🥬"],["מרק חם",false,"♨️"],["מורה סבלנית",false,"🧘"],
+  ["בית ישן",false,"🏚️"],["קפה חם",false,"☕"],["סוס מהיר",false,"🐎"],["כלב ידידותי",false,"🐕"],
+  ["מכונה חדשה",false,"⚙️"],["חתול שחור",false,"🐈‍⬛"]
+];
+
+/* משחק 2: [נסמך, סומך (בלי ה'), אימוג'י] — 45 פריטים */
+const G2 = [
+  ["שמלת","שבת","👗"],["עוגת","שוקולד","🎂"],["מורת","ריקוד","💃"],["חולצת","כותנה","👚"],["גלידת","תות","🍓"],
+  ["מפתח","דלת","🔑"],["ספר","ילדים","📚"],["שער","גן","⛩️"],["ילדי","כיתה","🧒"],["פרחי","שדה","🌼"],
+  ["ציפורי","יער","🐦"],["עצי","פרי","🌳"],["כדור","רגל","⚽"],["כדור","סל","🏀"],["מחברת","חשבון","📓"],
+  ["דף","עבודה","📄"],["שעת","לילה","🌙"],["ארוחת","צהריים","🍽️"],["ארוחת","בוקר","🥣"],["חדר","אוכל","🍴"],
+  ["חדר","שינה","🛏️"],["חצר","בית","🏡"],["גג","בית","🏠"],["גננת","ילדים","👩‍🏫"],["מרק","עוף","🍲"],
+  ["סלט","פירות","🥗"],["מיץ","תפוזים","🍊"],["קערת","מרק","🥣"],["כוס","מים","🥤"],["בקבוק","חלב","🍼"],
+  ["שולחן","מטבח","🍳"],["כיסא","מורה","🪑"],["חלון","חדר","🪟"],["דלת","כיתה","🚪"],["תמונת","משפחה","🖼️"],
+  ["נעלי","ספורט","👟"],["מכנסי","ג'ינס","👖"],["מעיל","חורף","🧥"],["מטריית","גשם","☔"],["אופני","ילדים","🚲"],
+  ["מכונית","מרוץ","🏎️"],["שיעורי","בית","📝"],["מבחן","חשבון","✏️"],["חוף","ים","🏖️"],["כוכבי","שמיים","⭐"],
+  ["תיק","ילד","🎒"],["כלב","שכנים","🐕"],["גלי","ים","🌊"],["עיני","ילד","👀"],["ידי","סבתא","🤲"],
+  ["נעלי","ילדים","👞"],["כוס","חלב","🥛"],["בקבוק","מים","💧"],["סלט","ירקות","🥗"],["תחנת","אוטובוס","🚌"],
+  ["חנות","ספרים","📚"],["מגדל","מים","🗼"],["פינת","חי","🐹"],["שיר","ילדים","🎵"],["מורה","חשבון","➗"],
+  ["שעון","קיר","🕰️"],["ספל","תה","🍵"],["צלחת","אוכל","🍽️"],["מפת","עולם","🗺️"],["כפתור","חולצה","🔘"],
+  ["עט","מורה","🖊️"],["ארון","בגדים","👕"],["סיפור","ילדים","📖"],["בריכת","שחייה","🏊"],["מגרש","משחקים","🛝"]
+];
+
+/* משחק 3: [נסמך בצורת בסיס, סומך (כפי שמוצג), אימוג'י, סוג] — 50 פריטים
+   סוגים: he = נקבה ביחיד ב-ה' → ת' | im = ־ים → ־י | fem = ־ות לא משתנה | masc = זכר יחיד לא משתנה */
+const G3 = [
+  ["שמלה","הילדה","👗","he"],["מורה","הכיתה","👩‍🏫","he"],["עוגה","שוקולד","🎂","he"],["גלידה","וניל","🍦","he"],
+  ["חולצה","כותנה","👚","he"],["ארוחה","הערב","🍽️","he"],["תמונה","המשפחה","🖼️","he"],["מטרייה","הגשם","☔","he"],
+  ["כיתה","הילדים","🏫","he"],["מדינה","ישראל","🇮🇱","he"],["שעה","הלילה","🌙","he"],["שמיכה","הילד","🛌","he"],
+  ["גינה","הבית","🏡","he"],["מסיבה","סיום","🎓","he"],["ספרייה","העיר","📚","he"],["חברה","הכיתה","👭","he"],
+  ["שאלה","המבחן","❓","he"],["קערה","המרק","🍲","he"],["מצלמה","הטלפון","📷","he"],["עגלה","התינוק","👶","he"],
+  ["ילדים","הגן","🧒","im"],["פרחים","השדה","🌼","im"],["תלמידים","הכיתה","🎒","im"],["ציפורים","היער","🐦","im"],
+  ["עצים","פרי","🌳","im"],["כוכבים","השמיים","⭐","im"],["ספרים","הספרייה","📚","im"],["שיעורים","בית","📝","im"],
+  ["גלים","הים","🌊","im"],["נעליים","ספורט","👟","im"],["מכנסיים","ג'ינס","👖","im"],["אופניים","הילד","🚲","im"],
+  ["חברים","הכיתה","🧑‍🤝‍🧑","im"],["כלבים","השכנים","🐕","im"],["דגים","הים","🐟","im"],["אורחים","החתונה","💒","im"],
+  ["שחקנים","הקבוצה","🏅","im"],["משקפיים","שמש","🕶️","im"],
+  ["מחברות","הכיתה","📓","fem"],["שמלות","הילדה","👗","fem"],["תמונות","המשפחה","🖼️","fem"],["מורות","הכיתה","👩‍🏫","fem"],
+  ["ארוחות","הערב","🍽️","fem"],["חולצות","הקיץ","👕","fem"],
+  ["ספר","שירים","📖","masc"],["כדור","רגל","⚽","masc"],["חדר","שינה","🛏️","masc"],["גן","חיות","🦁","masc"],
+  ["מפתח","הדלת","🔑","masc"],
+  ["מכונה","כביסה","🧺","he"],["פינה","החדר","📐","he"],["תחנה","האוטובוס","🚌","he"],["בריכה","השחייה","🏊","he"],
+  ["קופסה","הצבעים","🖍️","he"],["מפה","העולם","🗺️","he"],["מגירה","השולחן","🗃️","he"],["פרה","המשק","🐄","he"],
+  ["עוגיה","שוקולד","🍪","he"],
+  ["חיילים","הצבא","🪖","im"],["שכנים","הבניין","🏢","im"],["גנים","העיר","🌳","im"],["תפוחים","העץ","🍎","im"],
+  ["בגדים","הילדים","👕","im"],["צבעים","הקשת","🌈","im"],["ימים","השבוע","📅","im"],["חודשים","השנה","🗓️","im"],
+  ["עיניים","הילד","👀","im"],["ידיים","הסבתא","🤲","im"],["אוזניים","הארנב","🐰","im"],
+  ["גלידות","הקיץ","🍨","fem"],["קופסאות","הצבעים","🖍️","fem"],["מכונות","הכביסה","🧺","fem"],["חנויות","העיר","🏬","fem"],
+  ["תיק","הילד","🎒","masc"],["כיסא","המורה","🪑","masc"],["שולחן","הכיתה","📝","masc"],["עץ","הגינה","🌳","masc"],
+  ["כלב","השכנים","🐕","masc"]
+];
+
+/* משחק 4: [סמיכות דבוקה, סמיכות פרודה, אימוג'י] */
+const G4 = [
+  ["דלת הבית","הדלת של הבית","🚪"],
+  ["ילדי הגן","הילדים של הגן","🧒"],
+  ["תיק הילד","התיק של הילד","🎒"],
+  ["כיסא המורה","הכיסא של המורה","🪑"],
+  ["כלב השכנים","הכלב של השכנים","🐕"],
+  ["גג הבית","הגג של הבית","🏠"],
+  ["ספר המורה","הספר של המורה","📘"],
+  ["מפתח הדלת","המפתח של הדלת","🔑"],
+  ["חלון הכיתה","החלון של הכיתה","🪟"],
+  ["צבעי הילדה","הצבעים של הילדה","🎨"],
+  ["מחברת התלמיד","המחברת של התלמיד","📓"],
+  ["עיני הילד","העיניים של הילד","👀"],
+  ["נעלי הילדים","הנעליים של הילדים","👞"],
+  ["תמונת המשפחה","התמונה של המשפחה","🖼️"],
+  ["פרחי השדה","הפרחים של השדה","🌼"],
+  ["גלי הים","הגלים של הים","🌊"],
+  ["שער הגן","השער של הגן","⛩️"],
+  ["שמלת הילדה","השמלה של הילדה","👗"],
+  ["מורת הכיתה","המורה של הכיתה","👩‍🏫"],
+  ["ידי הסבתא","הידיים של הסבתא","🤲"],
+  ["שמלת שבת","שמלה של שבת","👗"],
+  ["עוגת שוקולד","עוגה של שוקולד","🎂"],
+  ["גלידת וניל","גלידה של וניל","🍦"],
+  ["חולצת כותנה","חולצה של כותנה","👚"],
+  ["כובע צמר","כובע של צמר","🧢"],
+  ["בית אב","בית של אב","🏡"],
+  ["ארוחת ערב","ארוחה של ערב","🍽️"],
+  ["סלט ירקות","סלט של ירקות","🥗"],
+  ["מרק עוף","מרק של עוף","🍲"],
+  ["מיץ תפוזים","מיץ של תפוזים","🍊"],
+  ["ספר שירים","ספר של שירים","📖"],
+  ["שולחן עץ","שולחן של עץ","🪵"],
+  ["קערת מרק","קערה של מרק","🥣"],
+  ["בקבוק מים","בקבוק של מים","💧"],
+  ["כוס חלב","כוס של חלב","🥛"],
+  ["גן חיות","גן של חיות","🦁"],
+  ["חדר שינה","חדר של שינה","🛏️"],
+  ["פירות האילן","פירות של האילן","🍎"],
+  ["תבשיל עדשים","תבשיל של עדשים","🍲"],
+  ["גל אבנים","גל של אבנים","🪨"],
+  ["בית ספר","בית של ספר","🏫"]
+];
+
+/* משחק 5: [שאלה, תשובה נכונה, [טעויות], הסבר, אימוג'י] */
+const G5 = [
+  ["איך נקראת המילה הראשונה בסמיכות?","נסמך",["סומך","תואר"],"המילה הראשונה נקראת נסמך. היא 'נשענת' על המילה שאחריה.","1️⃣"],
+  ["איך נקראת המילה השנייה בסמיכות?","סומך",["נסמך","תואר"],"המילה השנייה נקראת סומך. היא 'סומכת' (תומכת) במילה הראשונה.","2️⃣"],
+  ["סמיכות היא...","שני שמות עצם שמתחברים ליחידה אחת",["שם עצם ותואר שמתאימים זה לזה","שני פעלים ברצף","שם עצם ופועל"],"סמיכות היא צירוף של שני שמות עצם, נסמך וסומך.","🧱"],
+  ["לאיזו מילה מצטרפת ה' הידיעה בסמיכות?","רק לסומך (המילה השנייה)",["רק לנסמך (המילה הראשונה)","לשתי המילים","לאף מילה"],"ה' הידיעה באה רק על הסומך: שמלת השבת, ולא 'השמלת שבת'.","🔍"],
+  ["לאיזו מילה מצטרפת ה' הידיעה בשם ותואר?","לשתי המילים",["רק לתואר","רק לשם העצם","לאף מילה"],"בשם ותואר ה' באה על שתיהן: הבית הגדול.","🏠"],
+  ["מהי סמיכות דבוקה?","צירוף ישיר: הנסמך בא לפני הסומך, בלי 'של'",["צירוף שבו מופיעה המילה 'של' בין שני השמות","שם עצם ותואר","שתי מילים שמתאימות במין ובמספר"],"בסמיכות דבוקה הנסמך בא ישר לפני הסומך: פירות האילן, בית אב, דלת הבית.","🔗"],
+  ["מהי סמיכות פרודה?","צירוף שבו מופיעה המילה 'של' בין הנסמך לסומך",["צירוף ישיר בלי 'של'","שם עצם ותואר","שלוש מילים ללא קשר"],"בסמיכות פרודה מופיעה מילת היחס 'של' בין שני השמות: תבשיל של עדשים, גל של אבנים.","✂️"],
+  ["איך הופכים סמיכות דבוקה לפרודה?","מוסיפים 'של' בין הנסמך לסומך",["מוסיפים 'מאוד' אחרי הסומך","מחליפים את סדר המילים","מוסיפים ה' לנסמך ולסומך"],"דלת הבית ← הדלת של הבית. הנסמך חוזר לצורתו הרגילה, והמילה 'של' באה לפני הסומך.","🔄"],
+  ["איזה מבחן עוזר להבחין בין שם ותואר לסמיכות?","מוסיפים 'מאוד' למילה השנייה",["סופרים אותיות","בודקים אם יש ה' הידיעה","מחליפים את סדר המילים"],"'בית גדול מאוד' נשמע טוב, ולכן גדול הוא תואר. 'בית ספר מאוד' לא נשמע טוב, ולכן זו סמיכות.","💡"],
+  ["בסמיכות דבוקה, האם אפשר להכניס מילה בין הנסמך לסומך?","לא, הם צמודים",["כן, תמיד","רק תואר","רק ה' הידיעה"],"בסמיכות דבוקה הנסמך והסומך צמודים. רק בסמיכות פרודה מופיעה ביניהם המילה 'של'.","🔗"],
+  ["מה קורה לנסמך נקבה ביחיד שנגמר ב-ה'?","ה' הופכת ל-ת'",["ה' נשארת","מוסיפים י'","ה' נעלמת בלי תחליף"],"שמלה ← שמלת שבת. ה' בסוף הופכת ל-ת'.","👗"],
+  ["מה קורה לסיומת ־ים של נסמך ברבים זכרים?","היא הופכת ל־י",["היא הופכת ל־ות","היא לא משתנה","היא הופכת ל־ת"],"ילדים ← ילדי הגן. הסיומת ־ים הופכת ל־י.","🧒"],
+  ["מה קורה לנסמך ברבים נקבות (־ות)?","הוא לא משתנה",["־ות הופכת ל־י","־ות הופכת ל־ת","־ות הופכת ל־ים"],"מחברות הכיתה, שמלות הילדה: הסיומת ־ות נשארת.","📓"],
+  ["מה קורה לנסמך זכר ביחיד?","הוא לא משתנה",["מוסיפים לו ת'","מוסיפים לו י'","מוסיפים לו ה'"],"ספר שירים, כדור רגל: הנסמך הזכר ביחיד נשאר כמו שהוא.","📖"],
+  ["איך נסמיך את המילה 'נעליים'?","נעלי",["נעליים","נעלות","נעלית"],"גם סיומת הזוג ־יים הופכת ל־י: נעלי ספורט.","👟"],
+  ["מה תפקיד הסומך?","הוא מוסיף מידע על הנסמך",["הוא מתאים לנסמך במין ובמספר","הוא תמיד תואר","הוא תמיד פועל"],"הסומך אומר לנו עוד על הנסמך: שמלת שבת, מפתח הדלת.","ℹ️"],
+  ["האם בסמיכות יש חובה שהמילים יתאימו במין ובמספר?","לא, אין חובה",["כן, תמיד","רק במספר","רק במין"],"בסמיכות אין התאמה. 'גלידת וניל' הוא נקבה וזכר ביחד. בשם ותואר יש התאמה.","⚖️"],
+  ["האם בשם ותואר יש התאמה במין ובמספר?","כן, יש",["לא, אין","רק בסמיכות","רק במין"],"'ילדים חכמים' ו'שמלה יפה': התואר מתאים לשם העצם.","🤝"],
+  ["בצירוף 'עוגת שוקולד' מי הסומך?","שוקולד",["עוגת","עוגה","אין סומך"],"הסומך הוא המילה השנייה: שוקולד.","🎂"],
+  ["בצירוף 'שולחן עץ' מי הנסמך?","שולחן",["עץ","שולחן עץ","אין נסמך"],"הנסמך הוא המילה הראשונה: שולחן.","🪵"],
+  ["'הדלת של הבית' היא סמיכות מאיזה סוג?","פרודה",["דבוקה"],"המילה 'של' מופיעה בין שני השמות, ולכן היא סמיכות פרודה.","✂️"],
+  ["'דלת הבית' היא סמיכות מאיזה סוג?","דבוקה",["פרודה"],"דלת הבית היא צירוף ישיר בלי 'של', ולכן היא סמיכות דבוקה.","🚪"],
+  ["'ילדים חכמים' הם...","שם ותואר",["סמיכות"],"חכמים מתאר את הילדים ומתאים להם ברבים זכרים, ולכן זה שם ותואר.","🧠"],
+  ["איזה צירוף הוא סמיכות פרודה?","גל של אבנים",["פירות האילן","בית אב","ילדי הגן"],"רק ב'גל של אבנים' מופיעה המילה 'של' בין שני השמות.","🪨"],
+  ["איזה צירוף הוא סמיכות דבוקה?","פירות האילן",["גל של אבנים","תבשיל של עדשים","ילדים חכמים"],"פירות האילן הוא צירוף ישיר בלי 'של': נסמך וסומך צמודים.","🍎"],
+  ["כמה מילים יש בסמיכות דבוקה?","שתיים: נסמך וסומך",["אחת","שלוש בדיוק","חמש"],"סמיכות בנויה משני שמות עצם: נסמך וסומך.","🔢"],
+  ["איך אומרים בצורה ידועה 'שמלת שבת'?","שמלת השבת",["השמלת שבת","השמלת השבת"],"ה' הידיעה מצטרפת רק לסומך: שמלת השבת.","👗"],
+  ["הסומך יכול להיות ידוע או לא ידוע. אילו מהצירופים הם סמיכות?","דלת הבית ודלת בית",["רק דלת הבית","רק דלת בית","אף אחד מהם"],"גם 'דלת הבית' (סומך ידוע) וגם 'דלת בית' (סומך לא ידוע) הם סמיכות.","🚪"],
+  ["מה ההבדל בין סמיכות דבוקה לפרודה?","בפרודה מופיעה המילה 'של' בין הנסמך לסומך",["בפרודה אין סומך","בדבוקה יש תואר","בדבוקה מופיעה המילה 'של'"],"דבוקה: דלת הבית. פרודה: הדלת של הבית. ההבדל הוא במילה 'של'.","✂️"],
+  ["איך נכתוב בסמיכות דבוקה: 'הילדים של הגן'?","ילדי הגן",["הילדים הגן","ילדים של הגן","הילדי הגן"],"בדבוקה מורידים את 'של' והנסמך חוזר לצורת הסמיכות: ילדים ← ילדי, וה' הידיעה נשארת רק על הסומך.","🧒"],
+  ["איך נכתוב בסמיכות פרודה: 'מפתח הדלת'?","המפתח של הדלת",["המפתח הדלת","מפתח של הדלת של","מפתח דלת של"],"בפרודה הנסמך חוזר לצורתו הרגילה ומוסיפים 'של' לפני הסומך: המפתח של הדלת.","🔑"],
+  ["איך נחבר 'עוגה של שוקולד' לסמיכות דבוקה?","עוגת שוקולד",["עוגה שוקולד","העוגת שוקולד","עוגות שוקולד"],"ה' בסוף עוגה הופכת ל-ת' והמילה 'של' נעלמת: עוגת שוקולד.","🎂"],
+  ["איך נחבר 'הנעליים של הילדים' לסמיכות דבוקה?","נעלי הילדים",["נעליים הילדים","הנעלי הילדים","נעליות הילדים"],"הסיומת ־יים הופכת ל־י, והמילה 'של' נעלמת: נעלי הילדים.","👟"],
+  ["איזו מילה מסמנת סמיכות פרודה?","של",["את","עם","על"],"המילה 'של' היא מה שמפריד בין שני השמות בסמיכות פרודה.","✂️"],
+  ["מי הנסמך בצירוף 'כובע הגננת'?","כובע",["הגננת","כובע הגננת","אין נסמך"],"הנסמך הוא המילה הראשונה: כובע.","🎩"],
+  ["מי הסומך בצירוף 'ספר המורה'?","המורה",["ספר","ספר המורה","אין סומך"],"הסומך הוא המילה השנייה: המורה (ה' הידיעה שייכת לו).","📘"],
+  ["מה השתנה בנסמך 'ילדים' בצירוף 'ילדי הכיתה'?","הסיומת ־ים הפכה ל־י",["נוספה ת'","נוספה ה'","לא השתנה כלום"],"ברבים זכרים הסיומת ־ים הופכת ל־י בסמיכות דבוקה.","🧒"],
+  ["מה השתנה בנסמך 'שמלה' בצירוף 'שמלת שבת'?","ה' הפכה ל-ת'",["ה' הפכה ל־י","נוספה ה' בהתחלה","לא השתנה כלום"],"בנקבה ביחיד ה' בסוף הופכת ל-ת' בסמיכות דבוקה.","👗"],
+  ["איך נסמיך את 'מחברות' עם 'הכיתה'?","מחברות הכיתה",["מחברי הכיתה","מחברים הכיתה","המחברות הכיתה"],"רבים נקבות (־ות) לא משתנים בסמיכות דבוקה.","📓"],
+  ["מה צורת הסמיכות של 'משקפיים'?","משקפי",["משקפיים","משקפות","משקפית"],"סיומת הזוג ־יים הופכת ל־י: משקפי שמש.","🕶️"],
+  ["מה צורת הסמיכות של 'מכנסיים'?","מכנסי",["מכנסיים","מכנסות","מכנסית"],"מכנסיים ← מכנסי ג'ינס.","👖"],
+  ["מה צורת הסמיכות של 'גלידה'?","גלידת",["גלידה","גלידי","גלידות"],"ה' הופכת ל-ת': גלידת וניל.","🍦"],
+  ["מה צורת הסמיכות של 'פרחים'?","פרחי",["פרחים","פרחות","פרחת"],"־ים הופכת ל־י: פרחי השדה.","🌼"],
+  ["מה צורת הסמיכות של 'תמונות'?","תמונות",["תמונת","תמוני","תמונים"],"רבים נקבות לא משתנים: תמונות המשפחה.","🖼️"],
+  ["מה צורת הסמיכות של 'שעה'?","שעת",["שעה","שעי","שעות"],"שעה ← שעת הלילה.","🌙"],
+  ["איזה צירוף ידוע נכון בסמיכות דבוקה?","גג הבית",["הגג הבית","הגג בית"],"ה' הידיעה באה רק על הסומך: גג הבית.","🏠"],
+  ["במה שונה סמיכות דבוקה משם ותואר?","בשם ותואר יש התאמה במין ובמספר, ובסמיכות אין",["בשם ותואר אין התאמה","בסמיכות דבוקה תמיד יש תואר","אין הבדל"],"'ילדים חכמים' מתאימים במין ובמספר, אבל 'גלידת וניל' לא.","🕵️"],
+  ["איזו מילה היא התואר בצירוף 'בית גדול'?","גדול",["בית","בית גדול","אין תואר"],"גדול מתאר את הבית, והוא התואר.","🏠"],
+  ["איך נאמר בצורה ידועה 'ילדה חכמה'?","הילדה החכמה",["הילדה חכמה","ילדה החכמה","ילדת החכמה"],"בשם ותואר ה' הידיעה באה על שתי המילים.","👧"],
+  ["איזה מהצירופים הבאים כתוב בסמיכות פרודה?","תבשיל של עדשים",["גל אבנים","ילדים חכמים","דלת הכיתה"],"המילה 'של' מפרידה בין שני השמות: תבשיל של עדשים.","🍲"],
+  ["איזה מהצירופים הבאים כתוב בסמיכות דבוקה?","בית אב",["בית של אב","בית גדול","ילדים של הגן"],"בית אב הוא צירוף ישיר בלי 'של' ובלי תואר.","🏡"],
+  ["מה ההבדל בין 'ספר ילדים' ל'ספר של ילדים'?","הראשון דבוקה והשני פרודה",["הראשון פרודה והשני דבוקה","שניהם דבוקה","שניהם פרודה"],"ספר ילדים: ישיר בלי 'של' (דבוקה). ספר של ילדים: עם 'של' (פרודה).","📚"],
+  ["כמה שמות עצם יש בצירוף 'תבשיל של עדשים'?","שניים: תבשיל ועדשים",["אחד","שלושה, כולל 'של'","אפס"],"'של' היא מילת יחס, לא שם עצם. הנסמך הוא תבשיל והסומך הוא עדשים.","🔢"],
+  ["איזה סוג מילה היא 'של'?","מילת יחס",["שם עצם","שם תואר","פועל"],"'של' היא מילת יחס שמחברת בין הנסמך לסומך בסמיכות פרודה.","🔗"],
+  ["איך נחבר 'השמלה של הילדה' לסמיכות דבוקה?","שמלת הילדה",["השמלת הילדה","שמלה הילדה","השמלה הילדה"],"ה' הידיעה עוברת רק לסומך, וה' בסוף שמלה הופכת ל-ת'.","👗"],
+  ["איך נפרק 'חולצת כותנה' לסמיכות פרודה?","חולצה של כותנה",["חולצת של כותנה","החולצה כותנה","חולצות של כותנה"],"הנסמך חוזר לצורתו הרגילה (חולצה) ומוסיפים 'של'.","👚"],
+  ["הסומך 'שוקולד' בצירוף 'עוגת שוקולד' הוא...","לא ידוע (בלי ה' הידיעה)",["ידוע","אין סומך"],"אין ה' הידיעה לפני שוקולד, ולכן הוא לא ידוע.","🍫"],
+  ["הסומך 'הגן' בצירוף 'ילדי הגן' הוא...","ידוע (יש ה' הידיעה)",["לא ידוע","אין סומך"],"יש ה' הידיעה לפני גן, ולכן הסומך ידוע.","🧒"],
+  ["אם הסומך ידוע, מה דינו של הנסמך?","גם הוא נחשב ידוע, בלי ה' הידיעה",["הוא תמיד לא ידוע","צריך להוסיף לו ה' הידיעה","הוא הופך לתואר"],"בסמיכות הצירוף כולו ידוע כשהסומך ידוע: ילדי הגן, ולא 'הילדי הגן'.","🎯"],
+  ["מי הסומך בצירוף 'כוס חלב'?","חלב",["כוס","כוס חלב","אין סומך"],"הסומך הוא המילה השנייה.","🥛"],
+  ["איזה צירוף הוא שם ותואר?","מורה נחמדה",["מורת הכיתה","ילדי הגן","בית אב"],"נחמדה מתארת את המורה ומתאימה לה במין ובמספר.","👩‍🏫"],
+  ["איך נחבר 'החבר של הילד' לסמיכות דבוקה?","חבר הילד",["החבר הילד","חברת הילד","חברי הילד"],"הנסמך לא משתנה (זכר ביחיד), וה' הידיעה נשארת רק על הסומך.","🧑‍🤝‍🧑"],
+  ["איזה צירוף בסמיכות פרודה נכון?","הכלב של השכנים",["כלב של השכנים של","הכלב השכנים של","של הכלב השכנים"],"קודם הנסמך, אחר כך 'של', ואחריה הסומך.","🐕"],
+  ["לאיזה סוג שייך 'פירות האילן'?","דבוקה",["פרודה"],"בלי 'של' ביניהם, ולכן הסמיכות דבוקה.","🍎"],
+  ["לאיזה סוג שייך 'גל של אבנים'?","פרודה",["דבוקה"],"יש 'של' ביניהם, ולכן הסמיכות פרודה.","🪨"],
+  ["מה קורה לה' הידיעה של הנסמך כשהופכים 'הדלת של הבית' לסמיכות דבוקה?","הנסמך מאבד אותה והיא נשארת רק על הסומך",["היא נשארת על שתי המילים","היא עוברת לנסמך","היא הופכת ל-ת'"],"הדלת של הבית ← דלת הבית.","🚪"]
+];
+const RULES = {
+  he:"נקבה ביחיד שנגמרת ב-ה׳: ה׳ הופכת ל-ת׳ בסמיכות (שמלה ← שמלת). ה׳ הידיעה לא באה על הנסמך!",
+  im:"רבים זכרים: הסיומת ־ים הופכת ל־י בסמיכות (ילדים ← ילדי).",
+  fem:"רבים נקבות (־ות): הצורה לא משתנה בסמיכות (מחברות הכיתה).",
+  masc:"זכר ביחיד: הנסמך לא משתנה בסמיכות (ספר שירים)."
+};
+
+/* ===================== כלים ===================== */
+const $ = id => document.getElementById(id);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.random()*(i+1)|0; [a[i],a[j]]=[a[j],a[i]]; } return a; };
+const pick = a => a[Math.random()*a.length|0];
+let boy = false;
+try { boy = localStorage.getItem("smichutBoy") === "1"; } catch(e){}
+const G = (f, m) => boy ? m : f;
+const GAMES = {
+  1:{n:"הזיהוי המהיר",d:"😊 קל"}, 2:{n:"איפה ה' הידיעה?",d:"🙂 בינוני"}, 3:{n:"מרכיבים סמיכות",d:"🙂 בינוני"},
+  4:{n:"איזה סוג סמיכות?",d:"🤔 קשה"}, 5:{n:"שאלות על החוקים",d:"🔥 הכי קשה"}
+};
+
+/* שקית קלפים: לא חוזרים על שאלה עד שכל השאלות נוצלו */
+const bags = {};
+function draw(key, arr){
+  if (!bags[key] || !bags[key].length) bags[key] = shuffle(arr.map((_,i)=>i));
+  return arr[bags[key].pop()];
+}
+
+/* רקע צף */
+(function(){
+  const e = ["⭐","🌈","🎈","📚","✏️","🦋","🌸","🎒","💫","🍭","🐝","☁️","🎀","🍓","🐞","✨","🎨","🦄"];
+  const kinds = ["", "k2", "k3", "k4"];
+  for (let i=0;i<34;i++){
+    const s = document.createElement("span");
+    s.textContent = e[i % e.length];
+    s.className = kinds[i % kinds.length];
+    s.style.left = Math.random()*95 + "%";
+    s.style.top = Math.random()*92 + "%";
+    s.style.animationDelay = (-Math.random()*12) + "s";
+    s.style.animationDuration = (6 + Math.random()*10) + "s";
+    s.style.fontSize = (22 + Math.random()*30) + "px";
+    $("bg").appendChild(s);
+  }
+  for (let i=0;i<12;i++){
+    const b = document.createElement("i");
+    const d = 14 + Math.random()*40;
+    b.style.cssText = "left:" + Math.random()*100 + "%;width:" + d + "px;height:" + d + "px;animation-delay:" + (-Math.random()*14) + "s;animation-duration:" + (9 + Math.random()*10) + "s";
+    $("bg").appendChild(b);
+  }
+})();
+
+/* צליל */
+let muted = false, actx = null;
+try { muted = localStorage.getItem("smichutMuted") === "1"; } catch(e){}
+$("mute").textContent = muted ? "🔇" : "🔊";
+function beep(freqs, dur){
+  if (muted) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    let t = actx.currentTime;
+    freqs.forEach(f => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur);
+      t += dur * .8;
+    });
+  } catch(e){}
+}
+$("mute").onclick = () => {
+  muted = !muted; $("mute").textContent = muted ? "🔇" : "🔊";
+  try { localStorage.setItem("smichutMuted", muted ? "1" : "0"); } catch(e){}
+};
+
+/* קונפטי */
+const cv = $("confetti"), cx = cv.getContext("2d");
+let parts = [], raf = 0;
+function sizeCv(){ cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener("resize", sizeCv); sizeCv();
+function confetti(n, x, y){
+  const cols = ["#ff5fa2","#8e5cff","#35b6ff","#2fd67b","#ffd23f","#ff9140"];
+  for (let i=0;i<n;i++) parts.push({
+    x: x ?? cv.width/2, y: y ?? cv.height*.4,
+    vx:(Math.random()-.5)*14, vy:-Math.random()*13-3, g:.35+Math.random()*.2,
+    s:6+Math.random()*7, c:pick(cols), r:Math.random()*6, vr:(Math.random()-.5)*.4, life:90+Math.random()*50
+  });
+  if (!raf) raf = requestAnimationFrame(tick);
+}
+function tick(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts = parts.filter(p => p.life > 0 && p.y < cv.height + 20);
+  parts.forEach(p => {
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66); cx.restore();
+  });
+  raf = parts.length ? requestAnimationFrame(tick) : 0;
+  if (!raf) cx.clearRect(0,0,cv.width,cv.height);
+}
+
+/* ===================== מצב המשחק ===================== */
+const ROUND = 10;
+let score = 0, best = 0;
+try { best = +localStorage.getItem("smichutBest") || 0; } catch(e){}
+let mode = 0, qs = [], idx = 0, okCount = 0, streak = 0, locked = false, advTimer = 0;
+
+function mult(){ return streak >= 6 ? 3 : streak >= 3 ? 2 : 1; }
+function updateHud(){
+  $("score").textContent = score;
+  const m = mult();
+  $("combo").textContent = streak >= 3 ? (m >= 3 ? "🔥🔥 x" : "🔥 x") + m : (streak ? "🔥 " + streak : "");
+  $("scorePill").classList.toggle("fire", m > 1);
+}
+function show(id){
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+}
+function floatText(txt, bad, el){
+  const r = (el || $("stage")).getBoundingClientRect();
+  const f = document.createElement("div");
+  f.className = "floatpts" + (bad ? " bad" : "");
+  f.textContent = txt;
+  f.style.left = (r.left + r.width/2 - 30) + "px";
+  f.style.top = (r.top + r.height/2 - 20) + "px";
+  document.body.appendChild(f);
+  setTimeout(() => f.remove(), 1000);
+}
+
+document.querySelectorAll(".tile[data-mode]").forEach(b => b.onclick = () => start(+b.dataset.mode));
+function applyGender(){
+  document.body.classList.toggle("boy", boy);
+  $("gGirl").classList.toggle("on", !boy); $("gBoy").classList.toggle("on", boy);
+  try { localStorage.setItem("smichutBoy", boy ? "1" : "0"); } catch(e){}
+}
+$("gGirl").onclick = () => { boy = false; applyGender(); };
+$("gBoy").onclick = () => { boy = true; applyGender(); };
+applyGender();
+$("homeBtn").onclick = () => { clearTimeout(advTimer); show("menu"); };
+$("learnBtn").onclick = () => { $("learn").scrollTop = 0; show("learn"); confetti(30); };
+$("learnGo").onclick = () => show("menu");
+$("toMenu").onclick = () => show("menu");
+$("again").onclick = () => start(mode);
+
+function start(m){
+  mode = m; idx = 0; okCount = 0; streak = 0; locked = false;
+  qs = [];
+  for (let i=0;i<ROUND;i++){
+    const g = m === 0 ? 1 + (i % 5) : m;   // מיקס: חלוקה שווה
+    qs.push(g);
+  }
+  if (m === 0) qs = shuffle(qs);
+  updateHud(); show("game"); nextQ();
+}
+
+function nextQ(){
+  if (idx >= ROUND) return finish();
+  locked = false;
+  $("bar").style.width = (idx / ROUND * 100) + "%";
+  $("qinfo").textContent = "שאלה " + (idx + 1) + " מתוך " + ROUND + " · " + GAMES[qs[idx]].n + " · " + GAMES[qs[idx]].d;
+  const st = $("stage"); st.innerHTML = "";
+  [renderG1, renderG2, renderG3, renderG4, renderG5][qs[idx] - 1](st);
+}
+
+function tipBox(st){
+  const t = document.createElement("div"); t.id = "tip"; st.appendChild(t);
+  const n = document.createElement("button"); n.id = "next"; n.textContent = G("הבנתי, ממשיכה ←", "הבנתי, ממשיך ←"); st.appendChild(n);
+  n.onclick = () => { clearTimeout(advTimer); idx++; nextQ(); };
+  return { t, n };
+}
+
+/* תשובה: מציג משוב ומתקדם */
+function result(ok, st, tipEl, nextBtn, msg, anchor){
+  locked = true;
+  if (ok){
+    streak++; okCount++;
+    const pts = 10 * mult();
+    score += pts;
+    floatText("+" + pts + (mult() > 1 ? " 🔥" : ""), false, anchor);
+    beep([660, 880], .12);
+    confetti(streak >= 3 ? 70 : 28);
+    tipEl.textContent = msg; tipEl.className = "show good";
+    nextBtn.classList.add("show");
+    updateHud();
+  } else {
+    streak = 0;
+    floatText("😢", true, anchor);
+    beep([300, 200], .18);
+    const f = $("flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
+    st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
+    try { navigator.vibrate && navigator.vibrate(120); } catch(e){}
+    tipEl.textContent = msg; tipEl.className = "show";
+    nextBtn.classList.add("show");
+    updateHud();
+  }
+}
+
+/* החלקה: ימינה = התשובה הראשונה (מימין), שמאלה = השנייה */
+function attachSwipe(card, answer){
+  let sx = null;
+  card.addEventListener("pointerdown", e => { if (!locked){ sx = e.clientX; card.setPointerCapture(e.pointerId); card.style.transition = "none"; } });
+  card.addEventListener("pointermove", e => {
+    if (sx === null) return;
+    const dx = e.clientX - sx;
+    card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 14 + "deg)";
+    card.style.outline = dx > 40 ? "5px solid #2fd67b" : dx < -40 ? "5px solid #ff4d5e" : "none";
+  });
+  const end = e => {
+    if (sx === null) return;
+    const dx = e.clientX - sx; sx = null;
+    card.style.transition = "transform .25s"; card.style.transform = ""; card.style.outline = "none";
+    if (Math.abs(dx) > 90) answer(dx > 0);
+  };
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", end);
+}
+
+/* ---------- משחק 1: זיהוי מהיר ---------- */
+function renderG1(st){
+  const [phrase, isS, em] = draw("g1", G1);
+  const parts = phrase.split(" ");
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<div class="ask">האם אלו מילים בסמיכות?</div><span class="emoji">' + em + '</span><div class="phrase">' + phrase + '</div>';
+  const hint = document.createElement("div"); hint.className = "swipehint"; hint.textContent = "אפשר גם להחליק את הכרטיס ימינה (כן) או שמאלה (לא)";
+  const row = document.createElement("div"); row.className = "row";
+  row.innerHTML = '<button class="big yes">✅ כן, סמיכות</button><button class="big no">❌ לא, שם ותואר</button>';
+  st.appendChild(card); st.appendChild(hint); st.appendChild(row);
+  const { t, n } = tipBox(st);
+
+  const def = isS ? parts[0] + " " + (parts[1][0] === "ה" ? parts[1] : "ה" + parts[1])
+                  : "ה" + parts[0] + " ה" + parts[1];
+  const why = isS
+    ? "סמיכות! שני שמות עצם שמתחברים יחד, ואי אפשר להפריד ביניהם. ה' הידיעה באה רק על המילה השנייה: " + def
+    : "שם ותואר! המילה השנייה מתארת את הראשונה ומתאימה לה במין ובמספר. ה' הידיעה באה על שתיהן: " + def;
+  const yes = row.children[0], no = row.children[1];
+  function answer(sayYes){
+    if (locked) return;
+    const ok = sayYes === isS;
+    yes.disabled = no.disabled = true;
+    (isS ? yes : no).style.outline = "5px solid #fff";
+    result(ok, st, t, n, ok ? "כל הכבוד! " + why : why, card);
+  }
+  yes.onclick = () => answer(true);
+  no.onclick = () => answer(false);
+
+  attachSwipe(card, answer);
+}
+
+/* ---------- משחק 2: איפה ה' הידיעה ---------- */
+function renderG2(st){
+  const [a, b, em] = draw("g2", G2);
+  const right = a + " ה" + b;
+  const wrongs = shuffle(["ה" + a + " " + b, "ה" + a + " ה" + b]);
+  const opts = shuffle([right].concat(wrongs.slice(0, 1 + (Math.random() * 2 | 0))));
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<div class="ask">' + G("הפכי","הפוך") + ' לידוע:</div><span class="emoji">' + em + '</span><div class="phrase">' + a + " " + b + '</div>';
+  const box = document.createElement("div"); box.className = "opts";
+  st.appendChild(card); st.appendChild(box);
+  const { t, n } = tipBox(st);
+  const btns = opts.map(o => {
+    const bt = document.createElement("button"); bt.className = "opt"; bt.textContent = o; box.appendChild(bt);
+    bt.onclick = () => {
+      if (locked) return;
+      const ok = o === right;
+      btns.forEach(x => { x.disabled = true; if (x.textContent === right) x.classList.add("right"); });
+      if (!ok) bt.classList.add("wrong");
+      result(ok, st, t, n, ok ? "מעולה! ה' הידיעה מצטרפת רק לסומך." : "ה' הידיעה מצטרפת רק לסומך (המילה השנייה)! נכון: " + right, card);
+    };
+    return bt;
+  });
+}
+
+/* ---------- משחק 3: מרכיבים סמיכות ---------- */
+function renderG3(st){
+  const [base, som, em, type] = draw("g3", G3);
+  let right, wr;
+  if (type === "he"){ const s = base.slice(0,-1); right = s + "ת"; wr = [base, "ה" + s + "ת"]; }
+  else if (type === "im"){ const s = base.slice(0,-2); right = s + "י"; wr = [base, s + "ות"]; }
+  else if (type === "fem"){ const s = base.slice(0,-2); right = base; wr = [s + "י", s + "ים"]; }
+  else { right = base; wr = [base + "ת", base + "י"]; }
+  const full = w => w + " " + som;
+  const opts = shuffle([right].concat(wr)).map(full);
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<div class="ask">' + G("חברי","חבר") + ' את שתי המילים לסמיכות נכונה:</div><span class="emoji">' + em + '</span>' +
+    '<div class="chips"><div class="chip"><small>נסמך</small>' + base + '</div><div class="plus">+</div><div class="chip"><small>סומך</small>' + som + '</div></div>';
+  const box = document.createElement("div"); box.className = "opts";
+  st.appendChild(card); st.appendChild(box);
+  const { t, n } = tipBox(st);
+  const rightFull = full(right);
+  const btns = opts.map(o => {
+    const bt = document.createElement("button"); bt.className = "opt"; bt.textContent = o; box.appendChild(bt);
+    bt.onclick = () => {
+      if (locked) return;
+      const ok = o === rightFull;
+      btns.forEach(x => { x.disabled = true; if (x.textContent === rightFull) x.classList.add("right"); });
+      if (!ok) bt.classList.add("wrong");
+      result(ok, st, t, n, (ok ? "נכון! " : "נכון: " + rightFull + ". ") + RULES[type], card);
+    };
+    return bt;
+  });
+}
+
+/* ---------- משחק 4: איזה סוג סמיכות ---------- */
+function renderG4(st){
+  const [dvuka, peruda, em] = draw("g4", G4);
+  const isSplit = Math.random() < .5;
+  const phrase = isSplit ? peruda : dvuka;
+  const why = isSplit
+    ? "סמיכות פרודה: המילה 'של' מופיעה בין שני השמות. בצורה דבוקה: " + dvuka
+    : "סמיכות דבוקה: הנסמך בא ישר לפני הסומך, בלי 'של'. בצורה פרודה: " + peruda;
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<div class="ask">איזה סוג סמיכות זו?</div><span class="emoji">' + em + '</span><div class="phrase">' + phrase + '</div>';
+  const hint = document.createElement("div"); hint.className = "swipehint"; hint.textContent = "אפשר גם להחליק את הכרטיס ימינה (דבוקה) או שמאלה (פרודה)";
+  const row = document.createElement("div"); row.className = "row";
+  row.innerHTML = '<button class="big tfree">🔗 דבוקה</button><button class="big tcomp">✂️ פרודה</button>';
+  st.appendChild(card); st.appendChild(hint); st.appendChild(row);
+  const { t, n } = tipBox(st);
+  const bD = row.children[0], bP = row.children[1];
+  function answer(sayDvuka){
+    if (locked) return;
+    const ok = sayDvuka === !isSplit;
+    bD.disabled = bP.disabled = true;
+    (isSplit ? bP : bD).style.outline = "5px solid #fff";
+    result(ok, st, t, n, (ok ? "נכון! " : "לא בדיוק. ") + why, card);
+  }
+  bD.onclick = () => answer(true);
+  bP.onclick = () => answer(false);
+  attachSwipe(card, answer);
+}
+
+/* ---------- משחק 5: שאלות הגדרה ---------- */
+function renderG5(st){
+  const [q, right, wrongs, why, em] = draw("g5", G5);
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = '<span class="emoji">' + em + '</span><div class="q">' + q + '</div>';
+  const box = document.createElement("div"); box.className = "opts";
+  st.appendChild(card); st.appendChild(box);
+  const { t, n } = tipBox(st);
+  const btns = shuffle([right].concat(wrongs)).map(o => {
+    const bt = document.createElement("button"); bt.className = "opt small"; bt.textContent = o; box.appendChild(bt);
+    bt.onclick = () => {
+      if (locked) return;
+      const ok = o === right;
+      btns.forEach(x => { x.disabled = true; if (x.textContent === right) x.classList.add("right"); });
+      if (!ok) bt.classList.add("wrong");
+      result(ok, st, t, n, (ok ? "נכון! " : "התשובה הנכונה: " + right + ". ") + why, card);
+    };
+    return bt;
+  });
+}
+
+/* ---------- סיום ---------- */
+function finish(){
+  $("bar").style.width = "100%";
+  const stars = okCount >= 9 ? 3 : okCount >= 7 ? 2 : okCount >= 4 ? 1 : 0;
+  const msgs = [
+    [G("כמעט! נסי שוב 💪","כמעט! נסה שוב 💪"),"בפעם הבאה זה יצליח!"],
+    ["יפה מאוד! 👍","כבר רואים התקדמות!"],
+    ["כל הכבוד! 🎉","תוצאה מצוינת!"],
+    [G("אלופה! 🏆","אלוף! 🏆"),G("בלתי ניתנת לעצירה!","בלתי ניתן לעצירה!")]
+  ];
+  $("stars").innerHTML = [0,1,2].map(i => '<span style="animation-delay:' + (i * .3) + 's">' + (i < stars ? "⭐" : "☆") + "</span>").join("");
+  $("endMsg").textContent = msgs[stars][0];
+  let extra = "";
+  if (score > best){ best = score; extra = "<br>🎊 שיא חדש!"; try { localStorage.setItem("smichutBest", best); } catch(e){} }
+  $("endStats").innerHTML = okCount + " מתוך " + ROUND + " נכון<br>" + msgs[stars][1] + "<br>סך הניקוד: ⭐ " + score + extra;
+  show("end");
+  beep(stars >= 2 ? [523, 659, 784, 1047] : [440, 523], .15);
+  if (stars >= 2){ confetti(160); setTimeout(() => confetti(120), 350); }
+}
+const CNT = {1:G1.length, 2:G2.length, 3:G3.length, 4:G4.length * 2, 5:G5.length};
+CNT[0] = CNT[1] + CNT[2] + CNT[3] + CNT[4] + CNT[5];
+document.querySelectorAll("[data-cnt]").forEach(el => { el.textContent = CNT[el.dataset.cnt] + " שאלות"; });
+updateHud();
+</script>
+</body>
+</html>
