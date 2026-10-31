@@ -336,7 +336,36 @@ try { gender = localStorage.getItem("gender") || "boy"; } catch (e) {}
 const gt = (b, g) => gender === "girl" ? g : b;
 let S = null;                       // {order, best, skips, avatar}
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function freshState() { return { sig: SIG, best: Array(N).fill(-1), skips: 2, avatar: null, finished: false }; }
+function freshState() { return { sig: SIG, best: Array(N).fill(-1), skips: 2, avatar: null, finished: false, deck: [], last: -1 }; }
+// ---------- word dealing: a saved "deck" so every word comes up evenly ----------
+// every word is dealt once before any word repeats; words you struggled with come back sooner
+function dealWords() {
+  const seen = new Set();
+  S.deck = (Array.isArray(S.deck) ? S.deck : []).filter(i => Number.isInteger(i) && i >= 0 && i < N && !seen.has(i) && seen.add(i));
+  if (S.deck.length < 3) S.deck = S.deck.concat(shuffle([...Array(N).keys()].filter(i => !seen.has(i))));
+  const hand = S.deck.slice(0, 3);   // taken off the deck only when the stage is finished, so a left stage keeps its words
+  if (hand[0] === S.last) [hand[0], hand[1]] = [hand[1], hand[0]];     // never open with the word you just finished on
+  save();
+  return hand;
+}
+function reinsertWeak() {
+  S.deck = S.deck.filter(i => !st.idx.includes(i));
+  st.idx.forEach((wi, q) => {
+    if (!st.weak[q]) return;
+    S.deck = S.deck.filter(i => i !== wi);
+    S.deck.splice(Math.min(S.deck.length, 3 + Math.floor(Math.random() * 4)), 0, wi);   // back in a stage or two
+  });
+  S.last = st.idx[st.idx.length - 1];
+}
+// wrong answers that look like the right one (similar length / first letter / verb-or-not)
+function pickWrong(word, e2h, n, smart) {
+  const others = WORDS.filter(w => w !== word);
+  if (!smart) return shuffle(others).slice(0, n);
+  const like = o => e2h
+    ? (o.hebrew.startsWith("ל") === word.hebrew.startsWith("ל") ? 2 : 0) - Math.abs(o.hebrew.length - word.hebrew.length) * .5
+    : (o.english[0].toLowerCase() === word.english[0].toLowerCase() ? 2 : 0) + (o.english.includes(" ") === word.english.includes(" ") ? 1 : 0) - Math.abs(o.english.length - word.english.length) * .5;
+  return others.map(o => ({ o, k: like(o) + Math.random() * 1.5 })).sort((a, b) => b.k - a.k).slice(0, n).map(x => x.o);
+}
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
@@ -544,7 +573,8 @@ let st = null, word = null, solved = false, slots = [], mistakes = 0;
 const isBoss = s => s === N - 1;
 const types = () => st.boss ? BOSS_TYPES : TYPES;
 function startStage(s) {
-  st = { s, q: 0, stars: [], boss: isBoss(s), words: shuffle(WORDS.slice()).slice(0, 3) };   // 3 different random words
+  const hand = dealWords();   // 3 different words from the saved deck
+  st = { s, q: 0, stars: [], weak: [], boss: isBoss(s), idx: hand, words: hand.map(i => WORDS[i]) };
   show("stage");
   $("pav").textContent = S.avatar;
   $("bossRow").classList.toggle("hidden", !st.boss);
@@ -581,12 +611,12 @@ function renderQuestion() {
     const e2h = type === "e2h";
     $("pemoji").textContent = "❓"; $("ptext").textContent = e2h ? word.english : word.hebrew;
     say(e2h ? "מה פירוש המילה הזאת בעברית?" : "איך אומרים את זה באנגלית?");
-    buildQuiz(e2h, hard ? 6 : 4);
+    buildQuiz(e2h, hard ? 6 : 4, mid);
     if (e2h) setTimeout(() => speak(), 300);
   }
 }
-function buildQuiz(e2h, count) {
-  const opts = shuffle(shuffle(WORDS.filter(w => w !== word)).slice(0, count - 1).concat(word));
+function buildQuiz(e2h, count, smart) {
+  const opts = shuffle(pickWrong(word, e2h, count - 1, smart).concat(word));
   opts.forEach(o => {
     const b = document.createElement("button");
     b.className = "optb"; b.dir = e2h ? "rtl" : "ltr"; b.dataset.ans = o === word ? "1" : "";
@@ -673,6 +703,7 @@ function done(star, skipped) {
   solved = true;
   $("skipBtn").classList.add("hidden");
   st.stars[st.q] = star ? 1 : 0;
+  st.weak[st.q] = !star || !!skipped;
   $("pemoji").textContent = word.emoji;
   renderDots(star ? st.q : undefined); updateSkipBtn();
   if (star) {
@@ -702,12 +733,15 @@ $("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) 
 
 // ---------- end of stage ----------
 function finishStage() {
+  if (st.finished) return;   // a double-click on "finish" must not run it twice
+  st.finished = true;
   const earned = st.stars.reduce((a, b) => a + b, 0);
   const prevBest = Math.max(0, S.best[st.s]), before = total();
   S.best[st.s] = Math.min(STARS_MAX, Math.max(S.best[st.s], earned));
   const after = total(), gained = after - before;
   const justFinished = !S.finished && S.best.every(b => b >= 0);
   if (justFinished) S.finished = true;
+  reinsertWeak();
   save();
   const newAv = unlockedAv(after) > unlockedAv(before) ? AVATARS[unlockedAv(after) - 1] : null;
 
