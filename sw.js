@@ -1,7 +1,7 @@
 // Network-first: online users always get the newest games; offline falls back to the saved copy.
-const CACHE = "games-v4";
+const CACHE = "games-v5";
 const PAGES = ["./", "grade2/", "grade6/", "math-adventure/", "words-adventure/", "words-adventure-2/", "smichut/",
-  "words-b-animals/", "words-b-colors/", "words-b-food/", "words-b-home/", "words-b-body/",
+  "words-b-animals/", "words-b-colors/", "words-b-food/", "words-b-home/", "words-b-body/", "shoresh-b/",
   "manifest.webmanifest", "pwa.js", "site.js", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
