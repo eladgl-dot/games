@@ -18,6 +18,7 @@
     { grade: 2, topic: "english", dir: "words-b-body",    icon: "👕", color: "purple", title: "הרפתקת המילים: גוף ובגדים",   desc: EN2, date: "2026-10-30", isNew: 1 },
     { grade: 2, topic: "hebrew",  dir: "shoresh-b",       icon: "🧩", color: "orange", title: "הרפתקת השורש שׂ.ח.ק", desc: "עברית · שורש וניקוד", date: "2026-11-02", isNew: 1 },
     { grade: 6, topic: "math",    dir: "math-adventure",  icon: "➗", color: "blue",   title: "הרפתקת המתמטיקה", desc: "שברים, עשרוניים וגיאומטריה", date: "2026-10-30", isNew: 1 },
+    { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3", desc: "אנגלית", date: "2026-11-05", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure-2", icon: "🔤", color: "pink",   title: "הרפתקת המילים 2", desc: "אנגלית", date: "2026-10-31", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure", icon: "🔤", color: "pink",   title: "הרפתקת המילים",   desc: "אנגלית", date: "2026-10-28" },
     { grade: 6, topic: "hebrew",  dir: "smichut",         icon: "📖", color: "purple", title: "משחק הסמיכות",    desc: "עברית",  date: "2026-10-25" }
