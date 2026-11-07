@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>הרפתקת המדע</title>
+<style>
+:root{
+  --pink:#ff5fa2; --purple:#8e5cff; --blue:#35b6ff; --green:#2fd67b; --yellow:#ffd23f; --orange:#ff9140; --red:#ff4d5e;
+  --ink:#3a2a63; --card:#ffffffee;
+  --font:"Varela Round","Arial Rounded MT Bold","Comic Sans MS","Segoe UI",Arial,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;font-family:var(--font);color:var(--ink);user-select:none;-webkit-user-select:none}
+body{
+  background:linear-gradient(135deg,#ffd1f0,#c9b8ff,#b8ecff,#d3ffd9);
+  background-size:300% 300%;animation:bgmove 14s ease infinite;
+}
+@keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.bg{position:fixed;top:0;right:0;bottom:0;left:0;pointer-events:none;overflow:hidden;z-index:0}
+.bg span{position:absolute;font-size:34px;opacity:.4;animation:float 9s ease-in-out infinite}
+.bg span.k2{animation-name:drift;animation-timing-function:linear}
+.bg span.k3{animation-name:spin;animation-timing-function:linear}
+.bg span.k4{animation-name:bounce;animation-timing-function:ease-in-out}
+@keyframes drift{0%{transform:translateX(-30px) rotate(-10deg)}50%{transform:translateX(60px) rotate(10deg)}100%{transform:translateX(-30px) rotate(-10deg)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounce{0%,100%{transform:translateY(0) scale(1)}30%{transform:translateY(-50px) scale(1.15)}60%{transform:translateY(0) scale(.9)}}
+.bg i{position:absolute;bottom:-60px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fff,#ffffff22);border:2px solid #fff8;animation:rise 12s linear infinite}
+@keyframes rise{to{transform:translateY(-115vh) translateX(30px)}}
+.mbtn:nth-child(odd){animation:wiggle 3.5s ease-in-out infinite}
+.mbtn:nth-child(even){animation:wiggle 3.5s ease-in-out infinite reverse}
+@keyframes wiggle{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.2deg) scale(1.02)}}
+h1{animation:bob 2.5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px) scale(1.03)}}
+.card .phrase{animation:glow 2.4s ease-in-out infinite}
+@keyframes glow{50%{text-shadow:0 0 14px #ff5fa2aa;transform:scale(1.04)}}
+.chip{animation:bob 2.6s ease-in-out infinite}
+.plus{animation:spin 4s linear infinite}
+/* מסך הסבר */
+#learn{overflow-y:auto;gap:12px;padding:2px 2px 12px}
+.lsec{background:var(--card);border-radius:26px;padding:14px;box-shadow:0 8px 0 #8e5cff22,0 12px 24px #8e5cff33;animation:slidein .5s backwards}
+.lsec h2{margin:0 0 6px;font-size:23px;color:var(--purple);display:flex;align-items:center;gap:8px}
+.lsec h2 .em{font-size:34px;display:inline-block;animation:bounce 2.2s infinite}
+.lsec p{margin:6px 0;font-size:18px;line-height:1.5}
+.ex{display:flex;align-items:center;gap:10px;background:#f6f0ff;border-radius:18px;padding:8px 12px;margin:8px 0;font-size:19px;line-height:1.4}
+.ex .em{font-size:36px;flex:none;animation:float 3s ease-in-out infinite}
+.ex b{color:var(--pink)}
+.ex u{text-decoration-color:var(--blue);text-decoration-thickness:3px}
+.ex.bad{background:#ffe9ec}
+.ex.good{background:#e0ffee}
+.tag{display:inline-block;border-radius:10px;padding:0 8px;color:#fff;font-weight:bold;font-size:16px}
+.t1{background:var(--blue)}.t2{background:var(--pink)}
+.arrow{display:inline-block;animation:nudge 1.2s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(-8px)}}
+.lgo{border:0;border-radius:99px;background:linear-gradient(135deg,#2fd67b,#19b062);color:#fff;font-size:22px;font-weight:bold;padding:14px;box-shadow:0 6px 0 #0003;animation:pulse .7s infinite alternate}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-28px) rotate(8deg)}}
+#app{position:relative;z-index:1;height:100%;max-width:560px;margin:0 auto;display:flex;flex-direction:column;padding:10px 16px 14px}
+#top{display:flex;align-items:center;gap:8px;justify-content:space-between;padding:6px 0}
+.pill{background:#fff;border-radius:999px;padding:6px 14px;font-size:18px;font-weight:bold;box-shadow:0 4px 0 #0001,0 6px 14px #8e5cff33;display:flex;align-items:center;gap:6px}
+#scorePill.fire{background:linear-gradient(90deg,#ffe259,#ff9140);animation:pulse .6s infinite alternate}
+@keyframes pulse{to{transform:scale(1.07)}}
+#combo{font-size:15px;color:var(--orange);min-width:44px;text-align:center}
+.iconbtn{border:0;background:#fff;border-radius:50%;width:40px;height:40px;font-size:20px;box-shadow:0 4px 0 #0001;cursor:pointer}
+button{font-family:inherit;cursor:pointer;transition:transform .12s}
+button:active:not(:disabled){transform:scale(.95)}
+.screen{display:none;flex:1;flex-direction:column;min-height:0;animation:slidein .45s cubic-bezier(.2,.9,.3,1.2)}
+.screen.on{display:flex}
+@keyframes slidein{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:none}}
+h1{margin:6px 0 2px;font-size:34px;text-align:center;color:var(--purple);text-shadow:0 3px 0 #fff}
+.sub{text-align:center;margin:0 0 12px;font-size:17px}
+.menu-grid{display:flex;flex-direction:column;gap:12px;overflow:auto;padding:4px 2px 8px}
+.mbtn{border:0;border-radius:24px;padding:14px 16px;color:#fff;font-size:21px;font-weight:bold;display:flex;align-items:center;gap:14px;text-align:right;box-shadow:0 7px 0 #0003,0 12px 20px #0002}
+.mbtn small{display:block;font-size:14px;font-weight:normal;opacity:.95}
+.mbtn .em{font-size:40px;animation:float 4s ease-in-out infinite}
+.m1{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.m2{background:linear-gradient(135deg,#ff5fa2,#ff3d7f)}
+.m3{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.m5{background:linear-gradient(135deg,#8e5cff,#6a3df0)}
+.m6{background:linear-gradient(135deg,#00c2c7,#0891b2)}
+.m7{background:linear-gradient(135deg,#ff6bd6,#c13cff)}
+.tfree{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.tcomp{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+.opt.small{font-size:20px;padding:12px 10px;line-height:1.3}
+.card .q{font-size:24px;font-weight:bold;margin:8px 0;line-height:1.35}
+.m4{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+#progress{height:12px;background:#fff9;border-radius:99px;overflow:hidden;margin:4px 0 6px}
+#bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));border-radius:99px;transition:width .4s}
+#qinfo{text-align:center;font-size:15px;margin-bottom:6px}
+#stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0;position:relative}
+.card{background:var(--card);border-radius:28px;padding:20px 14px;text-align:center;box-shadow:0 8px 0 #8e5cff22,0 14px 28px #8e5cff33;touch-action:pan-y}
+.card .emoji{font-size:64px;line-height:1.1;display:block;animation:float 3.5s ease-in-out infinite}
+.card .phrase{font-size:38px;font-weight:bold;margin-top:6px}
+.card .ask{font-size:19px;margin-bottom:4px}
+.chips{display:flex;justify-content:center;align-items:center;gap:10px;margin:8px 0}
+.chip{background:#f1e9ff;border-radius:16px;padding:8px 14px;font-size:26px;font-weight:bold}
+.chip small{display:block;font-size:12px;font-weight:normal;opacity:.7}
+.plus{font-size:26px;font-weight:bold;color:var(--pink)}
+.swipehint{font-size:13px;opacity:.7;text-align:center}
+.row{display:flex;gap:12px}
+.big{flex:1;border:0;border-radius:22px;padding:18px 6px;font-size:21px;font-weight:bold;color:#fff;box-shadow:0 6px 0 #0003}
+.yes{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.no{background:linear-gradient(135deg,#ff6b7a,#ff3d55)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{border:0;border-radius:20px;background:#fff;color:var(--ink);padding:14px 10px;font-size:27px;font-weight:bold;box-shadow:0 6px 0 #8e5cff33,0 8px 16px #0001;border:3px solid transparent}
+.opt.right{background:#c8ffdf;border-color:var(--green);animation:pop .5s}
+.opt.wrong{background:#ffd3d8;border-color:var(--red)}
+.opt:disabled,.big:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.08)}}
+#tip{display:none;background:#fff6c9;border:3px dashed var(--orange);border-radius:20px;padding:10px 12px;font-size:17px;text-align:center;animation:slidein .3s}
+#tip.show{display:block}
+#tip.good{background:#d8ffe8;border-color:var(--green)}
+#next{display:none;border:0;border-radius:99px;background:var(--purple);color:#fff;font-size:20px;font-weight:bold;padding:12px 30px;align-self:center;box-shadow:0 5px 0 #0003}
+#next.show{display:block}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-14px)}40%{transform:translateX(14px)}60%{transform:translateX(-10px)}80%{transform:translateX(10px)}}
+#flash{position:fixed;top:0;right:0;bottom:0;left:0;background:var(--red);opacity:0;pointer-events:none;z-index:50}
+#flash.on{animation:flash .45s}
+@keyframes flash{0%{opacity:.35}100%{opacity:0}}
+.floatpts{position:fixed;z-index:60;font-size:34px;font-weight:bold;color:var(--green);text-shadow:0 2px 0 #fff,0 0 8px #fff;pointer-events:none;animation:up 1s ease-out forwards}
+.floatpts.bad{color:var(--red);font-size:44px}
+@keyframes up{from{opacity:1;transform:translateY(0) scale(.7)}to{opacity:0;transform:translateY(-120px) scale(1.3)}}
+#confetti{position:fixed;top:0;right:0;bottom:0;left:0;pointer-events:none;z-index:70}
+#end{align-items:center;justify-content:center;text-align:center;gap:8px}
+#stars{font-size:62px;letter-spacing:6px}
+#stars span{display:inline-block;animation:pop .7s backwards}
+#endMsg{font-size:34px;font-weight:bold;color:var(--pink);text-shadow:0 3px 0 #fff}
+.endbtns{display:flex;gap:12px;margin-top:14px;width:100%}
+.endbtns .big{font-size:19px;padding:15px 4px}
+.again{background:linear-gradient(135deg,#8e5cff,#5c7bff)}
+.home{background:linear-gradient(135deg,#ff9140,#ff6a2f)}
+@media (max-height:640px){.card .emoji{font-size:44px}.card .phrase{font-size:30px}.opt{font-size:22px;padding:10px 8px}h1{font-size:28px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important}}
+.f{display:inline}.m{display:none}
+body.boy .m{display:inline}body.boy .f{display:none}
+body.boy{background:linear-gradient(135deg,#bfe0ff,#8fb8ff,#9fe0ff,#c6f3ff);background-size:300% 300%}
+.gtoggle{display:flex;background:#fff;border-radius:99px;padding:3px;box-shadow:0 4px 0 #0001}
+.gtoggle button{border:0;background:transparent;border-radius:99px;width:38px;height:34px;font-size:20px;opacity:.55}
+.gtoggle button.on{background:linear-gradient(135deg,#ffd1f0,#ff9ad0);opacity:1}
+body.boy .gtoggle button.on{background:linear-gradient(135deg,#9fd0ff,#4f9bff)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;overflow:auto;padding:8px 2px 10px;align-content:start}
+.tile{position:relative;border:0;border-radius:26px;padding:30px 6px 10px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;box-shadow:0 7px 0 #0003,0 12px 20px #0002;animation:wiggle 3.6s ease-in-out infinite}
+.tile:nth-child(even){animation-direction:reverse}
+.tile.wide{grid-column:1/-1;flex-direction:row;justify-content:center;gap:14px;padding:12px;font-size:20px}
+.tile.wide .tt{text-align:right}
+.tile .em{font-size:48px;line-height:1.1;animation:float 4s ease-in-out infinite}
+.tile.wide .em{font-size:40px}
+.tile b{font-size:19px;line-height:1.2}
+.tile small{display:block;font-size:13px;opacity:.95;font-weight:normal}
+.diff{position:absolute;top:8px;inset-inline-start:8px;background:#fff;color:var(--ink);border-radius:99px;padding:2px 9px;font-size:12px;font-weight:bold}
+.hotdiff{background:linear-gradient(90deg,#ffe259,#ff6a2f);color:#7a1d00;animation:pulse .6s infinite alternate}
+.cnt{margin-top:4px;background:#0003;border-radius:99px;padding:1px 10px;font-size:13px;font-weight:bold}
+.tile.hot{box-shadow:0 7px 0 #0003,0 0 22px 4px #ff9140}
+.c0{background:linear-gradient(135deg,#8e5cff,#6a3df0)}
+.c1{background:linear-gradient(135deg,#35b6ff,#2f7bff)}
+.c2{background:linear-gradient(135deg,#ff5fa2,#ff3d7f)}
+.c3{background:linear-gradient(135deg,#2fd67b,#19b062)}
+.c4{background:linear-gradient(135deg,#ffb23f,#ff7a2f)}
+.c6{background:linear-gradient(135deg,#00c2c7,#0891b2)}
+.c7{background:linear-gradient(135deg,#ff6bd6,#c13cff)}
+/* ---- שאלות ---- */
+.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block;white-space:nowrap}
+.floatpts{direction:ltr}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 3px;line-height:1.15;font-weight:bold}
+.fr>span:first-child{border-bottom:.09em solid currentColor;padding:0 .2em .05em}
+.fr>span:last-child{padding:.05em .2em 0}
+.mixed{display:inline-flex;align-items:center;gap:2px;direction:ltr;vertical-align:middle}
+.math{font-size:34px;font-weight:bold;margin:6px 0;line-height:1.5}
+.math.sm{font-size:26px}
+.vis{display:flex;justify-content:center;margin:6px 0}
+.vis svg{max-width:100%;max-height:190px;height:auto}
+.qbox{display:inline-block;min-width:1.3em;border:3px dashed var(--purple);border-radius:10px;color:var(--purple);padding:0 4px}
+pre.vert{direction:ltr;display:inline-block;text-align:left;margin:6px 0;font-family:Consolas,"Courier New",monospace;font-size:32px;font-weight:bold;line-height:1.2;background:#f6f0ff;border-radius:16px;padding:8px 18px}
+.opts.inline{flex-direction:row}
+.opts.inline .opt{flex:1;padding:14px 4px;font-size:34px}
+.opt .fr{font-size:.95em}
+#stage{overflow-y:auto;overflow-x:hidden;padding:4px 2px;justify-content:safe center}
+.card .emoji{animation:none}
+#ansbox{background:#fff;border:4px solid var(--purple);border-radius:20px;font-size:34px;font-weight:bold;padding:6px 14px;min-height:60px;direction:ltr;text-align:center;display:flex;justify-content:center;align-items:center;gap:8px}
+#ansbox.right{border-color:var(--green);background:#c8ffdf}
+#ansbox.wrong{border-color:var(--red);background:#ffd3d8}
+#ansbox .cur{display:inline-block;width:3px;height:36px;background:var(--purple);animation:blink 1s steps(2) infinite}
+#ansbox .unit{font-size:18px;direction:rtl;opacity:.7}
+@keyframes blink{50%{opacity:0}}
+#kp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;direction:ltr}
+#kp button{border:0;border-radius:16px;background:#fff;color:var(--ink);font-size:26px;font-weight:bold;padding:10px 0;box-shadow:0 5px 0 #8e5cff33}
+#kp button.ok{grid-column:1/-1;background:linear-gradient(135deg,#2fd67b,#19b062);color:#fff;font-size:21px;box-shadow:0 5px 0 #0003}
+#kp button.dl{background:#ffe3e6}
+.topic{margin:6px 2px 2px;font-size:22px;font-weight:bold;color:var(--purple);display:flex;align-items:center;gap:8px;text-shadow:0 2px 0 #fff}
+.topic .tl{margin-inline-start:auto;border:0;border-radius:99px;background:#fff;color:var(--purple);font-weight:bold;font-size:15px;padding:5px 12px;box-shadow:0 4px 0 #8e5cff33}
+#menu{overflow-y:auto}
+#menu .tiles{overflow:visible;padding-top:10px}
+.tile{padding:30px 6px 12px}
+.tile b{font-size:17px}
+.c5{background:linear-gradient(135deg,#ff9140,#ff6a2f)}
+.c8{background:linear-gradient(135deg,#6a3df0,#35b6ff)}
+.lsec .fr{font-size:1em}
+.lsec svg{max-width:100%;height:auto}
+.vis2{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+table.pt{border-collapse:collapse;margin:8px auto;direction:rtl;font-size:14px;max-width:100%;table-layout:fixed;width:100%}
+table.pt td,table.pt th{border:2px solid #cdbcff;padding:4px 3px;text-align:center;word-break:break-word}
+@media (max-width:400px){table.pt{font-size:12px}.math{font-size:26px}.math.sm{font-size:19px}pre.vert{font-size:26px}.gtoggle button{width:30px}.pill{padding:6px 10px}#combo{min-width:0}.opt{font-size:23px}}
+table.pt th{background:#efe6ff}
+#endList{width:100%;max-height:34vh;overflow-y:auto;text-align:right;font-size:16px;display:flex;flex-direction:column;gap:6px}
+#endList .it{background:#fff;border-radius:14px;padding:8px 10px;border-inline-start:6px solid var(--red)}
+#endList .it small{display:block;opacity:.8;margin-top:2px}
+/* ================= הרפתקה ================= */
+.hidden{display:none!important}
+body.w0{background-image:linear-gradient(135deg,#d9d2ff,#b3a6ff,#fff0b8,#cfc6ff)}
+body.w1{background-image:linear-gradient(135deg,#ffd1ec,#ffb3dd,#fff0b8,#ffc9ea)}
+body.w2{background-image:linear-gradient(135deg,#ffe3bd,#ffc58a,#fff0b8,#ffd9a8)}
+body.w4{background-image:linear-gradient(135deg,#bfe6ff,#8fd2ff,#ffe9c9,#c9ecff)}
+body.w3{background-image:linear-gradient(135deg,#d3ffb8,#9be07a,#ffe9a0,#b8f0a0)}
+.pill.pop,.iconbtn.pop{animation:pop .5s}
+.iconbtn.av{font-size:22px}
+#start h1,#home h1{font-size:28px}
+#top .pill{padding:6px 12px}
+#start,#home{overflow-y:auto}
+.sub small{display:block;opacity:.8;margin-top:2px}
+.avgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0}
+.avcard{background:#f3edff;border:3px solid transparent;border-radius:18px;padding:8px 2px;font-size:42px;line-height:1.15;box-shadow:0 4px 0 #cbbdf5;margin:0;color:var(--ink);border-bottom-width:3px}
+.avcard small{display:block;font-size:11px;font-weight:bold;line-height:1.2;padding:0 2px}
+.avcard.sel{border-color:var(--purple);background:#fff}
+.avcard.lock{opacity:.55;filter:grayscale(1)}
+.avcard.boss{background:linear-gradient(135deg,#fff3c4,#ffe0f0)}
+#startGrid{width:100%;max-width:420px;margin:10px auto}
+#startGrid .avcard{font-size:62px;padding:14px 4px}
+#startGrid .avcard small{font-size:14px}
+.worlds{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 2px 10px;align-content:start}
+.wcard{position:relative;border:0;border-radius:26px;padding:16px 8px 12px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;box-shadow:0 7px 0 #0003,0 12px 20px #0002;animation:wiggle 3.6s ease-in-out infinite}
+.wcard:nth-child(even){animation-direction:reverse}
+.wcard .wem{font-size:58px;line-height:1.1;animation:float 4s ease-in-out infinite}
+.wcard b{font-size:20px;line-height:1.2}
+.wcard small{font-size:14px;opacity:.95}
+.wcard .wbar{width:84%;height:9px;background:#0003;border-radius:99px;overflow:hidden}
+.wcard .wbar i{display:block;height:100%;background:#ffe259;border-radius:99px}
+.wcard .wst{font-weight:bold;font-size:15px;direction:ltr}
+#eoTally,#mapStars,#starPill{direction:ltr}
+.wcard .wboss{font-size:13px;background:#fff;color:var(--ink);border-radius:99px;padding:2px 10px;font-weight:bold}
+.wc0{background:linear-gradient(135deg,#8d7bff,#3a2bb0)}
+.wc1{background:linear-gradient(135deg,#ff8fc8,#ff4fa3)}
+.wc2{background:linear-gradient(135deg,#ffa95c,#e0651f)}
+.wc3{background:linear-gradient(135deg,#4cd964,#1f9a46)}
+.wc4{background:linear-gradient(135deg,#35c6ff,#1f6fe0);grid-column:1/3}
+.homebtns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:4px 0 8px}
+.tbtn{border:0;border-radius:99px;background:#fff;color:var(--ink);font-weight:bold;font-size:15px;padding:9px 14px;box-shadow:0 4px 0 #0002}
+.tbtn:disabled{opacity:.45;cursor:default}
+.tbtn.pw{background:linear-gradient(135deg,#ffe259,#ff9140);color:#5a2a00}
+.tbtn.gold{background:linear-gradient(135deg,#ffe259,#ffb23f);color:#5a3d00}
+.tbtn.green{background:linear-gradient(135deg,#2fd67b,#19b062);color:#fff}
+.tbtn.grey{background:#e4def5}
+.tbtn.big2{font-size:19px;padding:12px 22px}
+.opt.gone{opacity:.3;text-decoration:line-through}
+
+/* ---- המפה התלת-ממדית ---- */
+#map{overflow-y:auto;overflow-x:hidden;position:relative}
+#mapHead{position:sticky;top:0;z-index:8;display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 0}
+#mapTitle{font-size:16px;flex:1;min-width:0;text-align:center}
+#mapBack{padding:8px 10px}
+.scene{flex:none;perspective:760px;perspective-origin:50% 70%;padding:10px 0 30px;margin-top:-170%}
+.plane{position:relative;width:100%;aspect-ratio:2/7.5;transform:rotateX(40deg);transform-origin:50% 100%;transform-style:preserve-3d;border-radius:40px;border:6px solid var(--pb,#3f9d3f);
+  background:radial-gradient(circle at 20% 20%,rgba(255,255,255,.18) 0 8%,transparent 9%),radial-gradient(circle at 80% 55%,rgba(255,255,255,.14) 0 10%,transparent 11%),linear-gradient(180deg,var(--p1),var(--p2) 60%,var(--p3));
+  box-shadow:0 30px 0 var(--ps,#2d7a36),0 40px 40px rgba(0,0,0,.35)}
+.plane svg{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%}
+.upright{position:absolute;transform:translate3d(-50%,-100%,2px) rotateX(-40deg);transform-origin:50% 100%}
+.deco{line-height:1;pointer-events:none;filter:drop-shadow(0 5px 2px rgba(0,0,0,.25))}
+.deco.sway{animation:sway 3s ease-in-out infinite alternate}
+@keyframes sway{from{transform:translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(-5deg)}to{transform:translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(5deg)}}
+@keyframes abob{0%,100%{transform:translate3d(-50%,-100%,2px) rotateX(-40deg)}50%{transform:translate3d(-50%,-100%,2px) rotateX(-40deg) translateY(-9px)}}
+@keyframes bosswig{0%,100%{transform:translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(-6deg) scale(1)}50%{transform:translate3d(-50%,-100%,2px) rotateX(-40deg) rotate(6deg) scale(1.08)}}
+.stand{display:flex;flex-direction:column;align-items:center;animation:abob 2s ease-in-out infinite}
+.stand.boss{animation:bosswig 1.6s ease-in-out infinite}
+.stand.locked{animation:none}
+.node{width:80px;height:80px;border-radius:50%;border:4px solid #fff;margin:0;padding:0;font-size:34px;font-weight:900;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.35);
+  background:radial-gradient(circle at 35% 30%,#ffe08a,#ff9f1c);box-shadow:0 9px 0 #b86a00,0 16px 14px rgba(0,0,0,.3)}
+.node:active{transform:translateY(4px)}
+.node.done{background:radial-gradient(circle at 35% 30%,#86efac,#16a34a);box-shadow:0 9px 0 #0f6a30,0 16px 14px rgba(0,0,0,.3)}
+.node.cur{animation:ringglow 1.3s ease-out infinite}
+@keyframes ringglow{from{box-shadow:0 9px 0 #b86a00,0 16px 14px rgba(0,0,0,.3),0 0 0 0 rgba(255,255,255,.95)}to{box-shadow:0 9px 0 #b86a00,0 16px 14px rgba(0,0,0,.3),0 0 0 26px rgba(255,255,255,0)}}
+.node.locked{width:70px;height:70px;background:none;border:0;box-shadow:none;font-size:52px;cursor:default;filter:drop-shadow(0 6px 3px rgba(0,0,0,.35))}
+.node.boss{width:120px;height:120px;background:none;border:0;box-shadow:none;font-size:86px;line-height:1;filter:drop-shadow(0 8px 5px rgba(0,0,0,.4))}
+.node.boss.locked{font-size:64px;filter:grayscale(.7) drop-shadow(0 6px 3px rgba(0,0,0,.35))}
+.nstars{background:#fff;border-radius:999px;padding:0 10px;margin-bottom:8px;font-size:18px;line-height:1.6;white-space:nowrap;box-shadow:0 3px 0 rgba(0,0,0,.25);letter-spacing:1px;direction:ltr}
+.nstars b{color:#ffb800}.nstars i{color:#d4d4d8;font-style:normal}
+.you{font-size:42px;line-height:1;margin-bottom:4px;animation:hover 1.2s ease-in-out infinite;pointer-events:none;filter:drop-shadow(0 6px 3px rgba(0,0,0,.3))}
+@keyframes hover{50%{transform:translateY(-10px)}}
+
+/* ---- שלב ---- */
+#qscreen{gap:6px}
+#qhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+#dots{font-size:30px;direction:ltr;letter-spacing:2px;line-height:1}
+#dots span{display:inline-block;color:#fff;text-shadow:0 0 2px #7a6fa5,0 0 2px #7a6fa5,1px 1px 0 #7a6fa5,-1px -1px 0 #7a6fa5}
+#dots span.gold{color:#ffc414;text-shadow:0 0 2px #b88400,1px 1px 0 #c99700,-1px -1px 0 #c99700}
+#dots span.miss{color:#d9d4ea}
+#dots span.cur{transform:scale(1.2)}
+#dots span.pop{animation:starpop .7s}
+@keyframes starpop{0%{transform:scale(0) rotate(-180deg)}60%{transform:scale(1.8) rotate(20deg)}100%{transform:scale(1) rotate(0)}}
+#bossRow{display:flex;align-items:center;justify-content:center;gap:12px}
+#bossCol{display:flex;flex-direction:column;align-items:center}
+.bub.boss{border-color:#b3175f;background:#fff0f7;box-shadow:0 4px 0 #f5b8d6}
+.bub.boss::before{border-left-color:#b3175f}.bub.boss::after{border-left-color:#fff0f7}
+#boss{font-size:34px;line-height:1.1;animation:bossw 1.6s ease-in-out infinite;filter:drop-shadow(0 6px 3px rgba(0,0,0,.25))}
+@keyframes bossw{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.08)}}
+#bossHp{font-size:16px;letter-spacing:2px;line-height:1}
+#talk{display:flex;align-items:center;justify-content:center;gap:14px}
+#pav{font-size:42px;line-height:1.1;filter:drop-shadow(0 6px 3px rgba(0,0,0,.2));animation:idle 2.4s ease-in-out infinite}
+#pav.hop{animation:hop .6s}
+#pav.shk{animation:pshake .4s}
+@keyframes idle{50%{transform:translateY(-6px) rotate(-3deg)}}
+@keyframes hop{30%{transform:translateY(-22px) scale(1.2)}60%{transform:translateY(0) scale(.95)}}
+@keyframes pshake{25%{transform:translateX(-8px) rotate(-6deg)}75%{transform:translateX(8px) rotate(6deg)}}
+.bub{position:relative;background:#fff;border:3px solid var(--purple);border-radius:18px;padding:6px 12px;min-height:2.2em;max-width:calc(100% - 70px);min-width:0;font-weight:bold;font-size:15px;line-height:1.3;text-align:right;box-shadow:0 4px 0 #cbbdf5;animation:bubin .3s;display:flex;align-items:center}
+.bub::before{content:"";position:absolute;right:-15px;top:50%;margin-top:-11px;border:11px solid transparent;border-left:12px solid var(--purple);border-right:0}
+.bub::after{content:"";position:absolute;right:-9px;top:50%;margin-top:-8px;border:8px solid transparent;border-left:9px solid #fff;border-right:0}
+@keyframes bubin{from{transform:scale(.6);opacity:0}}
+#qscreen .card{padding:12px 10px;gap:0}
+#qscreen .card .emoji{font-size:34px!important}
+#qscreen #kp{gap:6px}
+#qscreen #kp button{padding:6px 0;font-size:22px}
+#qscreen #kp button.ok{font-size:19px}
+#qscreen #ansbox{min-height:50px;font-size:30px;padding:4px 12px}
+#qscreen .opt{padding:11px 10px}
+#qtools{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;padding-top:2px}
+.gone{}
+.opt.gone{pointer-events:none}
+
+/* ---- חלונות ---- */
+.ov{position:fixed;top:0;right:0;bottom:0;left:0;background:rgba(20,10,60,.65);z-index:20;display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto}
+.modal{background:#fff;border-radius:28px;padding:18px 14px;width:100%;max-width:420px;max-height:92vh;overflow-y:auto;box-shadow:0 10px 0 rgba(0,0,0,.2);text-align:center;animation:modalin .35s}
+@keyframes modalin{from{transform:scale(.7);opacity:0}}
+.modal h2{margin:4px 0 8px;color:var(--purple)}
+.modal.wide{max-width:520px;text-align:right}
+#eoAv{font-size:64px;animation:idle 2s ease-in-out infinite}
+#eoStars{font-size:50px;letter-spacing:6px;direction:ltr}
+#eoStars span{display:inline-block;color:#cbbdf5}
+#eoStars span.lit{color:#ffc414;animation:starpop .7s;text-shadow:0 3px 0 #c99700}
+#eoTally{font-size:21px;font-weight:bold;margin:8px 0}
+#eoNote{min-height:1.5em;font-weight:bold}
+.newf{background:#fff8dc;border-radius:18px;padding:10px;margin-top:8px;font-weight:bold;line-height:1.5}
+.newf .bigem{font-size:52px}
+.newf .pdesc{display:block;font-size:14px;color:#8a4b00}
+#eoWin{margin-top:10px;background:#e0ffee;border-radius:18px;padding:10px;font-weight:bold}
+.mbtns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#3a2a63;color:#fff;border-radius:16px;padding:10px 16px;z-index:80;font-weight:bold;max-width:90%;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s;font-size:15px}
+#toast.on{opacity:1}
+
+/* ---- מסיבה ---- */
+#party{position:fixed;top:0;right:0;bottom:0;left:0;z-index:25;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;
+  background:linear-gradient(120deg,#ff0080,#7928ca,#0070f3,#00dfd8,#ff0080);background-size:400% 400%;animation:bgmove var(--bgs,6s) linear infinite}
+#party::before{content:"";position:absolute;top:-60%;right:-60%;bottom:-60%;left:-60%;animation:spin var(--spin,9s) linear infinite;
+  background:conic-gradient(from 0deg,rgba(255,255,255,.35) 0 6deg,transparent 6deg 40deg,rgba(255,255,255,.3) 40deg 46deg,transparent 46deg 90deg,rgba(255,255,255,.35) 90deg 96deg,transparent 96deg 150deg,rgba(255,255,255,.3) 150deg 156deg,transparent 156deg 220deg,rgba(255,255,255,.35) 220deg 226deg,transparent 226deg 360deg)}
+#party.crazy{animation:bgmove var(--bgs,6s) linear infinite,hue 2.5s linear infinite}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+#partyNote{position:relative;max-width:420px;background:rgba(0,0,0,.38);color:#fff;border-radius:16px;padding:8px 14px;margin-bottom:12px;font-weight:bold;line-height:1.5;text-align:center}
+#partyTitle{position:relative;color:#fff;font-size:34px;font-weight:900;text-shadow:0 4px 0 rgba(0,0,0,.3);animation:pop 1s infinite;margin-bottom:18px}
+#pgrid{position:relative;display:flex;flex-wrap:wrap;gap:8px 16px;justify-content:center;max-width:480px}
+.dancer{position:relative;font-size:var(--dsz,60px);line-height:1.1;filter:drop-shadow(0 8px 4px rgba(0,0,0,.35));animation:dance1 var(--dance,.55s) ease-in-out infinite alternate}
+.dancer:nth-child(3n+2){animation-name:dance2}.dancer:nth-child(3n){animation-name:dance3}
+.fbub{display:none;position:absolute;bottom:100%;left:50%;transform:translateX(-50%);width:max-content;max-width:150px;z-index:4;background:#fff;color:var(--ink);border-radius:14px;padding:5px 10px;font-size:13px;line-height:1.3;font-weight:bold;text-align:center;filter:none;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.fbub::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:#fff;border-bottom:0}
+.dancer.say .fbub{display:block;animation:bubin .3s}
+@keyframes dance1{to{transform:translateY(-26px) rotate(-10deg)}}
+@keyframes dance2{to{transform:translateY(-14px) rotate(12deg) scale(1.15)}}
+@keyframes dance3{from{transform:scale(.9) rotate(-14deg)}to{transform:translateY(-20px) scale(1.2) rotate(14deg)}}
+.note{position:absolute;bottom:-50px;font-size:32px;animation:prise 5s linear infinite;pointer-events:none}
+@keyframes prise{to{transform:translateY(-115vh) rotate(40deg)}}
+#partyClose{position:relative;margin-top:18px}
+@media (max-width:400px){.worlds{gap:9px}.wcard .wem{font-size:48px}.wcard b{font-size:18px}#top{gap:5px}.bub{font-size:14px}}
+
+#qinfo{align-self:center;background:#fffc;border-radius:99px;padding:2px 14px}
+.dancer.say{z-index:6}
+.fbub.below{bottom:auto;top:100%}.fbub.below::after{display:none}
+#mapHead .tbtn{padding:8px 10px}
+
+#mapTitle small{display:block;font-size:13px;opacity:.75;font-weight:normal}
+
+#mapTitle{display:block;line-height:1.2;border-radius:20px;padding:5px 10px}
+#qtools{gap:6px}
+#qtools .tbtn{padding:8px 11px;font-size:14px}
+
+/* ---------- מדע: מיון ותרשים ---------- */
+#stage{justify-content:flex-start;overflow-y:auto;padding:2px 2px 8px}
+#stage .ask{font-size:19px;line-height:1.35}
+.opts.two{flex-direction:row}.opts.two .opt{flex:1}
+.pref{display:block;margin-top:4px;font-size:13px;opacity:.75}
+#eoFact{background:#fff6c9;border-radius:14px;padding:8px 10px;font-size:14px;line-height:1.4;margin:8px 0;text-align:start}
+.chip{border:0;border-radius:13px;background:#fff;color:var(--ink);font:bold 15px var(--font);padding:8px 10px;min-height:38px;line-height:1.2;box-shadow:0 3px 0 #8e5cff44;cursor:pointer;animation:none}
+.chip.sel{outline:3px solid var(--pink);transform:translateY(-2px)}
+.chip.ok{background:#c8ffdf}.chip.no{background:#ffd3d8}
+.tray{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;align-content:flex-start;background:#ffffff88;border-radius:16px;padding:8px;min-height:52px}
+.bins{display:grid;gap:8px}
+.bins.n2{grid-template-columns:1fr 1fr}.bins.n3{grid-template-columns:1fr 1fr 1fr}
+.bin{border:3px dashed var(--purple);background:#ffffffbb;border-radius:16px;padding:6px;min-height:104px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.bin h3{margin:0;font-size:15px;text-align:center}
+.binbox{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:flex-start;flex:1}
+.bins.n3 .chip{font-size:13px;padding:6px 7px}
+.checkbtn{flex:none;border:0;border-radius:16px;background:linear-gradient(135deg,#2fd67b,#19b062);color:#fff;font:bold 18px var(--font);padding:10px;box-shadow:0 4px 0 #0f6a30;cursor:pointer}
+.flow{display:flex;flex-direction:column;background:#ffffff88;border-radius:16px;padding:6px 8px}
+.frow{display:flex;flex-direction:column;gap:2px}
+.flabel{font-size:14px;font-weight:bold;text-align:start;line-height:1.2}
+.flabel small{font-weight:normal}
+.fhint{font-size:13px;font-weight:normal;opacity:.8;margin-top:2px}
+.fsys{margin-bottom:3px}
+.fslots{flex:1;display:flex;flex-wrap:wrap;gap:5px}
+.slot{flex:1 1 40%;min-width:0;min-height:40px;border:3px dashed var(--orange);background:#fff8ef;border-radius:12px;color:var(--ink);font:bold 14px var(--font);line-height:1.15;padding:3px 5px;cursor:pointer}
+.slot.done{border-style:solid}.slot.ok{background:#c8ffdf;border-color:var(--green)}.slot.no{background:#ffd3d8;border-color:var(--red)}
+.farrow{text-align:center;color:var(--orange);font-size:15px;line-height:1.1;font-weight:bold}
+.fsys{display:flex;align-items:center;justify-content:center;gap:6px;background:linear-gradient(135deg,#ffe9a8,#ffd0a0);border-radius:12px;padding:3px 8px;font-weight:bold;font-size:14px}
+.fsys span{font-size:24px;line-height:1.1}
+.chip:focus-visible,.slot:focus-visible,.bin:focus-visible,.checkbtn:focus-visible{outline:3px solid var(--pink);outline-offset:2px}
+.screen,#stage{scrollbar-width:none}
+.screen::-webkit-scrollbar,#stage::-webkit-scrollbar{display:none}
+/* מסך נמוך: שהכרטיסים והבדיקה ייכנסו בלי גלילה */
+@media (max-height:740px){
+  body.compactq #talk,body.compactq #qinfo,body.compactq #bossBubble{display:none}
+  body.compactq #qscreen .card{padding:7px 10px}
+  body.compactq #stage{gap:7px}
+  body.compactq #stage .ask{font-size:16px;line-height:1.25}
+  .slot{min-height:31px;font-size:13px;border-width:2px;padding:2px 4px}
+  .fslots{gap:3px}
+  .flow{padding:4px 6px}
+  .farrow{font-size:11px;line-height:1}
+  .fsys{padding:1px 8px;font-size:13px}.fsys span{font-size:18px}
+  .chip{min-height:30px;padding:4px 8px;font-size:14px}
+  .tray{padding:5px;gap:5px;min-height:40px}
+  .bin{min-height:72px;padding:4px}
+  .bin h3{font-size:14px}
+  .checkbtn{padding:6px;font-size:16px}
+  body.compactq #qtools .tbtn{padding:5px 11px}
+}
+/* הכפתורים בחלונות תמיד נראים, גם כשהתוכן ארוך */
+#endOv .modal,#learnOv .modal{padding-bottom:0}
+#eoBtns,#learnOv .mbtns{position:sticky;bottom:0;z-index:2;background:#fff;margin-top:8px;padding:8px 0 12px}
+.modal{scrollbar-width:none}.modal::-webkit-scrollbar{display:none}
+.lsec h2{font-family:var(--font)}
+#qscreen .card{background:#fffffff5}
+#stage .ask{font-weight:600}
+#qtools{padding-bottom:6px}
+@media (max-width:420px){#mapTitle small{display:none}#mapTitle{font-size:15px}}
+@media (max-height:740px){
+  #eoAv{font-size:42px;line-height:1.1}
+  #eoStars{font-size:36px}
+  .modal h2{font-size:20px;margin:2px 0 4px}
+  .newf{padding:6px;line-height:1.3;font-size:14px}.newf .bigem{font-size:34px}
+  #eoFact{font-size:13px;line-height:1.3;margin:5px 0}
+  #eoBtns .tbtn{padding:7px 11px;font-size:14px}
+}
+.lsec h2 .em{animation:none}
+@media (max-height:740px){
+  .flabel{font-size:13px;line-height:1.1}
+  .fhint{font-size:12px;margin-top:0}
+  .slot{min-height:28px}
+  .frow{gap:1px}
+}
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+<div id="flash"></div>
+<canvas id="confetti"></canvas>
+<div id="toast"></div>
+
+<div id="app">
+  <div id="top">
+    <div class="pill" id="starPill">⭐ <span id="tally">0</span></div>
+    <button class="iconbtn av" id="avBtn" aria-label="חבר">🐱</button>
+    <div class="gtoggle"><button id="gGirl" aria-label="בת">👧</button><button id="gBoy" aria-label="בן">👦</button></div>
+    <button class="iconbtn" id="mute" aria-label="צליל">🔊</button>
+    <button class="iconbtn" id="homeBtn" aria-label="לעולמות">🏠</button>
+  </div>
+
+  <div class="screen" id="start">
+    <h1>🔬 הרפתקת המדע 🌍</h1>
+    <p class="sub"><span class="f">בחרי חבר להרפתקה!</span><span class="m">בחר חבר להרפתקה!</span><small>בכל עולם מחכים חברים חדשים ✨</small></p>
+    <div class="avgrid" id="startGrid"></div>
+  </div>
+
+  <div class="screen on" id="home">
+    <h1>🔬 הרפתקת המדע</h1>
+    <p class="sub"><span class="f">בחרי עולם והתחילי לאסוף כוכבים!</span><span class="m">בחר עולם והתחל לאסוף כוכבים!</span></p>
+    <div class="homebtns"><button class="tbtn gold big2" id="partyBtn">🎉 מסיבת חברים</button></div>
+    <div class="worlds" id="worlds"></div>
+    <div class="homebtns">
+      <button class="tbtn" id="resetBtn">🔄 הרפתקה חדשה</button>
+      <button class="tbtn grey" id="siteBtn" onclick="location.href='../grade6/#science'">⬅ חזרה לאתר</button>
+    </div>
+  </div>
+
+  <div class="screen" id="map">
+    <div id="mapHead">
+      <button class="tbtn" id="mapBack">🌍 לעולמות</button>
+      <div class="pill" id="mapTitle"></div>
+      <div class="pill" id="mapStars"></div>
+      <button class="tbtn gold" id="partyBtn2" aria-label="מסיבת חברים">🎉</button>
+    </div>
+    <div class="scene"><div class="plane" id="plane"><svg id="road" viewBox="0 0 400 900" preserveAspectRatio="none"></svg></div></div>
+  </div>
+
+  <div class="screen" id="qscreen">
+    <div id="qhead">
+      <button class="tbtn" id="backMap">🗺️ למפה</button>
+      <div id="dots"></div>
+      <button class="tbtn" id="learnBtn">📖 הסבר</button>
+    </div>
+    <div id="bossRow" class="hidden"><div id="bossCol"><div id="boss"></div><div id="bossHp"></div></div><div class="bub boss" id="bossBubble"></div></div>
+    <div id="talk"><div id="pav"></div><div class="bub" id="bubble"></div></div>
+    <div id="qinfo"></div>
+    <div id="stage"></div>
+    <div id="qtools"><span id="powers" style="display:contents"></span><button class="tbtn" id="skipBtn"></button></div>
+  </div>
+</div>
+
+<div class="ov hidden" id="endOv"><div class="modal">
+  <div id="eoAv"></div>
+  <h2 id="eoTitle"></h2>
+  <div id="eoStars"><span>★</span><span>★</span><span>★</span></div>
+  <div id="eoTally"></div>
+  <div id="eoNote"></div>
+  <div id="eoFact"></div>
+  <div id="eoNew"></div>
+  <div id="eoWin" class="hidden">
+    🏆 כל הכבוד! ניצחת את כל חמשת הבוסים וסיימת את ההרפתקה!<br>
+    המסיבה הגדולה מחכה לך 🎉
+    <div class="mbtns"><button class="tbtn gold" id="winParty">🎉 למסיבה!</button></div>
+  </div>
+  <div class="mbtns hidden" id="eoBtns">
+    <button class="tbtn grey" id="eoMap">🗺️ למפה</button>
+    <button class="tbtn gold" id="eoAgain">🔁 עוד פעם</button>
+    <button class="tbtn green" id="eoNext">שלב הבא ←</button>
+  </div>
+</div></div>
+
+<div class="ov hidden" id="avOv"><div class="modal">
+  <h2><span class="f">בחרי חבר</span><span class="m">בחר חבר</span></h2>
+  <div class="avgrid" id="avGrid"></div>
+  <button class="tbtn grey" id="avClose">סגור</button>
+</div></div>
+
+<div class="ov hidden" id="learnOv"><div class="modal wide">
+  <h2 id="learnTitle"></h2>
+  <div id="learnBody" style="display:flex;flex-direction:column;gap:12px"></div>
+  <div class="mbtns"><button class="tbtn green big2" id="learnClose">✔ הבנתי</button></div>
+</div></div>
+
+<div id="party" class="hidden">
+  <div id="partyTitle">🎉 מסיבת חברים! 🎉</div>
+  <div id="partyNote"></div>
+  <div id="pgrid"></div>
+  <button class="tbtn grey" id="partyClose">⏹ סגור</button>
+</div>
+
+<script>
+"use strict";
+/* ===================== לוגיקה טהורה (בלי DOM), נבדקת ב-tests/logic.test.js ===================== */
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const shuffle = (a, rnd) => { rnd = rnd || Math.random; a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const ltr = s => '<span class="ltr">' + s + '</span>';
+
+/* הנושאים שעליהם השאלה מדברת, כדי לא לשאול פעמיים על אותו דבר באותו שלב */
+const SUBJECTS = ["נר", "קומקום", "פנס", "מאוורר", "מפרש", "שבשבת", "מכונית", "מדורה", "אופניים", "כוס", "מחשבון", "מערבל", "מיקרוגל", "טורבינה", "טורבינת", "טורבינות", "רמקול", "טוסטר", "מעבד מזון", "מכונת כביסה", "פחם", "נפט", "אורניום"];
+function subjectsOf(q){
+  const text = q.ask + " " + (q.right || "");
+  return SUBJECTS.filter(x => new RegExp("(?<![\u05D0-\u05EA])[\u05D1\u05DC\u05D4\u05DE\u05D5\u05E9]{0,2}" + x + "(?![\u05D0-\u05EA])").test(text));
+}
+/* בוחר שאלה: קודם כל שאלה שעוד לא הופיעה. רק כשכל הקבוצה הופיעה מתחילים סיבוב חדש,
+   ובו שאלות שטעו בהן באות ראשונות. stage: { ids, subs } של השלב הנוכחי */
+function pickQuestion(pool, seen, weak, stage, rnd){
+  rnd = rnd || Math.random;
+  const ids = (stage && stage.ids) || [], subs = (stage && stage.subs) || [];
+  let open = pool.filter(q => !seen.includes(q.id));
+  if (!open.length){
+    pool.forEach(x => { const i = seen.indexOf(x.id); if (i >= 0) seen.splice(i, 1); });
+    open = pool.filter(q => !ids.includes(q.id));
+    if (!open.length) open = pool;
+  }
+  const back = open.filter(q => weak.includes(q.id));
+  let list = back.length ? back : open;
+  const other = list.filter(q => !(q.subs || []).some(x => subs.includes(x)));
+  if (other.length) list = other;
+  const q = list[Math.floor(rnd() * list.length)];
+  seen.push(q.id);
+  return q;
+}
+/* בוחר עובדה שעוד לא הוצגה. בסוף הסיבוב מתחילים מחדש, אבל לא עם האחרונה שהוצגה */
+function pickFact(n, seen, rnd){
+  rnd = rnd || Math.random;
+  let last = -1;
+  if (seen.length >= n){ last = seen[seen.length - 1]; seen.length = 0; }
+  const open = [];
+  for (let i = 0; i < n; i++) if (!seen.includes(i) && i !== last) open.push(i);
+  const f = open.length ? open[Math.floor(rnd() * open.length)] : 0;
+  seen.push(f);
+  return f;
+}
+/* clean = נענתה נכון בניסיון ראשון, בלי דילוג */
+function markResult(weak, id, clean){
+  const i = weak.indexOf(id);
+  if (clean){ if (i >= 0) weak.splice(i, 1); }
+  else if (i < 0) weak.push(id);
+}
+/* placed: { טקסט: מפתח סל } */
+function checkSort(items, placed){
+  const marks = {};
+  let done = true, ok = true;
+  items.forEach(it => {
+    if (!(it.h in placed)){ done = false; ok = false; return; }
+    marks[it.h] = placed[it.h] === it.b;
+    if (!marks[it.h]) ok = false;
+  });
+  return { done, ok, marks };
+}
+/* placed: מערך לכל קבוצה, בכל תא טקסט או null. בתוך קבוצה הסדר לא משנה */
+function checkFlow(groups, placed){
+  let done = true, ok = true;
+  const marks = groups.map((g, i) => {
+    const left = g.a.slice();
+    return placed[i].map(v => {
+      if (v === null || v === undefined){ done = false; ok = false; return false; }
+      const j = left.indexOf(v);
+      if (j < 0){ ok = false; return false; }
+      left.splice(j, 1);
+      return true;
+    });
+  });
+  return { done, ok, marks };
+}
+/* עד n פריטים, לפחות אחד מכל סל */
+function sampleSort(items, n, rnd){
+  rnd = rnd || Math.random;
+  const mixed = shuffle(items, rnd), out = [], bins = new Set();
+  mixed.forEach(it => { if (!bins.has(it[1])){ bins.add(it[1]); out.push(it); } });
+  mixed.forEach(it => { if (out.length < n && !out.includes(it)) out.push(it); });
+  return shuffle(out, rnd);
+}
+/* הופך שאלה מהמאגר לשאלה מוכנה למסך */
+function prepare(q){
+  const o = Object.assign({}, q);
+  if (q.t === "mc") o.opts = shuffle(shuffle(q.wrong).slice(0, 3).map(h => ({ h, ok: false })).concat({ h: q.right, ok: true }));
+  if (q.t === "yn") o.opts = [{ h: "✅ נכון", ok: q.ans }, { h: "❌ לא נכון", ok: !q.ans }];
+  if (q.t === "sort") o.show = sampleSort(q.items, 6).map(i => ({ h: i[0], b: i[1] }));
+  if (q.t === "flow") o.chips = shuffle(q.groups.flatMap(g => g.a).concat(q.decoys));
+  o.small = 1;
+  return o;
+}
+
+/* ===================== מאגר השאלות (מדע וטכנולוגיה, כיתה ו', עמ' 4-43) ===================== */
+const M = (ask, right, wrong, why, p, em) => ({ t: "mc", ask, right, wrong, why, p, em });
+const TF = (ask, ans, why, p) => ({ t: "yn", ask, ans, why, p });
+const SORT = (ask, bins, items, why, p) => ({ t: "sort", ask, bins: bins.map(b => ({ k: b[0], h: b[1] })), items, why, p });
+const FLOW = (ask, sys, groups, decoys, why, p) => ({ t: "flow", ask, sys, groups: groups.map(g => ({ l: g[0], a: g[1] })), decoys, why, p });
+
+const CHEM = "אנרגיה כימית", ELEC = "אנרגיה חשמלית", HEAT = "אנרגיית חום", LIGHT = "אנרגיית אור", MOVE = "אנרגיית תנועה", SOUND = "אנרגיית קול";
+const TYPES = [CHEM, ELEC, HEAT, LIGHT, MOVE, SOUND];
+const others = (...right) => TYPES.filter(t => !right.includes(t));
+/* תרשים מעבר או המרה של אנרגיה */
+const ENERGY = (ask, sys, before, verb, after, decoys, why, p) => FLOW(ask, Object.assign({ top: 1 }, sys), [["איזו אנרגיה יש בהתחלה?", before], ["האנרגיה עברה (אותו סוג) או הפכה (סוג אחר)?", [verb]], ["איזו אנרגיה יש בסוף?", after]], [verb === "הפכה" ? "עברה" : "הפכה"].concat(decoys), why, p);
+/* תרשים של מערכת טכנולוגית */
+const SYSTEM = (ask, sys, input, process, output, decoys, why, p) => FLOW(ask, sys, [["קלט: מה נכנס למערכת?", input], ["תהליך: מה המערכת עושה?", [process]], ["פלט רצוי: מה מקבלים בסוף?", [output]]], decoys, why, p);
+
+const POOL = {
+/* ---------- עולם 1: מהי אנרגיה ---------- */
+11: [
+  M("איך אנחנו יודעים שאנרגיה קיימת?", "מהתופעות שהיא מאפשרת", ["רואים אותה בעיניים", "מריחים אותה", "נוגעים בה ביד"], "אי אפשר לראות או להריח אנרגיה. מסיקים שהיא קיימת מהתופעות שמתרחשות.", 9, "🔍"),
+  TF("אפשר לראות אנרגיה או להריח אותה.", false, "אי אפשר לראות או להריח אנרגיה. מסיקים על קיומה מהתופעות.", 9),
+  TF("ללא אנרגיה, תופעות כמו רוח וגלי ים לא היו מתרחשות.", true, "ללא אנרגיה כל התופעות האלה לא היו מתרחשות.", 9),
+  M("מהי התרחשות?", "משהו שקורה: תהליך, תופעה או פעולה", ["סוג של חומר דלק", "מכשיר חשמלי", "מקום בלי אנרגיה"], "התרחשות היא משהו שקורה: תהליך, תופעה או פעולה.", 9, "📖"),
+  SORT("באיזו סביבה מתרחשת כל תופעה?", [["n", "🌿 טבעית"], ["a", "🏗️ מלאכותית"]], [["רוח נושבת", "n"], ["גלי ים", "n"], ["התפרצות הר געש", "n"], ["רעידת אדמה", "n"], ["גדילה של צמח", "n"], ["ברק ורעם", "n"], ["חימום מים בקומקום", "a"], ["טיסה של חללית", "a"], ["גלגל ענק מסתובב", "a"], ["שאיבת מים", "a"], ["שידור טלוויזיה", "a"], ["רכיבה על אופניים", "a"]], "תופעות טבעיות קורות בטבע. תופעות מלאכותיות קורות בעזרת דברים שבני אדם יצרו.", 9),
+  M("איזו תופעה שייכת לסביבה הטבעית?", "גלי ים", ["טיסה של חללית", "חימום מים בקומקום", "שידור טלוויזיה"], "גלי ים הם תופעה בסביבה הטבעית.", 9, "🌊"),
+  M("איזו תופעה שייכת לסביבה המלאכותית?", "סיבוב גלגל ענק בפארק", ["רעם", "רוח נושבת", "גדילה של צמח"], "גלגל ענק נבנה בידי בני אדם, ולכן זו תופעה בסביבה המלאכותית.", 9, "🎡"),
+  M("מה משותף לברק, לקומקום רותח ולילדה שרצה?", "בכולם מתרחשת תופעה שדורשת אנרגיה", ["בכולם יש חשמל מהשקע", "כולם נוצרו בידי אדם", "באף אחד מהם אין אנרגיה"], "אנרגיה מאפשרת את ההתרחשות של תופעות, בטבע ובסביבה המלאכותית.", 9, "⚡"),
+  TF("תנועה של יצורים חיים היא תופעה בסביבה הטבעית.", true, "תנועה של יצורים חיים היא דוגמה לתופעה בסביבה הטבעית.", 9),
+  TF("רק בסביבה הטבעית מתרחשות תופעות שדורשות אנרגיה.", false, "גם תופעות בסביבה המלאכותית, כמו טיסת חללית, דורשות אנרגיה.", 9),
+  TF("רכיבה על אופניים היא תופעה שדורשת אנרגיה.", true, "ללא אנרגיה גם רכיבה על אופניים לא הייתה מתרחשת.", 9),
+],
+12: [
+  SORT("פעולה של יצור חי, או תהליך חיים בתוך הגוף?", [["act", "🏃 פעולה"], ["life", "🫁 תהליך חיים"]], [["תנועה ממקום למקום", "act"], ["השגת מזון ומים", "act"], ["העברת מידע", "act"], ["הגנה", "act"], ["נשימה", "life"], ["הזנה", "life"], ["הובלת חומרים בגוף", "life"], ["הפרשת חומרים", "life"], ["התרבות", "life"]], "פעולות הן מה שיצור חי עושה בסביבה. תהליכי חיים מתרחשים בתוך גופו ומאפשרים לו להתקיים.", 9),
+  M("אילו יצורים חיים זקוקים לאנרגיה?", "צמחים ובעלי חיים, כולל בני אדם", ["רק בני אדם", "רק בעלי חיים", "רק צמחים"], "כל היצורים החיים זקוקים לאנרגיה.", 9, "🐬"),
+  M("מה מהבאים הוא תהליך חיים?", "נשימה", ["נסיעה באוטובוס", "שידור טלוויזיה", "סיבוב גלגל ענק"], "נשימה היא תהליך חיים שמתרחש בגוף, וגם הוא דורש אנרגיה.", 9, "🫁"),
+  TF("תהליכי החיים מאפשרים ליצורים חיים לגדול ולהתפתח.", true, "קיומם של תהליכי החיים מאפשר ליצורים החיים לגדול ולהתפתח.", 10),
+  TF("יצורים חיים יכולים להתקיים ללא אנרגיה.", false, "ללא אנרגיה יצורים חיים לא יוכלו להתקיים.", 10),
+  M("באילו תחומים השימוש באנרגיה תורם לאיכות החיים?", "ברפואה, בתחבורה, בחקלאות ובתעשייה", ["רק בתעשייה", "רק ברפואה", "רק בתחבורה"], "אנחנו משתמשים באנרגיה בכל תחומי החיים.", 10, "🚦"),
+  M("למה בני אדם בנו מכשירים שפועלים באנרגיה?", "כדי לספק את צורכיהם ולשפר את איכות חייהם", ["כדי להפסיק לנשום", "כדי לבזבז חומרי דלק", "כדי שלא יהיה צורך באנרגיה"], "כלים, מכשירים ומכונות נועדו לספק את צורכי האדם ולשפר את איכות חייו.", 11, "🔌"),
+  M("בעל חיים בורח מטורף. איזו פעולה הוא מבצע?", "הגנה", ["הזנה", "הפרשה", "התרבות"], "בריחה מטורף היא פעולה של הגנה, והיא דורשת אנרגיה.", 9, "🐇"),
+  M("דולפין שוחה לעבר להקת דגים כדי לאכול. לאילו פעולות הוא צריך אנרגיה?", "תנועה והשגת מזון", ["שידור ומחשוב", "חימום מים בקומקום", "הוא לא צריך אנרגיה"], "תנועה ממקום למקום והשגת מזון הן פעולות שדורשות אנרגיה.", 9, "🐬"),
+  M("מהיכן מגיעה לצמחים האנרגיה שלהם?", "מאור השמש", ["מתחנת החשמל", "מהנפט", "מהרוח"], "הצמחים מקבלים אנרגיה מאור השמש.", 6, "🌱"),
+  M("מהיכן הגיעה לבעלי החיים האנרגיה שבגופם?", "מהצמחים שהם אכלו", ["ישר מתחנת החשמל", "מהנורה בחדר", "מהרוח שנושבת"], "בעלי החיים מקבלים אנרגיה מן הצמחים שהם אכלו.", 6, "🐄"),
+  M("לפי הספר, מאין מגיעה רוב האנרגיה לתחנת החשמל בישראל?", "משריפה של פחם או נפט", ["מרוח בלבד", "ממים זורמים בנהרות", "מנרות דולקים"], "בישראל, לפי הספר, רוב האנרגיה לתחנת החשמל מגיעה משריפה של פחם או נפט.", 6, "🏭"),
+  TF("רמזור ברחוב הוא דוגמה לשימוש באנרגיה שמשפר את איכות החיים.", true, "ברחוב, בתעשייה ובחקלאות, השימוש באנרגיה תורם לשיפור איכות החיים.", 10),
+],
+13: [
+  M("מהו טיעון?", "טענה + נימוקים", ["טענה בלבד", "נימוק בלבד", "שאלה ותשובה"], "טיעון = טענה + נימוקים.", 11, "🗣️"),
+  M("מהי טענה?", "האמירה שצריך להוכיח", ["ההסבר שמוכיח משהו", "תוצאה של ניסוי", "שם של מקור אנרגיה"], "טענה היא האמירה שאותה צריך להוכיח.", 11, "💬"),
+  M("מהם נימוקים?", "ההסברים שבעזרתם מוכיחים את הטענה", ["האמירה שצריך להוכיח", "שאלות שאין להן תשובה", "דוגמאות שסותרות את הטענה"], "נימוקים הם ההסברים שבאמצעותם אפשר להוכיח את הטענה.", 11, "🧠"),
+  SORT("טענה או נימוק?", [["c", "📣 טענה"], ["r", "💡 נימוק"]], [["בלי אנרגיה אי אפשר!", "c"], ["כדאי להשתמש יותר באנרגיית השמש", "c"], ["כדאי לחסוך בחומרי דלק", "c"], ["יצורים חיים לא מתקיימים בלי אנרגיה", "r"], ["מכשירים רבים לא פועלים בלי אנרגיה", "r"], ["השימוש בשמש אינו מזהם את הסביבה", "r"]], "טענה היא מה שרוצים להוכיח. נימוק הוא ההסבר שמוכיח אותה.", 11),
+  M("הטענה: \"בלי אנרגיה אי אפשר!\". איזה משפט הוא נימוק מתאים?", "ללא אנרגיה יצורים חיים לא יכולים להתקיים", ["אנרגיה היא מילה יפה", "לא כולם יודעים מהי אנרגיה", "אפשר לראות אנרגיה בעיניים"], "נימוק טוב מסביר למה הטענה נכונה.", 11, "⚡"),
+  M("הטענה: \"כדאי להשתמש יותר ברוח כמקור אנרגיה\". איזה משפט הוא נימוק מתאים?", "השימוש ברוח אינו מזהם את הסביבה", ["הרוח נעימה בקיץ", "הרוח מעיפה כובעים", "לרוח אין שום אנרגיה"], "השימוש ברוח כמקור אנרגיה אינו מזהם את הסביבה, וזה נימוק בעד הטענה.", 20, "🌬️"),
+  M("הטענה: \"השימוש בחומרי דלק פוגע בסביבה\". איזה משפט הוא נימוק מתאים?", "השימוש בהם מלווה בפליטה של חומרים מזהמים", ["חומרי דלק נמצאים באדמה", "בני אדם משתמשים בהם שנים רבות", "מכוניות נוסעות מהר"], "הפליטה של חומרים מזהמים גורמת לזיהום הסביבה.", 21, "🛢️"),
+  TF("טיעון כולל טענה ונימוקים שתומכים בה.", true, "בכתיבת טיעון יש להתייחס לשני מרכיבים: טענה ונימוקים.", 11),
+  TF("כדי לכתוב טיעון מספיק לכתוב טענה, בלי נימוקים.", false, "טיעון חייב לכלול גם נימוקים שמוכיחים את הטענה.", 11),
+  FLOW("בנו טיעון: בחרו טענה ושני נימוקים", null, [["טענה: מה רוצים להוכיח?", ["אנרגיה חיונית לחיים שלנו"]], ["נימוקים: למה זה נכון?", ["יצורים חיים זקוקים לאנרגיה", "מכשירים רבים פועלים באנרגיה"]]], ["אנרגיה היא מילה ארוכה"], "טיעון טוב הוא טענה אחת ונימוקים שמוכיחים אותה.", 11),
+  TF("המשפט \"אנרגיה היא דבר חשוב\" הוא טיעון שלם.", false, "זו טענה בלבד. כדי שיהיה טיעון צריך להוסיף נימוקים.", 11),
+],
+/* ---------- עולם 2: סוגי אנרגיה ---------- */
+21: [
+  M("איזה סוג אנרגיה מספק הזרם החשמלי?", ELEC, others(ELEC), "אנרגיה חשמלית היא האנרגיה שמספק הזרם החשמלי, והיא מפעילה מכשירי חשמל.", 13, "🔌"),
+  M("מה גורם לגופים להעלות טמפרטורה ולהתחמם?", HEAT, others(HEAT), "אנרגיית חום גורמת לגופים להעלות טמפרטורה ולהתחמם.", 13, "🌡️"),
+  M("איזו אנרגיה מאפשרת לנו לראות?", LIGHT, others(LIGHT), "אנרגיית אור היא האנרגיה שיש בכל סוגי האור.", 13, "💡"),
+  M("איזו אנרגיה נמצאת בחומרים?", CHEM, others(CHEM), "אנרגיה כימית נמצאת בחומרים, בגוף של יצורים חיים ובחומרי דלק.", 13, "🧪"),
+  M("איזו אנרגיה מצויה בגופים שנמצאים בתנועה?", MOVE, others(MOVE), "אנרגיית תנועה מצויה בגופים הנמצאים בתנועה.", 13, "🏃"),
+  M("איזו אנרגיה נמצאת בקולות הרעם?", SOUND, [CHEM, MOVE, ELEC], "אנרגיית קול נמצאת בקולות, למשל בקולות הרעם.", 13, "⛈️"),
+  M("מהו המקור הטבעי הגדול ביותר של אנרגיית חום?", "השמש", ["הר געש", "נר דולק", "מכשיר חשמל"], "השמש היא המקור הטבעי הגדול ביותר של אנרגיית חום.", 13, "☀️"),
+  M("מהו המקור הטבעי הגדול ביותר של אנרגיית אור?", "השמש", ["הירח", "נורה דולקת", "נר דולק"], "קרינת השמש היא המקור הטבעי הגדול ביותר של אנרגיית אור.", 13, "☀️"),
+  M("באיזו אנרגיה משתמשים הצמחים הירוקים כדי לייצר מזון?", LIGHT, others(LIGHT), "אנרגיית אור מנוצלת על ידי הצמחים הירוקים לייצור מזון.", 13, "🌿"),
+  M("מקור טבעי נוסף של אנרגיית חום נמצא במעמקי הקרקע. לְמה הוא קשור?", "להרי געש ולנביעות מים חמים", ["לרוחות חזקות", "לאור הירח", "לגלי הים"], "אנרגיית החום במעמקי הקרקע קשורה להתפרצויות של הרי געש ולנביעות מים חמים.", 13, "🌋"),
+  TF("אנרגיית חום נוצרת גם בעקבות שריפה של חומרי דלק.", true, "אנרגיית חום נוצרת בעקבות שריפה של חומרי דלק והפעלת מכשירי חשמל.", 13),
+  TF("אנרגיית אור מגיעה רק מהשמש.", false, "אנרגיית אור נוצרת גם בנר דולק ובנורה דולקת.", 13),
+  TF("אנרגיה כימית נמצאת רק בחומרי דלק.", false, "אנרגיה כימית נמצאת גם בגוף של יצורים חיים, למשל בפחמימות ובשומנים.", 13),
+],
+22: [
+  M("מכונית נוסעת על הכביש. איזו אנרגיה יש לה בגלל הנסיעה?", MOVE, [ELEC, LIGHT], "למכונית שנמצאת בתנועה יש אנרגיית תנועה.", 13, "🚗"),
+  M("פעמון מצלצל בדלת. איזו אנרגיה יש בקול שלו?", SOUND, [LIGHT, CHEM], "בקולות הפעמון יש אנרגיית קול.", 13, "🔔"),
+  M("איזו אנרגיה יש בפחם, בעץ ובנפט?", CHEM, [MOVE, SOUND, ELEC], "חומרי דלק מכילים אנרגיה כימית.", 13, "🪵"),
+  M("איזו אנרגיה יש בפחמימות ובשומנים בגוף שלנו?", CHEM, [ELEC, SOUND, LIGHT], "פחמימות ושומנים בגוף של יצורים חיים מכילים אנרגיה כימית.", 13, "🍝"),
+  M("איזו אנרגיה מאפשרת לשרירים לפעול?", CHEM, [SOUND, LIGHT, ELEC], "האנרגיה הכימית מאפשרת ליצורים חיים לפעול, למשל להפעיל את השרירים.", 13, "💪"),
+  M("איזו אנרגיה יש במים שזורמים בנחל?", MOVE, [SOUND, LIGHT, CHEM], "במים זורמים ישנה אנרגיית תנועה.", 13, "🏞️"),
+  M("איזו אנרגיה יש ברוח שנושבת?", MOVE, [CHEM, LIGHT, ELEC], "ברוח נושבת ישנה אנרגיית תנועה.", 13, "🌬️"),
+  M("מזגן פועל בחדר. איזו אנרגיה מפעילה אותו?", ELEC, others(ELEC), "אנרגיה חשמלית מפעילה את מכשירי החשמל.", 12, "❄️"),
+  M("איזו אנרגיה יש בקולות שבוקעים מהטלוויזיה?", SOUND, others(SOUND), "בקולות הבוקעים מהטלוויזיה יש אנרגיית קול.", 13, "📺"),
+  M("נורה דולקת בחדר חשוך. איזו אנרגיה מאפשרת לנו לראות?", LIGHT, others(LIGHT), "אנרגיית אור נוצרת גם בנורה דולקת.", 13, "💡"),
+  TF("למים שזורמים בנהר יש אנרגיית תנועה.", true, "גופים הנמצאים בתנועה, כמו מים זורמים, מכילים אנרגיית תנועה.", 13),
+  TF("לרעם יש אנרגיית קול.", true, "בקולות הרעם יש אנרגיית קול.", 13),
+  TF("לרוח שנושבת אין אנרגיה.", false, "ברוח נושבת יש אנרגיית תנועה.", 13),
+],
+23: [
+  SORT("מיינו: אנרגיית תנועה או אנרגיית קול?", [["m", "🏃 תנועה"], ["s", "🔊 קול"]], [["מכונית נוסעת", "m"], ["מטוס ממריא", "m"], ["מים זורמים בנחל", "m"], ["רוח נושבת", "m"], ["רעם", "s"], ["פעמון מצלצל", "s"], ["קולות מהטלוויזיה", "s"]], "בגופים בתנועה יש אנרגיית תנועה. בקולות יש אנרגיית קול.", 13),
+  SORT("מיינו: אנרגיה כימית או אנרגיית תנועה?", [["c", "🧪 כימית"], ["m", "🏃 תנועה"]], [["פחם", "c"], ["נפט", "c"], ["עץ", "c"], ["פחמימות בגוף", "c"], ["שומנים בגוף", "c"], ["רוח נושבת", "m"], ["מים זורמים", "m"], ["ילדה שרצה", "m"]], "אנרגיה כימית נמצאת בחומרים. אנרגיית תנועה נמצאת בגופים שזזים.", 13),
+  SORT("מיינו לשלושה סוגי אנרגיה", [["e", "🔌 חשמלית"], ["c", "🧪 כימית"], ["s", "🔊 קול"]], [["הזרם בכבל החשמל", "e"], ["הזרם שמפעיל מזגן", "e"], ["גז טבעי", "c"], ["פחם אבן", "c"], ["קול הרעם", "s"], ["צלצול הפעמון", "s"]], "כל סוג אנרגיה מופיע בתופעות אחרות.", 13),
+  SORT("מיינו לפי המקור", [["h", "🔥 נותן אנרגיית חום"], ["s", "🔊 נותן קול"]], [["השמש", "h"], ["מעמקי הקרקע", "h"], ["נביעת מים חמים", "h"], ["פעמון בדלת", "s"], ["ברק ורעם", "s"], ["טלוויזיה", "s"]], "אנרגיית חום מגיעה מהשמש וממעמקי הקרקע. קול מגיע מדברים שמשמיעים צלילים.", 13),
+  M("איזה משפט נכון?", "השמש נותנת גם אנרגיית חום וגם אנרגיית אור", ["השמש נותנת רק אור", "השמש נותנת רק אנרגיית חום", "השמש אינה מקור אנרגיה"], "השמש היא המקור הטבעי הגדול ביותר של אנרגיית חום ושל אנרגיית אור.", 13, "☀️"),
+  M("כמה סוגי אנרגיה למדנו בפרק?", "שישה", ["שניים", "שלושה", "עשרה"], "חשמלית, אנרגיית חום, אור, כימית, תנועה וקול.", 13, "6️⃣"),
+  M("מה מהבאים אינו סוג אנרגיה?", "אנרגיית שולחן", [ELEC, CHEM, SOUND], "ששת הסוגים: חשמלית, אנרגיית חום, אור, כימית, תנועה וקול.", 13, "🤔"),
+  M("לפני שמדליקים נר: איזו אנרגיה יש בחומר שלו?", CHEM, [MOVE, SOUND, ELEC], "הנר הוא חומר, והאנרגיה שבחומרים היא אנרגיה כימית.", 13, "🕯️"),
+  M("מה מחמם את כדור הארץ?", "אנרגיית החום שמגיעה מהשמש", ["אור הירח", "קולות הרעם", "הנורות בבתים"], "האנרגיה שעוברת אלינו מהשמש נקראת אנרגיית חום והיא מחממת את כדור הארץ.", 13, "🌍"),
+  TF("אנרגיית תנועה ואנרגיית קול הן אותו סוג אנרגיה.", false, "אלה שני סוגי אנרגיה שונים.", 13),
+  TF("אנרגיה חשמלית מפעילה את מכשירי החשמל.", true, "נכון: הזרם החשמלי מספק את האנרגיה שמפעילה את המכשירים.", 13),
+],
+/* ---------- עולם 3: מעבר והמרה ---------- */
+31: [
+  M("מהו מעבר אנרגיה?", "אנרגיה עוברת מגוף לגוף, והסוג שלה לא משתנה", ["אנרגיה הופכת לסוג אחר", "אנרגיה נעלמת", "אנרגיה נוצרת מכלום"], "במעבר אנרגיה הסוג אינו משתנה.", 15, "⬅️"),
+  M("מהי המרת אנרגיה?", "אנרגיה הופכת מסוג אחד לסוג אחר", ["אנרגיה עוברת מגוף לגוף בלי להשתנות", "אנרגיה נשארת באותו סוג", "גוף נעצר ולא זז"], "כשאנרגיה הופכת מסוג לסוג, הסוג משתנה. זו המרת אנרגיה.", 15, "🔄"),
+  TF("במעבר אנרגיה, סוג האנרגיה אינו משתנה.", true, "כאשר האנרגיה עוברת מגוף לגוף, סוג האנרגיה אינו משתנה.", 15),
+  TF("בהמרת אנרגיה, סוג האנרגיה נשאר אותו דבר.", false, "בהמרה הסוג משתנה. אם הוא לא משתנה, זה מעבר.", 15),
+  TF("אנרגיה מסוג אחד יכולה להתקבל מאנרגיה מסוג אחר.", true, "כך קורה למשל בפנס: מאנרגיה חשמלית מתקבלים אנרגיית אור ואנרגיית חום.", 16),
+  SORT("מעבר אנרגיה או המרת אנרגיה?", [["t", "⬅️ מעבר"], ["c", "🔄 המרה"]], [["כוס חמה מחממת את השולחן", "t"], ["רוח מסובבת שבשבת", "t"], ["רוח דוחפת סירת מפרש", "t"], ["נורה דולקת בפנס", "c"], ["רוכב מניע אופניים", "c"], ["נר דולק", "c"], ["קומקום חשמלי מחמם מים", "c"], ["מאוורר פועל", "c"]], "במעבר הסוג נשאר אותו דבר. בהמרה הוא משתנה.", 16),
+  SORT("ומה קורה כאן: מעבר או המרה?", [["t", "⬅️ מעבר"], ["c", "🔄 המרה"]], [["תה חם מחמם את הספל", "t"], ["רוח מזיזה ענפים", "t"], ["כדור פוגע בכדור ומזיז אותו", "t"], ["מכונית נוסעת בעזרת דלק", "c"], ["מדורה בוערת", "c"], ["נורה מאירה מחשמל", "c"]], "אנרגיית חום שעוברת נשארת אנרגיית חום, ותנועה שעוברת נשארת תנועה. כשהסוג משתנה זו המרה.", 16),
+  M("כוס מים חמים עומדת על השולחן והשולחן מתחמם. מה קרה?", "מעבר אנרגיה: אנרגיית חום עברה מהכוס לשולחן", ["המרת אנרגיה: אנרגיית חום הפכה לאור", "לא קרה כלום", "המרת אנרגיה: אנרגיית חום הפכה לתנועה"], "אנרגיית החום עוברת מהכוס לשולחן, והסוג לא משתנה.", 15, "☕"),
+  M("מדליקים פנס. מה קורה לאנרגיה החשמלית?", "היא הופכת לאנרגיית אור ולאנרגיית חום", ["היא עוברת לפנס אחר", "היא נעלמת", "היא הופכת לאנרגיית קול"], "בנורת הפנס אנרגיה חשמלית הופכת לאנרגיית אור ולאנרגיית חום. זו המרה.", 15, "🔦"),
+  M("רוח מסובבת שבשבת. מה קרה לאנרגיית התנועה של הרוח?", "היא עברה לשבשבת", ["היא הפכה לאור", "היא הפכה לחשמל בשבשבת", "היא נעלמה"], "אנרגיית התנועה של הרוח עברה לאנרגיית התנועה של השבשבת.", 15, "🌬️"),
+  M("רוכבת על אופניים מניעה את הגלגלים. מה קרה?", "אנרגיה כימית בשרירים הפכה לתנועה", ["אנרגיית חום עברה לגלגלים", "אנרגיית קול הפכה לתנועה", "אנרגיית אור עברה לגלגלים"], "האנרגיה הכימית בשרירים הפכה לאנרגיית תנועה של הגלגלים.", 15, "🚴"),
+  M("איזו מילה מתאימה לתרשים: אנרגיה כימית ← ? ← אנרגיית אור ואנרגיית חום", "הפכה", ["עברה", "נעלמה", "נשארה"], "הסוג השתנה, ולכן האנרגיה הפכה.", 24, "🕯️"),
+],
+32: [
+  ENERGY("מה קורה לאנרגיה בנר דולק?", { em: "🕯️", n: "נר דולק" }, [CHEM], "הפכה", [HEAT, LIGHT], [MOVE], "האנרגיה הכימית בנר הופכת לאנרגיית חום ולאנרגיית אור.", 16),
+  ENERGY("מה קורה לאנרגיה בקומקום חשמלי?", { em: "🫖", n: "קומקום חשמלי" }, [ELEC], "הפכה", [HEAT], [SOUND, CHEM], "האנרגיה החשמלית הופכת לאנרגיית חום שמחממת את המים.", 25),
+  ENERGY("מה קורה לאנרגיה במדורה?", { em: "🔥", n: "מדורה בקומזיץ" }, [CHEM], "הפכה", [HEAT], [ELEC, SOUND], "האנרגיה הכימית שבעץ הופכת לאנרגיית חום.", 25),
+  ENERGY("מה קורה לאנרגיה כשרוח דוחפת סירת מפרש?", { em: "⛵", n: "סירת מפרש" }, [MOVE], "עברה", [MOVE], [LIGHT], "אנרגיית התנועה של הרוח עברה לסירה. הסוג לא השתנה.", 25),
+  ENERGY("מה קורה לאנרגיה כשרוח מסובבת שבשבת?", { em: "🎐", n: "שבשבת" }, [MOVE], "עברה", [MOVE], [HEAT], "אנרגיית התנועה של הרוח עברה לשבשבת.", 15),
+  ENERGY("מה קורה לאנרגיה כשרוכבים על אופניים?", { em: "🚴", n: "רוכב אופניים" }, [CHEM], "הפכה", [MOVE], [ELEC, LIGHT], "האנרגיה הכימית בשרירים הפכה לאנרגיית תנועה.", 15),
+  ENERGY("מה קורה לאנרגיה במאוורר?", { em: "🌀", n: "מאוורר פועל" }, [ELEC], "הפכה", [MOVE], [CHEM, SOUND], "האנרגיה החשמלית הופכת לאנרגיית תנועה של הכנפיים.", 24),
+  ENERGY("מה קורה לאנרגיה במכונית נוסעת?", { em: "🚗", n: "מכונית" }, [CHEM], "הפכה", [MOVE], [ELEC, LIGHT], "האנרגיה הכימית בדלק הופכת לאנרגיית תנועה.", 16),
+  ENERGY("מה קורה לאנרגיה בפנס דולק?", { em: "🔦", n: "פנס" }, [ELEC], "הפכה", [LIGHT, HEAT], [MOVE], "האנרגיה החשמלית הופכת בנורה לאנרגיית אור ולאנרגיית חום.", 15),
+  ENERGY("מה קורה לאנרגיה כשכוס חמה עומדת על שולחן?", { em: "☕", n: "כוס על שולחן" }, [HEAT], "עברה", [HEAT], [LIGHT], "אנרגיית החום עברה מהכוס לשולחן, והסוג לא השתנה.", 15),
+],
+33: [
+  M("איזו תופעה מתאימה לתרשים: אנרגיה כימית הפכה לאנרגיית אור ולאנרגיית חום?", "נר דולק", ["מאוורר פועל", "קרח שנמס", "רוח מזיזה ענפים"], "בנר דולק האנרגיה הכימית הופכת לאנרגיית אור ולאנרגיית חום.", 24, "🕯️"),
+  M("מכונית נוסעת. מאיזו אנרגיה התקבלה התנועה שלה?", "מהאנרגיה הכימית שבדלק", ["מאור הירח", "מאנרגיית הקול של המנוע", "מאנרגיית החום של הכביש"], "במכונית האנרגיה הכימית של הדלק הופכת לאנרגיית תנועה.", 16, "🚗"),
+  M("מה קורה בקומקום חשמלי?", "אנרגיה חשמלית הופכת לאנרגיית חום", ["אנרגיית חום הופכת לחשמל", "תנועה עוברת למים", "אור הופך לקול"], "החשמל הופך בקומקום לאנרגיית חום, ואנרגיית החום מחממת את המים.", 25, "🫖"),
+  M("מאוורר פועל. מאיזה סוג לאיזה סוג הפכה האנרגיה?", "מחשמלית לתנועה", ["מתנועה לחשמלית", "מאנרגיית חום לאור", "מקול לתנועה"], "במאוורר אנרגיה חשמלית הופכת לאנרגיית תנועה.", 24, "🌀"),
+  M("אם הסוג של האנרגיה לא השתנה, מה התרחש?", "מעבר אנרגיה", ["המרת אנרגיה", "שום דבר", "יצירת אנרגיה"], "כשהאנרגיה עוברת מגוף לגוף והסוג נשאר, זה מעבר אנרגיה.", 15, "⬅️"),
+  M("אם הסוג של האנרגיה השתנה, מה התרחש?", "המרת אנרגיה", ["מעבר אנרגיה", "שום דבר", "גוף שנעצר"], "כשהסוג משתנה, זו המרת אנרגיה.", 15, "🔄"),
+  TF("סירת מפרש שנדחפת ברוח היא דוגמה למעבר אנרגיה.", true, "אנרגיית התנועה של הרוח עוברת לסירה.", 25),
+  TF("נר דולק הוא דוגמה למעבר אנרגיה.", false, "בנר הסוג משתנה מאנרגיה כימית לאנרגיית אור ולאנרגיית חום. זו המרה.", 24),
+  TF("אפשר לתאר מעבר אנרגיה והמרת אנרגיה בעזרת תרשימים.", true, "הספר משתמש בתרשימים עם חץ: \"עברה\" או \"הפכה\".", 15),
+  TF("בכל תופעה האנרגיה תמיד הופכת לחשמל.", false, "אנרגיה יכולה להפוך לסוגים רבים: אור, אנרגיית חום, תנועה ועוד.", 16),
+],
+/* ---------- עולם 4: מקורות אנרגיה ---------- */
+41: [
+  M("מהם מקורות אנרגיה?", "משאבי טבע שמהם האדם מפיק את האנרגיה שהוא צריך", ["רק תחנות חשמל", "רק מכשירי חשמל", "חומרים שאין בהם אנרגיה"], "מקורות אנרגיה הם משאבי טבע שבני האדם למדו להפיק מהם אנרגיה.", 17, "🌍"),
+  M("איזו אנרגיה מפיקים מהשמש?", "אנרגיית אור ואנרגיית חום", ["כימית", "קול", "תנועה"], "השמש מספקת אנרגיית חום ואנרגיית אור.", 18, "☀️"),
+  M("איזו אנרגיה מפיקים ממים זורמים?", MOVE, [CHEM, SOUND, LIGHT], "ממים זורמים מפיקים אנרגיית תנועה.", 17, "🏞️"),
+  M("איזו אנרגיה מפיקים מהרוח?", MOVE, [CHEM, SOUND, LIGHT], "מהרוח מפיקים אנרגיית תנועה.", 17, "🌬️"),
+  M("איזו אנרגיה מפיקים משרירים?", CHEM, [ELEC, SOUND, LIGHT], "משרירים מפיקים אנרגיה מהאנרגיה הכימית שבהם.", 17, "💪"),
+  M("איזו אנרגיה יש בחומרי דלק כמו פחם ונפט?", CHEM, [MOVE, SOUND, ELEC], "מחומרי דלק מפיקים אנרגיה מהאנרגיה הכימית שבהם.", 17, "🛢️"),
+  M("מה מהבאים הוא חומר דלק?", "גז טבעי", ["רוח", "שמש", "מים זורמים"], "חומרי דלק הם פחם, נפט גולמי וגז טבעי.", 17, "⛽"),
+  SORT("איזו אנרגיה מפיקים מכל מקור?", [["m", "🏃 תנועה"], ["c", "🧪 כימית"]], [["רוח", "m"], ["מים זורמים", "m"], ["שרירים", "c"], ["פחם", "c"], ["נפט גולמי", "c"], ["גז טבעי", "c"]], "רוח ומים זורמים נותנים תנועה. שרירים וחומרי דלק נותנים אנרגיה כימית.", 17),
+  SORT("באיזה מקור משתמשים?", [["f", "⛽ חומרי דלק"], ["u", "🌬️ רוח"]], [["נסיעה באוטובוס", "f"], ["הדלקת נר", "f"], ["הפעלת מכונת קיטור", "f"], ["שיט בסירת מפרש", "u"], ["גלישה בגלשן אוויר", "u"], ["סיבוב טורבינת רוח", "u"]], "אוטובוס, נר ומכונת קיטור משתמשים בדלק. מפרשית, גלשן אוויר וטורבינה משתמשים ברוח.", 25),
+  FLOW("השלימו: מה הקשר בין הרוח לטחנה?", { em: "🌬️", n: "טחנת רוח" }, [["מקור: מאין מגיעה האנרגיה?", ["רוח"]], ["סוג: איזו אנרגיה מפיקים ממנו?", [MOVE]], ["שימוש: למה משתמשים בה?", ["טחינת קמח"]]], ["שמש", CHEM, "טיפוס על הר"], "הרוח מניעה טורבינה בעזרת אנרגיית התנועה שלה, למשל לטחינת קמח.", 20),
+  FLOW("השלימו: איך איכר נעזר בבעל חיים?", { em: "🐂", n: "איכר וחמור" }, [["מקור: מאין מגיעה האנרגיה?", ["שרירים"]], ["סוג: איזו אנרגיה מפיקים ממנו?", [CHEM]], ["שימוש: למה משתמשים בה?", ["חרישת השדה"]]], ["רוח", MOVE, "ייבוש כביסה"], "האדם למד לנצל את האנרגיה הכימית שבשרירי בעלי חיים, למשל כדי לחרוש שדה.", 20),
+  FLOW("השלימו: מה הקשר בין הנהר לסכר?", { em: "🏞️", n: "סכר על נהר" }, [["מקור: מאין מגיעה האנרגיה?", ["מים זורמים"]], ["סוג: איזו אנרגיה מפיקים ממנו?", [MOVE]], ["שימוש: למה משתמשים בה?", ["הפקת חשמל"]]], ["שמש", HEAT, "ריצה"], "כיום השימוש העיקרי באנרגיית התנועה של המים הוא להפקת חשמל.", 21),
+],
+42: [
+  SORT("מקור מתחדש או מקור מתכלה?", [["r", "♻️ מתחדש"], ["d", "⛽ מתכלה"]], [["שמש", "r"], ["רוח", "r"], ["מים זורמים", "r"], ["שרירי בעלי חיים", "r"], ["פחם אבן", "d"], ["נפט גולמי", "d"], ["גז טבעי", "d"]], "מקורות מתחדשים לא נגמרים כשמשתמשים בהם. מקורות מתכלים הולכים ואוזלים.", 18),
+  SORT("מיינו גם את האורניום: מתחדש או מתכלה?", [["r", "♻️ מתחדש"], ["d", "⛽ מתכלה"]], [["אורניום (חומר רדיואקטיבי)", "r"], ["שמש", "r"], ["רוח", "r"], ["פחם אבן", "d"], ["נפט גולמי", "d"], ["גז טבעי", "d"]], "לפי הספר, גם אורניום, שהוא חומר רדיואקטיבי, נחשב למקור אנרגיה מתחדש.", 18),
+  M("מהו מקור אנרגיה מתחדש?", "מקור שאפשר להשתמש בו ללא הגבלה, והוא לא אוזל", ["מקור שנגמר אחרי שימוש", "מקור שקיים רק בלילה", "מקור שאין בו אנרגיה"], "מקורות מתחדשים אינם מתכלים בעקבות השימוש בהם.", 18, "♻️"),
+  M("מהו מקור אנרגיה מתכלה?", "מקור שהכמות שלו בטבע סופית והוא אוזל", ["מקור שלעולם לא נגמר", "מקור שמגיע מהשמש", "מקור שגדל מעצמו"], "הכמויות של מקורות מתכלים בטבע הן סופיות.", 18, "⛽"),
+  M("מה יקרה ככל שנשרוף יותר חומרי דלק?", "הכמות שלהם בטבע תלך ותפחת", ["הכמות שלהם תגדל", "הם יהפכו לשמש", "לא ישתנה דבר"], "ככל שנשרוף יותר, כמותם בטבע תלך ותפחת.", 18, "🔥"),
+  M("איזה חומר רדיואקטיבי הספר מזכיר כמקור אנרגיה?", "אורניום", ["פחם אבן", "מים זורמים", "גז טבעי"], "הספר מזכיר את האורניום, חומר רדיואקטיבי, כדוגמה למקור אנרגיה מתחדש.", 18, "☢️"),
+  M("למה שרירים של בעלי חיים נחשבים למקור מתחדש?", "כי בעלי חיים מתרבים מדור לדור", ["כי הם לא זקוקים למזון", "כי הם עשויים מפחם", "כי הם מגיעים מהרוח"], "כיוון שבעלי חיים מתרבים מדור לדור, הם נחשבים למקור מתחדש.", 20, "🐂"),
+  M("למה מים זורמים נחשבים למקור מתחדש?", "בזכות מחזור המים בטבע", ["כי מייצרים אותם במפעל", "כי הם מלאים דלק", "כי הם לא זזים"], "הודות למחזור המים בטבע, מקורות המים מתחדשים.", 21, "💧"),
+  TF("השמש היא מקור אנרגיה מתחדש.", true, "השמש נחשבת למקור אנרגיה מתחדש.", 20),
+  TF("נפט גולמי הוא מקור אנרגיה מתחדש.", false, "נפט גולמי הוא מקור מתכלה. כמותו בטבע סופית.", 18),
+  TF("גז טבעי הוא מקור אנרגיה מתכלה.", true, "גז טבעי הוא מקור מתכלה, כמו נפט ופחם.", 18),
+  TF("רוח היא מקור אנרגיה מתכלה.", false, "רוח היא מקור מתחדש.", 20),
+  TF("לפי הספר, אורניום, שהוא חומר רדיואקטיבי, נחשב למקור מתחדש.", true, "כך כתוב בספר: שמש, רוח ואורניום (חומר רדיואקטיבי) הם דוגמאות למקורות מתחדשים.", 18),
+],
+43: [
+  SORT("האם השימוש במקור מזהם את הסביבה?", [["c", "🌱 לא מזהם"], ["p", "🏭 מזהם"]], [["שמש", "c"], ["רוח", "c"], ["מים זורמים", "c"], ["פחם אבן", "p"], ["נפט גולמי", "p"], ["גז טבעי", "p"]], "שמש, רוח ומים זורמים אינם מזהמים. השימוש בחומרי דלק מלווה בפליטה של חומרים מזהמים.", 21),
+  M("למה הרוח אינה מנוצלת בהיקף רחב?", "כי עוצמות הרוח משתנות ואינן קבועות", ["כי היא מזהמת מאוד", "כי היא אוזלת מהר", "כי אין בה אנרגיה"], "הרוח אינה מזהמת, אבל עוצמותיה משתנות ואינן קבועות.", 20, "🌬️"),
+  M("למה מים זורמים אינם מנוצלים בהיקף רחב?", "כי לא בכל מקום יש נהרות ומפלים חזקים", ["כי הם מזהמים מאוד", "כי הם אוזלים מהר", "כי אין בהם אנרגיה"], "השימוש בהם אינו מזהם, אבל לא בכל מקום יש זרם מים חזק.", 21, "🏞️"),
+  M("מה היתרון של השמש על פני חומרי דלק?", "היא אינה מזהמת את הסביבה", ["היא זמינה גם בלילה", "כבר יש מספיק אמצעים לניצולה", "יש בה פחות אנרגיה"], "השימוש באנרגיית השמש אינו מזהם את הסביבה, ולכן היא מקור ידידותי.", 20, "☀️"),
+  M("למה עדיין משתמשים מעט בשמש?", "כי יש מעט אמצעים טכנולוגיים לניצולה", ["כי היא תיגמר בקרוב", "כי היא מזהמת", "כי אין בה אנרגיה"], "למרות זמינותה, יש עדיין מעט אמצעים טכנולוגיים לניצולה.", 20, "☀️"),
+  M("במה משתמשים היום בעיקר בחומרי דלק?", "בתחבורה ובהפקת חשמל", ["רק בבישול", "רק בחימום בריכות", "בייבוש כביסה"], "משתמשים בחומרי דלק בעיקר לתחבורה ולהפקת חשמל.", 21, "🚌"),
+  M("מהו קיטור?", "אדי מים חמים מאוד שפורצים מבעד לפתח צר", ["סוג של פחם", "רוח חזקה בים", "אנרגיה שמגיעה מהשמש"], "קיטור הוא אדי מים חמים מאוד הפורצים מבעד לפתח צר.", 21, "♨️"),
+  M("מה הפעיל קיטור שהופק מפחם ונפט?", "את מכונת הקיטור", ["את טחנת הרוח", "את סירת המפרש", "את הפנס"], "החל מהמאה ה־18 השתמשו בחומרי דלק להפקת קיטור שהפעיל את מכונת הקיטור.", 21, "🚂"),
+  M("מה מהבאים הוא שימוש באנרגיית השמש?", "תאים סולריים להפקת חשמל", ["חרישת שדה", "נסיעה במכונית דלק", "שיט בסירת מפרש"], "את השמש מנצלים בדודי שמש, בתאים סולריים ובייבוש כביסה.", 20, "🔆"),
+  M("באיזה מקור אנרגיה משתמשים היום בהיקף רחב מאוד לעומת העבר?", "חומרי דלק", ["שרירי בעלי חיים", "טחנות רוח", "טחנות מים"], "מאז המאה ה־18 משתמשים בכמויות הולכות וגדלות של חומרי דלק.", 21, "📈"),
+  M("מה קורה לאנרגיה הכימית בחומרי דלק כשהם בוערים?", "היא הופכת לאנרגיית חום ולאנרגיית אור", ["היא עוברת לרוח", "היא הופכת לאנרגיית קול בלבד", "היא נשארת בדלק"], "האנרגיה הכימית בחומרי הדלק הופכת בתהליך הבערה לאנרגיית חום ולאנרגיית אור.", 21, "🔥"),
+  TF("השימוש ברוח כמקור אנרגיה אינו מזהם את הסביבה.", true, "השימוש ברוח אינו מזהם את הסביבה.", 20),
+  TF("השימוש הנרחב בחומרי דלק גורם לזיהום הסביבה.", true, "השימוש מלווה בפליטה של חומרים מזהמים שגורמים לזיהום הסביבה.", 21),
+  TF("אפשר להשתמש בשמש בלי לזהם את הסביבה.", true, "השימוש באנרגיית השמש אינו מזהם את הסביבה.", 20),
+],
+/* ---------- עולם 5: מערכות טכנולוגיות ---------- */
+51: [
+  M("מי יצר את המערכות הטכנולוגיות, ולמה?", "בני אדם, כדי לתת מענה לצרכים של אנשים", ["הטבע, בלי סיבה", "בעלי חיים, כדי להתחבא", "הן נוצרו מעצמן"], "מערכות טכנולוגיות נוצרו בידי בני האדם כדי לתת מענה לצרכים אנושיים.", 28, "👷"),
+  M("מה מהבאים הוא מערכת טכנולוגית?", "מעלית", ["עץ זית", "חתול", "ענן"], "מכונית, אופניים, מעלית, עגורן, מחשב ומעבד מזון הם דוגמאות למערכות טכנולוגיות.", 28, "🛗"),
+  SORT("מערכת טכנולוגית או לא?", [["y", "⚙️ מערכת טכנולוגית"], ["n", "🌳 לא"]], [["מכונית", "y"], ["עגורן", "y"], ["מחשב", "y"], ["אופניים", "y"], ["גלגל ענק", "y"], ["עט כדורי", "y"], ["עץ", "n"], ["ציפור", "n"], ["ענן", "n"], ["אבן", "n"]], "מערכות טכנולוגיות נוצרו בידי בני אדם. עץ וציפור הם חלק מהטבע.", 28),
+  M("איך קוראים לחלקים שמהם בנויה מערכת טכנולוגית?", "רכיבים", ["פלטים", "נימוקים", "קלטים"], "המערכת בנויה מרכיבים, ולכל רכיב יש תפקיד.", 29, "🔩"),
+  M("מה עלול לקרות אם רכיב אחד במערכת מתקלקל?", "המערכת עלולה לא לפעול כראוי", ["המערכת תפעל טוב יותר", "לא ישתנה דבר", "המערכת תתחיל לגדול"], "לכל רכיב יש תפקיד, ולכן תקלה ברכיב פוגעת בפעולת המערכת.", 29, "🔧"),
+  M("מה עוזר למערכת לפעול נכון, מלבד הרכיבים עצמם?", "סדר הרכיבים במערכת", ["הצבע של הרכיבים", "הגודל של השולחן", "השם של המערכת"], "סדר הרכיבים תורם לפעולת המערכת.", 29, "🧩"),
+  TF("עט כדורי הוא מערכת טכנולוגית.", true, "לעט יש מטרה, רכיבים שונים ופעולה, ולכן הוא מערכת טכנולוגית.", 29),
+  TF("מערכות טכנולוגיות נוצרות בטבע ללא התערבות האדם.", false, "מערכות טכנולוגיות נוצרו בידי בני האדם.", 28),
+  TF("לכל מערכת טכנולוגית יש מטרה שנועדה לתת מענה לצורך של בני אדם.", true, "לכל מערכת יש מטרה, והיא נועדה לתת מענה לצרכים של בני אדם.", 42),
+  M("מהי מטרת הפנס?", "להאיר מקומות שאין בהם חשמל", ["לחמם מים", "לכבס בגדים", "לחשב תרגילים"], "מטרת הפנס היא להאיר מקומות שאין בהם חשמל.", 30, "🔦"),
+  M("מהי מטרת המערכת \"מערבל בטון\"?", "הכנת בטון", ["הובלת נוסעים", "שטיפת בגדים", "הפקת אור"], "מטרת מערבל הבטון היא הכנת בטון.", 38, "🚛"),
+  M("למה משמשת מערכת כמו גלגל ענק בלונה פארק?", "לתת מענה לצורך של אנשים בבילוי ובהנאה", ["לחרוש שדות", "להפיק דלק", "לכבס בגדים"], "גם מתקנים בלונה פארק הם מערכות טכנולוגיות שנותנות מענה לצורך של אנשים.", 28, "🎡"),
+],
+52: [
+  M("מהו קלט?", "כל מה שמוזן למערכת כדי שתפעל ותשיג את מטרתה", ["התוצר שהמערכת מפיקה", "הצבע של המערכת", "האדם שקנה אותה"], "קלט הוא כל מה שמוזן למערכת ודרוש כדי שהיא תפעל ותשיג את מטרתה.", 31, "⬇️"),
+  M("מהו תהליך?", "סדרת פעולות שמתבצעות באמצעות רכיבי המערכת", ["התוצר הסופי", "מה שמוזן למערכת", "השם של המערכת"], "תהליך הוא סדרת פעולות המתבצעות באמצעות רכיבי המערכת כדי להשיג את המטרה.", 31, "⚙️"),
+  M("מהו פלט?", "התוצרים הרצויים והלא רצויים שהמערכת מפיקה", ["מה שמכניסים למערכת", "הרכיבים של המערכת", "האנרגיה שנכנסת למערכת"], "פלט הוא התוצרים, הרצויים ולא הרצויים, שהמערכת מפיקה.", 31, "⬆️"),
+  SORT("בקומקום חשמלי: מה קלט ומה פלט?", [["i", "⬇️ קלט"], ["o", "⬆️ פלט"]], [["אנרגיה חשמלית", "i"], ["מים", "i"], ["מים רותחים", "o"], ["אדים", "o"]], "לקומקום מספקים חשמל ומים, ומקבלים מים רותחים ואדים.", 31),
+  SORT("במערבל בטון: מה קלט ומה פלט?", [["i", "⬇️ קלט"], ["o", "⬆️ פלט"]], [["חומרי דלק", "i"], ["מלט", "i"], ["חול", "i"], ["חצץ", "i"], ["מים", "i"], ["בטון נוזלי ליציקה", "o"], ["אוויר מזוהם", "o"]], "המערבל מקבל דלק, מלט, חצץ, חול ומים, ומפיק בטון.", 38),
+  SORT("פלט רצוי או פלט בלתי רצוי?", [["g", "👍 רצוי"], ["b", "👎 בלתי רצוי"]], [["בגדים נקיים", "g"], ["בטון ליציקה", "g"], ["מים רותחים", "g"], ["מזון מרוסק", "g"], ["אוויר מזוהם", "b"], ["מים מזוהמים", "b"]], "הפלט הרצוי הוא מטרת המערכת. פלט בלתי רצוי אינו תורם, למשל זיהום.", 39),
+  M("מהי המטרה של מערכת טכנולוגית?", "להשיג את הפלט הרצוי", ["להשיג פלט בלתי רצוי", "לצרוך כמה שיותר דלק", "לא לקבל קלט"], "השגת המטרה היא הפלט של המערכת הטכנולוגית.", 39, "🎯"),
+  M("מהו פלט בלתי רצוי?", "פלט שאינו תורם לפעולת המערכת", ["התוצר שבשבילו בנו את המערכת", "קלט של אנרגיה", "רכיב במערכת"], "פלט בלתי רצוי אינו תורם לפעולת המערכת ולרוב אנחנו לא מעוניינים בו.", 39, "👎"),
+  M("מה מהבאים הוא דוגמה לפלט בלתי רצוי?", "אוויר מזוהם", ["בגדים נקיים", "מים רותחים", "מזון מרוסק"], "אוויר ומים מזוהמים הם דוגמאות לפלט בלתי רצוי.", 39, "🌫️"),
+  M("בפנס: מהו הפלט הרצוי?", "אור", ["אנרגיה חשמלית", "הפקת אור", "סוללה"], "הקלט הוא אנרגיה חשמלית, התהליך הפקת אור, והפלט הוא אור.", 30, "🔦"),
+  M("במעבד מזון: מהי הפעולה?", "ריסוק", ["מזון מרוסק", "מזונות", "אנרגיה חשמלית"], "מזונות הם הקלט, ריסוק הוא הפעולה, ומזון מרוסק הוא הפלט.", 37, "🥣"),
+  TF("פלט של מערכת יכול להיות גם רצוי וגם בלתי רצוי.", true, "לפעמים נוסף על הפלט הרצוי מתקבל גם פלט בלתי רצוי.", 39),
+  TF("הקלט מגיע אחרי הפלט.", false, "קודם מספקים קלט, המערכת מבצעת תהליך, ורק אז מתקבל פלט.", 31),
+],
+53: [
+  SORT("איזה סוג קלט זה?", [["e", "⚡ אנרגיה"], ["i", "📲 מידע"], ["m", "🧱 חומרים"]], [["אנרגיה חשמלית", "e"], ["דלק במכונית", "e"], ["לחיצה על כפתור", "i"], ["הזנת תוכנית כביסה", "i"], ["חול ומלט", "m"], ["אבקת כביסה", "m"]], "אנרגיה מפעילה את המערכת, מידע אומר לה מה לעשות, וחומרים הם מה שהיא מעבדת.", 38),
+  SORT("האם המערכת דורשת קלט של חומרים?", [["y", "🧱 כן"], ["n", "🚫 לא"]], [["מעבד מזון", "y"], ["מכונת כביסה", "y"], ["מערבל בטון", "y"], ["מסחטת מיץ", "y"], ["מחשבון", "n"], ["שבשבת רוח", "n"], ["אופניים", "n"]], "מערכות שמעבדות חומרים זקוקות לקלט של חומרים. מערכות אחרות לא.", 38),
+  M("אילו שני סוגי קלט דרושים לכל מערכת טכנולוגית?", "אנרגיה ומידע", ["חומרים ומים", "מידע וחומרים", "אנרגיה ומים"], "לכל המערכות הטכנולוגיות דרושים אנרגיה ומידע להפעלה.", 37, "2️⃣"),
+  M("מהו קלט של מידע בכביסה במכונה?", "לחיצה על הכפתורים המתאימים", ["אבקת כביסה", "אנרגיה חשמלית", "בגדים נקיים"], "בלחיצה על הכפתורים המידע מוזן למכונת הכביסה.", 36, "📲"),
+  M("איזה סוג קלט נוסף דרוש למערכת שמטרתה לעבד מידע?", "נתונים", ["בטון", "רוח", "חול"], "מערכות שמעבדות מידע זקוקות גם לקלט של נתונים.", 36, "🔢"),
+  M("מהו הפלט של מחשבון כשמחשבים תרגיל?", "מידע מעובד", ["מלט", "מים חמים", "אור"], "פעולת המחשבון היא עיבוד מידע, והפלט הוא מידע מעובד.", 36, "🧮"),
+  M("במחשבון, מה הם המספרים של התרגיל שמקלידים?", "נתונים", ["אנרגיה", "חומרים", "פלט בלתי רצוי"], "את הנתונים מכניסים למחשבון כדי לקבל מידע מעובד.", 36, "🔢"),
+  M("מי מספק לאופניים את המידע לאן לנסוע?", "הרוכב", ["הצמיגים", "הכביש", "האוויר"], "הרוכב מספק מידע: לאן לנסוע, כמה מהר ומתי לעצור.", 34, "🚴"),
+  M("מה הקלט של אנרגיה במכונית?", "דלק", ["נתיב הנסיעה", "הגעה ליעד", "הכביש"], "הדלק הוא קלט האנרגיה של המכונית.", 33, "⛽"),
+  M("למה דרושה לעיבוד של חומרים גם אנרגיה?", "כי כל פעולה דורשת אנרגיה", ["כי חומרים הם אנרגיה", "כי כך המערכת נראית יפה יותר", "כי המערכת אוהבת אנרגיית חום"], "קלט של אנרגיה חיוני לפעולת המערכת. בלעדיו היא אינה פועלת.", 33, "⚡"),
+  M("אילו חומרים דרושים למכונת כביסה?", "אבקת כביסה ומים", ["מלט וחצץ", "רוח ואור", "דלק ופחם"], "למכונת הכביסה דרושים גם חומרים: אבקת כביסה ומים.", 38, "🧺"),
+  M("אילו חומרים דרושים למערבל בטון?", "מלט, חצץ, חול ומים", ["אבקת כביסה ומים", "דלק בלבד", "אנרגיית אור ואנרגיית חום"], "המערבל מערבב מלט, חצץ, חול ומים, ומתקבל בטון.", 38, "🚛"),
+  TF("קלט של אנרגיה חיוני לפעולת המערכת.", true, "בלעדיו המערכת אינה פועלת ולא משיגה את מטרתה.", 33),
+  TF("כל המערכות הטכנולוגיות זקוקות לקלט של חומרים.", false, "רק מערכות שמעבדות חומרים זקוקות לקלט של חומרים.", 38),
+  TF("גם אופניים צריכים קלט של מידע.", true, "הרוכב מספק לאופניים מידע: לאן לנסוע, מתי להתחיל ומתי לעצור.", 35),
+  TF("הגוף שלנו הוא מערכת ביולוגית שדורשת אנרגיה.", true, "גופנו הוא מערכת ביולוגית, ולפעולתו דרושה אנרגיה.", 32),
+],
+54: [
+  SYSTEM("בנו את תרשים המערכת של קומקום חשמלי", { em: "🫖", n: "קומקום חשמלי" }, [ELEC, "מים"], "חימום המים", "מים רותחים", ["ריסוק"], "חשמל ומים נכנסים, המים מתחממים, ומתקבלים מים רותחים.", 31),
+  SYSTEM("בנו את תרשים המערכת של מעבד מזון", { em: "🥣", n: "מעבד מזון" }, [ELEC, "מזון"], "ריסוק", "מזון מרוסק", ["חימום", "אור"], "מעבד המזון מקבל חשמל ומזון, מרסק, ומפיק מזון מרוסק.", 37),
+  SYSTEM("בנו את תרשים המערכת של פנס", { em: "🔦", n: "פנס" }, [ELEC], "הפקת אור", "אור", ["מים", "ריסוק"], "הפנס מקבל אנרגיה חשמלית, מפיק אור, והפלט הוא אור.", 30),
+  SYSTEM("בנו את תרשים המערכת של דוד שמש", { em: "🔆", n: "דוד שמש" }, ["קרינת השמש", "מים"], "חימום מים", "מים חמים", ["דלק", "ריסוק"], "קרינת השמש היא קלט האנרגיה, וגם המים הם קלט. הפלט הוא מים חמים.", 33),
+  SYSTEM("בנו את תרשים המערכת של מכונת כביסה", { em: "🧺", n: "מכונת כביסה" }, ["אנרגיה", "מידע להפעלה", "אבקת כביסה ומים"], "כביסה", "בגדים נקיים", ["אוויר מזוהם"], "המכונה צריכה אנרגיה, מידע וחומרים, כדי לכבס ולקבל בגדים נקיים.", 38),
+  SYSTEM("בנו את תרשים המערכת של מחשבון", { em: "🧮", n: "מחשבון" }, ["אנרגיה", "מידע להפעלה", "נתונים"], "עיבוד מידע", "מידע מעובד", ["חול ומלט"], "במחשבון נכנסים אנרגיה, מידע להפעלה ונתונים. הפלט הוא מידע מעובד.", 36),
+  SYSTEM("בנו את תרשים המערכת של מערבל בטון", { em: "🚛", n: "מערבל בטון" }, ["חומרי דלק", "איך מכינים בטון", "מלט, חצץ, חול ומים"], "ערבוב החומרים", "בטון ליציקה", ["אור"], "דלק הוא האנרגיה, ההוראות הן המידע, והמלט, החצץ, החול והמים הם החומרים.", 38),
+  SYSTEM("בנו את תרשים המערכת של מיקרוגל", { em: "🍲", n: "מיקרוגל" }, [ELEC, "לחיצה על כפתורים", "ארוחה קרה"], "חימום", "ארוחה חמה", ["ריסוק"], "המיקרוגל צריך אנרגיה, מידע וחומר, כדי לחמם את הארוחה.", 35),
+  SYSTEM("בנו את תרשים המערכת של אופניים", { em: "🚲", n: "אופניים" }, ["אנרגיה מהשרירים", "מידע מהרוכב"], "תנועה", "הגעה למקום הרצוי", ["חימום", "אבקת כביסה"], "הרוכב מספק גם אנרגיה מהשרירים וגם מידע, והאופניים נעים למקום הרצוי.", 35),
+],
+};
+
+/* ===================== שאלות נוספות. p: 0 = העשרה, לא מהספר ===================== */
+POOL[11].push(
+  TF("גם כשאנחנו ישנים, הגוף שלנו משתמש באנרגיה.", true, "גם בשינה הלב פועם והריאות נושמות, וזה דורש אנרגיה.", 0),
+  M("מה גורם לרוב גלי הים?", "הרוח", ["דגים גדולים", "אור הירח", "אוניות"], "רוב הגלים נוצרים מהרוח שנושבת על פני הים.", 0, "🌊"),
+  M("איזו תופעה קשורה לאנרגיית החום שבמעמקי כדור הארץ?", "התפרצות הר געש", ["טיסת מטוס", "גלגל ענק", "שידור רדיו"], "מעמקי הקרקע הם מקור טבעי לאנרגיית חום, והוא קשור להתפרצויות של הרי געש.", 13, "🌋"),
+  SORT("טבעי, או מעשה ידי אדם?", [["n", "🌿 טבעי"], ["a", "🏗️ מעשה ידי אדם"]], [["מפל מים", "n"], ["סופת חול", "n"], ["גדילה של עץ", "n"], ["מעלית עולה", "a"], ["רכבת נוסעת", "a"], ["מכונת כביסה פועלת", "a"]], "מפל, סופה וגדילת עץ קורים בטבע. מעלית, רכבת ומכונת כביסה נוצרו בידי בני אדם.", 0),
+  TF("כשרואים ציפור עפה, אפשר להסיק שיש אנרגיה.", true, "תנועה של יצור חי היא תופעה, ומהתופעות אנחנו מסיקים שיש אנרגיה.", 9),
+  TF("רעידת אדמה היא תופעה בסביבה המלאכותית.", false, "רעידת אדמה מתרחשת בסביבה הטבעית.", 9)
+);
+POOL[12].push(
+  M("למה אנחנו רעבים אחרי ריצה ארוכה?", "הגוף השתמש באנרגיה וצריך עוד מהמזון", ["כי הנעליים התבלו", "כי נגמר לנו האוויר", "כי בריצה לא משתמשים באנרגיה"], "הריצה משתמשת באנרגיה, והמזון מספק לגוף אנרגיה חדשה.", 0, "🏃"),
+  M("מאיפה האדם מקבל את האנרגיה לגופו?", "מהמזון שהוא אוכל", ["מהבגדים", "מהנעליים", "מהשקע בקיר"], "האנרגיה הכימית שבמזון מאפשרת לגוף לפעול.", 13, "🍎"),
+  TF("גם צמח שגדל זקוק לאנרגיה.", true, "צמחים הם יצורים חיים, וגם הם זקוקים לאנרגיה.", 9),
+  M("מכשיר בבית חולים שעוזר לחולים הוא דוגמה לשימוש באנרגיה בתחום...", "הרפואה", ["החקלאות", "התחבורה", "הספורט"], "השימוש באנרגיה תורם לאיכות החיים גם ברפואה.", 10, "🏥")
+);
+POOL[13].push(
+  M("הטענה: \"כדאי ללכת לבית הספר ברגל\". איזה משפט הוא נימוק מתאים?", "הליכה חוסכת דלק ולא מזהמת את האוויר", ["יש ילדים שגרים רחוק", "לכל ילד יש נעליים", "בית הספר פותח בבוקר"], "נימוק טוב מסביר למה כדאי לעשות את מה שהטענה אומרת.", 0, "🚶"),
+  TF("אפשר לתמוך בטענה אחת בכמה נימוקים.", true, "בספר מבקשים להביא לפחות שני נימוקים התומכים בטענה.", 11)
+);
+POOL[23].push(
+  SORT("מיינו: אנרגיית אור או אנרגיית קול?", [["l", "💡 אור"], ["s", "🔊 קול"]], [["נורה דולקת", "l"], ["פנס דולק", "l"], ["קרני השמש", "l"], ["צפירה של מכונית", "s"], ["שיר ברדיו", "s"], ["מחיאות כפיים", "s"]], "מה שמאיר נושא אנרגיית אור. מה ששומעים נושא אנרגיית קול.", 0),
+  M("איזו אנרגיה יש בכדור שמתגלגל?", MOVE, [SOUND, LIGHT, ELEC], "כדור שמתגלגל נמצא בתנועה, ולכן יש בו אנרגיית תנועה.", 0, "⚽"),
+  M("בשביל מה אופים עוגה בתנור?", "כדי שאנרגיית החום תאפה אותה", ["כדי שתזוז", "כדי שתשמיע קול", "כדי שתאיר את החדר"], "התנור מספק אנרגיית חום שמחממת את הבצק ואופה אותו.", 0, "🍰")
+);
+POOL[31].push(
+  SORT("עברה או הפכה?", [["t", "⬅️ עברה"], ["c", "🔄 הפכה"]], [["מרק חם מחמם את הצלחת", "t"], ["כדור באולינג מפיל פינים", "t"], ["רוח מעיפה עלים", "t"], ["טוסטר קולה לחם", "c"], ["רמקול משמיע שיר", "c"], ["תא סולרי מפיק חשמל", "c"]], "כשהסוג נשאר אותו דבר האנרגיה עברה. כשהסוג משתנה האנרגיה הפכה.", 0),
+  M("סיר חם עומד על השיש והשיש מתחמם. מה קרה?", "מעבר: אנרגיית חום עברה מהסיר לשיש", ["המרה: אנרגיית חום הפכה לאור", "המרה: אנרגיית חום הפכה לקול", "לא קרה כלום"], "אנרגיית החום עברה מגוף לגוף, והסוג לא השתנה.", 0, "🍲"),
+  M("רמקול משמיע מוזיקה. מה קורה בו?", "אנרגיה חשמלית הופכת לאנרגיית קול", ["אנרגיית קול הופכת לחשמל", "אנרגיית אור עוברת לרמקול", "אנרגיה כימית עוברת לרמקול"], "ברמקול הסוג משתנה מחשמל לקול, ולכן זו המרה.", 0, "🔊"),
+  TF("כדור שפוגע בכדור אחר ומזיז אותו מעביר אליו אנרגיית תנועה.", true, "אנרגיית התנועה עברה מכדור לכדור, והסוג לא השתנה.", 0)
+);
+POOL[32].push(
+  ENERGY("מה קורה לאנרגיה בתא סולרי?", { em: "🔆", n: "תא סולרי" }, [LIGHT], "הפכה", [ELEC], [SOUND, MOVE], "תא סולרי הופך אנרגיית אור לאנרגיה חשמלית.", 0),
+  ENERGY("מה קורה לאנרגיה בטורבינת רוח?", { em: "🌬️", n: "טורבינת רוח" }, [MOVE], "הפכה", [ELEC], [CHEM, SOUND], "הטורבינה הופכת את אנרגיית התנועה של הרוח לאנרגיה חשמלית.", 0),
+  ENERGY("מה קורה לאנרגיה בתחנת כוח על נהר?", { em: "🏞️", n: "תחנת כוח על נהר" }, [MOVE], "הפכה", [ELEC], [LIGHT, CHEM], "אנרגיית התנועה של המים הופכת לאנרגיה חשמלית.", 21),
+  ENERGY("מה קורה לאנרגיה בטוסטר?", { em: "🍞", n: "טוסטר" }, [ELEC], "הפכה", [HEAT], [SOUND, MOVE], "הטוסטר הופך אנרגיה חשמלית לאנרגיית חום שקולה את הלחם.", 0),
+  ENERGY("מה קורה לאנרגיה ברמקול שמנגן?", { em: "📻", n: "רמקול" }, [ELEC], "הפכה", [SOUND], [LIGHT, CHEM], "הרמקול הופך אנרגיה חשמלית לאנרגיית קול.", 0),
+  ENERGY("מה קורה לאנרגיה במיתר גיטרה?", { em: "🎸", n: "מיתר גיטרה" }, [MOVE], "הפכה", [SOUND], [HEAT, ELEC], "תנועת המיתר הופכת לאנרגיית קול שאנחנו שומעים.", 0),
+  ENERGY("מה קורה לאנרגיה בבלמים של אופניים?", { em: "🛑", n: "בלמי אופניים" }, [MOVE], "הפכה", [HEAT], [CHEM, LIGHT], "בבלימה אנרגיית התנועה הופכת לאנרגיית חום, ולכן הבלמים מתחממים.", 0)
+);
+POOL[33].push(
+  M("משפשפים ידיים בחורף והן מתחממות. מה קרה?", "אנרגיית תנועה הפכה לאנרגיית חום", ["אנרגיית קול עברה לידיים", "אנרגיה חשמלית הפכה לאור", "לא קרה כלום"], "החיכוך הופך את אנרגיית התנועה לאנרגיית חום.", 0, "🙌"),
+  M("קרח נמס בכוס מים. מה קרה?", "אנרגיית חום עברה מהמים לקרח", ["אנרגיית אור עברה לקרח", "אנרגיית קול הפכה לקרח", "הקרח הפך לחשמל"], "אנרגיית החום עוברת מהמים החמים יותר אל הקרח, והוא נמס.", 0, "🧊"),
+  TF("בטלוויזיה אנרגיה חשמלית הופכת גם לאור וגם לקול.", true, "מסך מאיר ורמקול משמיע: שתי המרות באותו מכשיר.", 0)
+);
+POOL[41].push(
+  M("איזה מקור אנרגיה מניע סירת מפרש?", "רוח", ["פחם", "שרירי בעלי חיים", "גז טבעי"], "סירת מפרש מנצלת את אנרגיית התנועה של הרוח.", 25, "⛵"),
+  M("באיזה מקור משתמשים כדי לחמם מים בדוד שמש?", "שמש", ["נפט", "רוח", "מים זורמים"], "דוד השמש מנצל את אנרגיית השמש לחימום מים.", 20, "🔆"),
+  M("באיזה מקור משתמש מי שמטפס על הר?", "שרירים", ["גז טבעי", "רוח", "מים זורמים"], "הטיפוס נעשה בעזרת האנרגיה הכימית שבשרירים.", 25, "🧗"),
+  M("באיזה מקורות משתמשים כשמייבשים כביסה על חבל?", "שמש ורוח", ["פחם ונפט", "מים זורמים", "שרירים בלבד"], "השמש והרוח מייבשות את הכביסה בלי לזהם.", 25, "👕"),
+  M("טחנות קמח ישנות עמדו על נהרות. באיזה מקור הן השתמשו?", "מים זורמים", ["פחם", "גז טבעי", "שמש"], "בעבר נהגו להשתמש באנרגיית התנועה של המים להפעלת טחנות קמח.", 21, "🌾"),
+  TF("טורבינות שמניעה הרוח יכולות להפיק חשמל.", true, "הרוח מניעה טורבינות, למשל להפקת חשמל.", 20)
+);
+POOL[42].push(
+  TF("פחם אבן הוא מקור אנרגיה מתחדש.", false, "פחם אבן הוא מקור מתכלה. כמותו בטבע סופית.", 18),
+  M("באיזו קבוצה כל המקורות מתחדשים?", "שמש, רוח, מים זורמים", ["פחם, נפט, גז טבעי", "שמש, פחם, רוח", "נפט, רוח, מים זורמים"], "שמש, רוח ומים זורמים אינם אוזלים בעקבות השימוש בהם.", 18, "♻️"),
+  M("מאיפה הגיעה האנרגיה שבנפט?", "משאריות יצורים חיים ששקעו לפני שנים רבות", ["מהרוח שנושבת היום", "ממפעלים שמייצרים אותו", "מהירח"], "נפט נוצר משאריות גוף של בעלי חיים ששקעו לקרקעית הים לפני שנים רבות.", 6, "🛢️"),
+  TF("ככל שמשתמשים יותר באנרגיית השמש, היא נגמרת מהר יותר.", false, "השמש היא מקור מתחדש, והשימוש בה לא מכלה אותה.", 18),
+  M("מה ההבדל המרכזי בין מקור מתחדש למקור מתכלה?", "מתחדש לא אוזל בשימוש, ומתכלה אוזל", ["מתחדש תמיד מזהם", "מתכלה נמצא רק בשמש", "אין ביניהם הבדל"], "זה ההבדל שעליו מבוסס המיון של מקורות האנרגיה.", 18, "⚖️")
+);
+POOL[43].push(
+  M("למה כדאי לחסוך בחומרי דלק?", "כי הכמות שלהם סופית והם מזהמים", ["כי הם לא נותנים אנרגיה", "כי הם גדלים מהר מדי", "כי אי אפשר לשרוף אותם"], "חומרי דלק הם מקור מתכלה, והשימוש בהם מזהם את הסביבה.", 21, "💡"),
+  M("באזור יש רוח חזקה וקבועה כל השנה. באיזה מקור כדאי לנסות להשתמש שם?", "רוח", ["מים זורמים", "פחם", "נפט"], "החיסרון של הרוח הוא שהיא משתנה. אם היא קבועה, זה מקום טוב לטורבינות.", 0, "🌬️"),
+  M("מה מפיקים בעזרת תאים סולריים?", "חשמל", ["פחם", "נפט", "גז טבעי"], "תאים סולריים מנצלים את אנרגיית השמש להפקת חשמל.", 20, "🔋"),
+  M("מתי אפשר לנצל ישירות את אנרגיית האור של השמש?", "בשעות היום", ["רק בלילה", "רק בזמן גשם", "אי אפשר לנצל אותה"], "השמש זמינה בשעות היום.", 20, "🌅")
+);
+POOL[52].push(...[
+  M("מהו הפלט הרצוי של קומקום חשמלי?", "מים רותחים", ["מים קרים", "אנרגיה חשמלית", "הכבל של הקומקום"], "מטרת הקומקום היא לקבל מים רותחים.", 31, "🫖"),
+  M("מהו קלט האנרגיה של מעבד מזון?", ELEC, [CHEM, SOUND, LIGHT], "מעבד מזון פועל בעזרת אנרגיה חשמלית שמפעילה את המנוע.", 33, "🥣"),
+  M("מהו הפלט הרצוי של מכונית?", "הגעה ליעד", ["דלק", "גזים מהמנוע", "הכביש"], "מטרת המכונית היא להגיע ליעד המבוקש, וזה גם הפלט שלה.", 33, "🚗"),
+  M("איזה פלט של מכונית אינו רצוי?", "גזים מזהמים", ["הגעה ליעד", "דלק", "ההגה"], "הגזים המזהמים אינם תורמים לנסיעה, ולרוב אנחנו לא מעוניינים בהם.", 0, "💨"),
+  M("מהו הפלט הרצוי של מייבש כביסה?", "בגדים יבשים", ["בגדים רטובים", "אנרגיה חשמלית", "רעש"], "בשביל זה בנו את המייבש: לקבל בגדים יבשים.", 0, "👕"),
+  M("מה הסדר הנכון בפעולת מערכת טכנולוגית?", "קלט, תהליך, פלט", ["פלט, תהליך, קלט", "תהליך, פלט, קלט", "קלט, פלט, תהליך"], "קודם מספקים קלט, אז מתרחש תהליך, ובסוף מתקבל פלט.", 31, "🔢"),
+  TF("רעש של מכונה יכול להיות פלט בלתי רצוי.", true, "רעש אינו תורם למטרת המערכת, ולרוב לא רוצים בו.", 0),
+  SORT("במיקרוגל: מה קלט ומה פלט?", [["i", "⬇️ קלט"], ["o", "⬆️ פלט"]], [["אנרגיה חשמלית", "i"], ["ארוחה קרה", "i"], ["לחיצה על כפתור", "i"], ["ארוחה חמה", "o"]], "המיקרוגל מקבל אנרגיה, מידע וחומר, ומפיק ארוחה חמה.", 35),
+  SORT("במכונית: מה קלט ומה פלט?", [["i", "⬇️ קלט"], ["o", "⬆️ פלט"]], [["דלק", "i"], ["מידע מהנהג", "i"], ["הגעה ליעד", "o"], ["גזים מזהמים", "o"]], "דלק ומידע נכנסים. הגעה ליעד היא הפלט הרצוי, וגזים הם פלט בלתי רצוי.", 0)
+]);
+POOL[53].push(...[
+  M("איזה מידע מכניסים למיקרוגל?", "כמה זמן לחמם", ["את הצלחת", "את החשמל", "את האוכל"], "זמן החימום הוא המידע שמוזן בלחיצה על הכפתורים.", 35, "⏱️")
+]);
+POOL[54].push(...[
+  SYSTEM("בנו את תרשים המערכת של טוסטר", { em: "🍞", n: "טוסטר" }, [ELEC, "לחם"], "קלייה", "לחם קלוי", ["אור", "מים"], "הטוסטר מקבל חשמל ולחם, קולה, ומפיק לחם קלוי.", 31),
+  SYSTEM("בנו את תרשים המערכת של מסחטת מיץ", { em: "🍊", n: "מסחטת מיץ" }, [ELEC, "תפוזים"], "סחיטה", "מיץ תפוזים", ["חימום", "חול"], "המסחטה מקבלת חשמל ופירות, סוחטת, ומפיקה מיץ.", 37),
+  SYSTEM("בנו את תרשים המערכת של מדפסת", { em: "🖨️", n: "מדפסת" }, [ELEC, "קובץ להדפסה", "נייר ודיו"], "הדפסה", "דף מודפס", ["חימום"], "המדפסת צריכה אנרגיה, מידע וחומרים, ומפיקה דף מודפס.", 0),
+  SYSTEM("בנו את תרשים המערכת של תנור אפייה", { em: "🍰", n: "תנור אפייה" }, [ELEC, "בצק"], "אפייה", "עוגה", ["ריסוק", "אבקת כביסה"], "התנור מקבל חשמל ובצק, אופה, ומפיק עוגה.", 37),
+  SYSTEM("בנו את תרשים המערכת של מדיח כלים", { em: "🍽️", n: "מדיח כלים" }, [ELEC, "לחיצה על כפתור", "סבון ומים"], "שטיפה", "כלים נקיים", ["אור"], "המדיח צריך אנרגיה, מידע וחומרים, ומפיק כלים נקיים.", 40),
+  SYSTEM("בנו את תרשים המערכת של מעלית", { em: "🛗", n: "מעלית" }, [ELEC, "לחיצה על מספר הקומה"], "תנועה בין הקומות", "הגעה לקומה הרצויה", ["מים", "ריסוק"], "המעלית צריכה אנרגיה ומידע כדי להגיע לקומה הרצויה.", 28)
+]);
+
+/* ===================== רשימת המשחקים ===================== */
+/* המזהה תלוי במיקום, והוא נשמר אצל השחקנים: שאלות חדשות מוסיפים רק בסוף הקבוצה */
+Object.keys(POOL).forEach(g => POOL[g].forEach((q, i) => { q.id = g + "-" + i; q.subs = subjectsOf(q); }));
+
+const TOPICS = [
+  { id: 1, n: "מהי אנרגיה", em: "⚡", games: [11, 12, 13] },
+  { id: 2, n: "סוגי אנרגיה", em: "🌈", games: [21, 22, 23] },
+  { id: 3, n: "מעבר והמרה", em: "🔄", games: [31, 32, 33] },
+  { id: 4, n: "מקורות אנרגיה", em: "☀️", games: [41, 42, 43] },
+  { id: 5, n: "מערכות טכנולוגיות", em: "🎡", games: [51, 52, 53, 54] }
+];
+const GAME_NAMES = {
+  11: "מזהים אנרגיה", 12: "אנרגיה לחיים", 13: "טענה ונימוקים",
+  21: "מכירים את הסוגים", 22: "איזו אנרגיה יש כאן?", 23: "ממיינים אנרגיות",
+  31: "מעבר או המרה?", 32: "בונים תרשים", 33: "מה הפך למה?",
+  41: "מקורות וסוגים", 42: "מתחדש או מתכלה", 43: "יתרונות וחסרונות",
+  51: "מהי מערכת", 52: "קלט, תהליך, פלט", 53: "סוגי הקלט", 54: "בונים תרשים מערכת"
+};
+const GAMES = {};
+Object.keys(POOL).forEach(g => { GAMES[g] = { n: GAME_NAMES[g], gen: (seen, weak, stage) => prepare(pickQuestion(POOL[g], seen || [], weak || [], stage || {})) }; });
+
+/* ===================== דפי הסבר ===================== */
+let lsd = 0;
+const lcard = (em, title, body) => '<div class="lsec" style="animation-delay:' + ((lsd++ % 6) * .08) + 's"><h2><span class="em">' + em + '</span>' + title + '</h2>' + body + '</div>';
+const lex = (em, body, cls) => '<div class="ex ' + (cls || '') + '"><span class="em">' + em + '</span><span>' + body + '</span></div>';
+const LEARN = {
+  1: () => [
+    lcard("🔍", "איך יודעים שיש אנרגיה?",
+      '<p>אי אפשר לראות אנרגיה או להריח אותה. אנחנו מסיקים שהיא קיימת <b>מהתופעות</b> שמתרחשות בעזרתה.</p>' +
+      lex("🌿", '<b>בסביבה הטבעית:</b> רוח, גלי ים, הר געש, גדילה של צמח, ברק ורעם.') +
+      lex("🏗️", '<b>בסביבה המלאכותית:</b> קומקום, חללית, גלגל ענק, טלוויזיה, אופניים.')),
+    lcard("🐬", "אנרגיה ליצורים חיים",
+      '<p>כל היצורים החיים זקוקים לאנרגיה. בלעדיה הם לא יכולים להתקיים.</p>' +
+      lex("🏃", '<b>פעולות:</b> תנועה, השגת מזון ומים, העברת מידע, הגנה.') +
+      lex("🫁", '<b>תהליכי חיים:</b> נשימה, הזנה, הובלת חומרים בגוף, הפרשה, התרבות.')),
+    lcard("🚦", "אנרגיה ואיכות חיים",
+      '<p>אנחנו משתמשים באנרגיה ברפואה, בתחבורה, בחקלאות, בתקשורת ובתעשייה. מכשירים ומכונות נועדו לספק את צורכי האדם ולשפר את איכות חייו.</p>'),
+    lcard("🗣️", "טיעון = טענה + נימוקים",
+      lex("📣", '<b>טענה:</b> האמירה שצריך להוכיח.<br>"בלי אנרגיה אי אפשר!"') +
+      lex("💡", '<b>נימוקים:</b> ההסברים שמוכיחים אותה.<br>"ללא אנרגיה יצורים חיים לא יכולים להתקיים."', "good"))
+  ],
+  2: () => [
+    lcard("🌈", "ששת סוגי האנרגיה",
+      lex("🔌", '<b>אנרגיה חשמלית:</b> מסופקת על ידי הזרם החשמלי ומפעילה מכשירי חשמל.') +
+      lex("🔥", '<b>אנרגיית חום:</b> גורמת לגופים להעלות טמפרטורה ולהתחמם.') +
+      lex("💡", '<b>אנרגיית אור:</b> יש אותה בכל סוגי האור. צמחים ירוקים מנצלים אותה לייצור מזון.') +
+      lex("🧪", '<b>אנרגיה כימית:</b> נמצאת בחומרים, בגוף של יצורים חיים ובחומרי דלק.') +
+      lex("🏃", '<b>אנרגיית תנועה:</b> בגופים בתנועה, כמו מכונית, מים זורמים ורוח.') +
+      lex("🔊", '<b>אנרגיית קול:</b> בקולות, כמו פעמון, טלוויזיה ורעם.')),
+    lcard("☀️", "השמש",
+      '<p>השמש היא המקור הטבעי הגדול ביותר של <b>אנרגיית חום</b> וגם של <b>אור</b>.</p>' +
+      lex("🌋", 'מקור טבעי נוסף של אנרגיית חום נמצא במעמקי הקרקע: הרי געש ונביעות מים חמים.'))
+  ],
+  3: () => [
+    lcard("⬅️", "מעבר אנרגיה",
+      '<p>האנרגיה עוברת מגוף לגוף. <b>הסוג לא משתנה.</b></p>' +
+      lex("☕", 'אנרגיית חום עוברת מכוס מים חמה אל השולחן.') +
+      lex("🎐", 'אנרגיית התנועה של הרוח עוברת לשבשבת.')),
+    lcard("🔄", "המרת אנרגיה",
+      '<p>האנרגיה הופכת מסוג אחד לסוג אחר. <b>הסוג משתנה.</b></p>' +
+      lex("🔦", 'בפנס: אנרגיה חשמלית הופכת לאנרגיית אור ולאנרגיית חום.') +
+      lex("🕯️", 'בנר: אנרגיה כימית הופכת לאנרגיית חום ולאנרגיית אור.') +
+      lex("🚴", 'ברכיבה: אנרגיה כימית בשרירים הופכת לתנועה של הגלגלים.')),
+    lcard("🧠", "איך מבדילים?",
+      lex("❓", 'שואלים: האם הסוג <b>השתנה</b>?<br>לא: "עברה". כן: "הפכה".', "good"))
+  ],
+  4: () => [
+    lcard("🌍", "מקורות אנרגיה",
+      '<p>משאבי טבע שבני האדם למדו להפיק מהם אנרגיה.</p>' +
+      lex("☀️", '<b>שמש:</b> אנרגיית חום ואנרגיית אור') +
+      lex("🌬️", '<b>רוח:</b> תנועה') +
+      lex("🏞️", '<b>מים זורמים:</b> תנועה') +
+      lex("💪", '<b>שרירים:</b> אנרגיה כימית') +
+      lex("⛽", '<b>חומרי דלק (פחם, נפט, גז):</b> אנרגיה כימית')),
+    lcard("♻️", "מתחדש או מתכלה",
+      lex("♻️", '<b>מתחדשים:</b> אפשר להשתמש בהם ללא הגבלה: שמש, רוח, מים זורמים, שרירים. לפי הספר גם אורניום, שהוא חומר רדיואקטיבי.', "good") +
+      lex("⛽", '<b>מתכלים:</b> הכמות שלהם בטבע סופית: נפט גולמי, פחם אבן, גז טבעי.')),
+    lcard("⚖️", "יתרונות וחסרונות",
+      lex("☀️", '<b>שמש:</b> לא מזהמת, אך יש מעט אמצעים טכנולוגיים לניצולה.') +
+      lex("🌬️", '<b>רוח:</b> לא מזהמת, אך העוצמה שלה משתנה.') +
+      lex("🏞️", '<b>מים זורמים:</b> לא מזהמים, אך לא בכל מקום יש זרם חזק.') +
+      lex("⛽", '<b>חומרי דלק:</b> בשימוש רחב, אך הם מתכלים ומזהמים.'))
+  ],
+  5: () => [
+    lcard("⚙️", "מהי מערכת טכנולוגית?",
+      '<p>מערכת שנוצרה בידי בני אדם כדי לתת מענה לצורך. יש לה <b>מטרה</b>, ובנויה <b>מרכיבים</b> מסודרים.</p>' +
+      lex("🚗", 'מכונית, אופניים, מעלית, מחשב, מעבד מזון.')),
+    lcard("🔁", "קלט, תהליך, פלט",
+      lex("⬇️", '<b>קלט:</b> כל מה שמוזן למערכת כדי שתפעל.') +
+      lex("⚙️", '<b>תהליך:</b> סדרת פעולות של רכיבי המערכת.') +
+      lex("⬆️", '<b>פלט:</b> התוצרים שהמערכת מפיקה.')),
+    lcard("📥", "שלושה סוגי קלט",
+      lex("⚡", '<b>אנרגיה:</b> דרושה לכל מערכת.') +
+      lex("📲", '<b>מידע:</b> דרוש לכל מערכת, למשל לחיצה על כפתורים. מערכת שמעבדת מידע צריכה גם <b>נתונים</b>.') +
+      lex("🧱", '<b>חומרים:</b> רק למערכות שמעבדות חומרים, כמו מערבל בטון ומכונת כביסה.')),
+    lcard("🎯", "פלט רצוי ובלתי רצוי",
+      lex("👍", '<b>רצוי:</b> המטרה של המערכת, למשל בגדים נקיים.', "good") +
+      lex("👎", '<b>בלתי רצוי:</b> אינו תורם למערכת, למשל אוויר ומים מזוהמים.'))
+  ]
+};
+
+</script>
+<script>
+"use strict";
+/* ===================== ממשק ===================== */
+const $ = id => document.getElementById(id);
+
+/* רקע צף */
+(function(){
+  const e = ["⚡","⚡","⚡","⚡","⚡","⚡","⚡","⚡","⚡","⭐","⚡","✏️","💫","🔷","🧊","🌈","🎈","🦄"];
+  const kinds = ["", "k2", "k3", "k4"];
+  for (let i=0;i<34;i++){
+    const s = document.createElement("span");
+    s.textContent = e[i % e.length];
+    s.className = kinds[i % kinds.length];
+    s.style.left = Math.random()*95 + "%";
+    s.style.top = Math.random()*92 + "%";
+    s.style.animationDelay = (-Math.random()*12) + "s";
+    s.style.animationDuration = (6 + Math.random()*10) + "s";
+    s.style.fontSize = (22 + Math.random()*30) + "px";
+    $("bg").appendChild(s);
+  }
+  for (let i=0;i<12;i++){
+    const b = document.createElement("i");
+    const d = 14 + Math.random()*40;
+    b.style.cssText = "left:" + Math.random()*100 + "%;width:" + d + "px;height:" + d + "px;animation-delay:" + (-Math.random()*14) + "s;animation-duration:" + (9 + Math.random()*10) + "s";
+    $("bg").appendChild(b);
+  }
+})();
+
+/* צליל */
+let muted = false, actx = null;
+try { muted = localStorage.getItem("sciMuted") === "1"; } catch(e){}
+$("mute").textContent = muted ? "🔇" : "🔊";
+function beep(freqs, dur){
+  if (muted) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === "suspended") actx.resume();
+    let t = actx.currentTime;
+    freqs.forEach(f => {
+      const o = actx.createOscillator(), g = actx.createGain();
+      o.type = "triangle"; o.frequency.value = f;
+      g.gain.setValueAtTime(.18, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + dur);
+      t += dur * .8;
+    });
+  } catch(e){}
+}
+$("mute").onclick = () => {
+  muted = !muted; $("mute").textContent = muted ? "🔇" : "🔊";
+  try { localStorage.setItem("sciMuted", muted ? "1" : "0"); } catch(e){}
+};
+
+/* קונפטי */
+const cv = $("confetti"), cx = cv.getContext("2d");
+let parts = [], raf = 0;
+function sizeCv(){ cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener("resize", sizeCv); sizeCv();
+function confetti(n, x, y){
+  const cols = ["#ff5fa2","#8e5cff","#35b6ff","#2fd67b","#ffd23f","#ff9140"];
+  for (let i=0;i<n;i++) parts.push({
+    x: x ?? cv.width/2, y: y ?? cv.height*.4,
+    vx:(Math.random()-.5)*14, vy:-Math.random()*13-3, g:.35+Math.random()*.2,
+    s:6+Math.random()*7, c:pick(cols), r:Math.random()*6, vr:(Math.random()-.5)*.4, life:90+Math.random()*50
+  });
+  if (!raf) raf = requestAnimationFrame(tick);
+}
+function tick(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts = parts.filter(p => p.life > 0 && p.y < cv.height + 20);
+  parts.forEach(p => {
+    p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life--;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.r); cx.fillStyle = p.c;
+    cx.fillRect(-p.s/2,-p.s/3,p.s,p.s*.66); cx.restore();
+  });
+  raf = parts.length ? requestAnimationFrame(tick) : 0;
+  if (!raf) cx.clearRect(0,0,cv.width,cv.height);
+}
+/* החלקה: ימינה = האפשרות הראשונה (מימין), שמאלה = השנייה */
+function attachSwipe(card, answer){
+  let sx = null;
+  card.addEventListener("pointerdown", e => { if (!locked){ sx = e.clientX; card.setPointerCapture(e.pointerId); card.style.transition = "none"; } });
+  card.addEventListener("pointermove", e => {
+    if (sx === null) return;
+    const dx = e.clientX - sx;
+    card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 14 + "deg)";
+    card.style.outline = dx > 40 ? "5px solid #2fd67b" : dx < -40 ? "5px solid #ff4d5e" : "none";
+  });
+  const end = (e, cancel) => {
+    if (sx === null) return;
+    const dx = cancel ? 0 : e.clientX - sx; sx = null;
+    card.style.transition = "transform .25s"; card.style.transform = ""; card.style.outline = "none";
+    if (Math.abs(dx) > 90) answer(dx > 0 ? 0 : 1);
+  };
+  card.addEventListener("pointerup", end);
+  card.addEventListener("pointercancel", e => end(e, true));
+}
+
+function render(q, st){
+  skipHook = sonarHook = null;
+  document.body.classList.toggle("compactq", q.t === "sort" || q.t === "flow");
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML = (q.em ? '<span class="emoji" style="font-size:44px">' + q.em + '</span>' : '') + '<div class="ask">' + q.ask + '</div>';
+  st.appendChild(card);
+  const tip = tipBox();
+  if (q.t === "sort") return renderSort(q, st, card, tip);
+  if (q.t === "flow") return renderFlow(q, st, card, tip);
+  const box = document.createElement("div");
+  box.className = "opts" + (q.t === "yn" ? " two" : "");
+  if (q.t === "yn"){
+    const h = document.createElement("div"); h.className = "swipehint"; h.textContent = "אפשר גם להחליק את הכרטיס ימינה או שמאלה"; st.appendChild(h);
+  }
+  st.appendChild(box); st.appendChild(tip.t); st.appendChild(tip.n);
+  const right = q.opts.find(o => o.ok).h;
+  const btns = q.opts.map((o, i) => {
+    const bt = document.createElement("button");
+    bt.className = "opt small";
+    bt.innerHTML = o.h; box.appendChild(bt);
+    bt.onclick = () => choose(i);
+    return bt;
+  });
+  function choose(i){
+    if (locked || btns[i].disabled) return;
+    if (!q.opts[i].ok){ btns[i].disabled = true; btns[i].classList.add("wrong"); onWrong(q, st); return; }
+    btns.forEach((x, j) => { x.disabled = true; if (q.opts[j].ok) x.classList.add("right"); });
+    result(true, q, st, tip, card, right);
+  }
+  if (q.t === "yn") attachSwipe(card, choose);
+  skipHook = () => {
+    if (locked) return;
+    btns.forEach((x, j) => { x.disabled = true; if (q.opts[j].ok) x.classList.add("right"); });
+    result(true, q, st, tip, card, right);
+  };
+  sonarHook = q.t === "yn" || q.opts.length < 3 ? null : () => {
+    const w = btns.filter((x, j) => !q.opts[j].ok && !x.disabled);
+    if (w.length < 2) return null;
+    const x = pick(w); x.disabled = true; x.classList.add("gone");
+    return "🦇 הסונאר הוריד תשובה אחת שגויה";
+  };
+}
+
+/* ---------- כרטיסים שמניחים בהקשה: הקשה על כרטיס ואז על המקום שלו ---------- */
+function makeChip(text){
+  const b = document.createElement("button");
+  b.className = "chip"; b.type = "button"; b.textContent = text;
+  return b;
+}
+function checkBtn(onClick){
+  const b = document.createElement("button");
+  b.className = "checkbtn"; b.type = "button"; b.textContent = "✔ בדיקה"; b.onclick = onClick;
+  return b;
+}
+
+/* ---------- שאלת מיון ---------- */
+function renderSort(q, st, card, tip){
+  card.insertAdjacentHTML("beforeend", '<div class="fhint">הקישו על כרטיס, ואז על המקום שלו</div>');
+  const wrap = document.createElement("div"); wrap.className = "bins n" + q.bins.length;
+  const tray = document.createElement("div"); tray.className = "tray";
+  let sel = null;
+  const clearMarks = () => st.querySelectorAll(".chip").forEach(c => c.classList.remove("ok", "no"));
+  const select = c => {
+    if (locked) return;
+    if (sel) sel.classList.remove("sel");
+    sel = sel === c ? null : c;
+    if (sel) sel.classList.add("sel");
+  };
+  const place = (c, box) => { box.appendChild(c); c.classList.remove("sel", "ok", "no"); if (sel === c) sel = null; };
+  const bins = q.bins.map(b => {
+    const el = document.createElement("div"); el.className = "bin"; el.setAttribute("role", "button"); el.tabIndex = 0;
+    el.innerHTML = '<h3>' + b.h + '</h3><div class="binbox"></div>';
+    el.onclick = () => { if (!locked && sel) place(sel, el.lastChild); };
+    el.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); el.onclick(); } };
+    wrap.appendChild(el);
+    return { k: b.k, box: el.lastChild };
+  });
+  const chips = q.show.map(it => {
+    const c = makeChip(it.h);
+    c.onclick = e => { e.stopPropagation(); select(c); };
+    tray.appendChild(c);
+    return { c, it };
+  });
+  tray.onclick = () => { if (!locked && sel && sel.parentNode !== tray) place(sel, tray); };
+  const read = () => {
+    const placed = {};
+    bins.forEach(b => [...b.box.children].forEach(c => { placed[c.textContent] = b.k; }));
+    return placed;
+  };
+  const paint = marks => chips.forEach(({ c, it }) => { if (it.h in marks){ c.classList.toggle("ok", marks[it.h]); c.classList.toggle("no", !marks[it.h]); } });
+  const finish = (chk) => {
+    locked = true; chk.style.display = "none"; tray.style.display = "none";
+    result(true, q, st, tip, card, "מסומנת למעלה");
+  };
+  const chk = checkBtn(() => {
+    if (locked) return;
+    const r = checkSort(q.show, read());
+    if (!r.done){ toast("קודם מניחים את כל הכרטיסים 🙂"); return; }
+    paint(r.marks);
+    if (!r.ok){ onWrong(q, st); return; }
+    finish(chk);
+  });
+  st.append(wrap, tray, chk, tip.t, tip.n);
+  const binOf = k => bins.find(b => b.k === k).box;
+  skipHook = () => {
+    if (locked) return;
+    clearMarks();
+    chips.forEach(({ c, it }) => place(c, binOf(it.b)));
+    paint(checkSort(q.show, read()).marks);
+    finish(chk);
+  };
+  sonarHook = () => {
+    const placed = read(), miss = chips.find(({ c, it }) => placed[it.h] !== it.b);
+    if (!miss) return null;
+    place(miss.c, binOf(miss.it.b)); miss.c.classList.add("ok");
+    return "🦇 הסונאר הציב כרטיס אחד במקום הנכון";
+  };
+}
+
+/* ---------- שאלת תרשים ---------- */
+function renderFlow(q, st, card, tip){
+  card.insertAdjacentHTML("beforeend", '<div class="fhint">הקישו על כרטיס למטה, ואז על הריבוע שלו</div>');
+  const wrap = document.createElement("div"); wrap.className = "flow";
+  const tray = document.createElement("div"); tray.className = "tray";
+  let sel = null;
+  const select = c => {
+    if (locked) return;
+    if (sel) sel.classList.remove("sel");
+    sel = sel === c ? null : c;
+    if (sel) sel.classList.add("sel");
+  };
+  const chips = q.chips.map(t => {
+    const c = makeChip(t);
+    c.onclick = e => { e.stopPropagation(); select(c); };
+    tray.appendChild(c);
+    return c;
+  });
+  const free = slot => {
+    const c = slot._chip;
+    if (!c) return;
+    c.classList.remove("ok", "no"); c.style.display = ""; slot._chip = null;
+    slot.textContent = "?"; slot.classList.remove("done", "ok", "no");
+  };
+  const fill = (slot, c) => {
+    free(slot);
+    slot._chip = c; slot.textContent = c.textContent; slot.classList.add("done");
+    c.classList.remove("sel"); c.style.display = "none";
+    if (sel === c) sel = null;
+  };
+  const sysHtml = q.sys ? '<div class="fsys"><span>' + q.sys.em + '</span>' + q.sys.n + '</div>' : "";
+  if (q.sys && q.sys.top) wrap.insertAdjacentHTML("beforeend", sysHtml);
+  const slots = q.groups.map((g, gi) => {
+    if (gi > 0) wrap.insertAdjacentHTML("beforeend", '<div class="farrow">⬇</div>');
+    const row = document.createElement("div"); row.className = "frow";
+    row.innerHTML = '<div class="flabel">' + g.l + (g.a.length > 1 ? " <small>(בחרו " + g.a.length + ")</small>" : "") + '</div>';
+    const box = document.createElement("div"); box.className = "fslots";
+    const list = g.a.map(() => {
+      const s = document.createElement("button"); s.className = "slot"; s.type = "button"; s.textContent = "?";
+      s.onclick = () => { if (locked) return; if (sel) fill(s, sel); else free(s); };
+      box.appendChild(s);
+      return s;
+    });
+    row.appendChild(box); wrap.appendChild(row);
+    if (gi === 0 && q.sys && !q.sys.top) wrap.insertAdjacentHTML("beforeend", '<div class="farrow">⬇</div>' + sysHtml);
+    return list;
+  });
+  const read = () => slots.map(l => l.map(s => s._chip ? s._chip.textContent : null));
+  const paint = marks => slots.forEach((l, i) => l.forEach((s, j) => { s.classList.toggle("ok", marks[i][j]); s.classList.toggle("no", !marks[i][j]); }));
+  const finish = chk => {
+    locked = true; chk.style.display = "none"; tray.style.display = "none";
+    result(true, q, st, tip, card, "מסומנת למעלה");
+  };
+  const chk = checkBtn(() => {
+    if (locked) return;
+    const r = checkFlow(q.groups, read());
+    if (!r.done){ toast("קודם ממלאים את כל הריבועים 🙂"); return; }
+    paint(r.marks);
+    if (!r.ok){ onWrong(q, st); return; }
+    finish(chk);
+  });
+  st.append(wrap, tray, chk, tip.t, tip.n);
+  const takeChip = text => chips.find(c => c.textContent === text && c.style.display !== "none") || null;
+  skipHook = () => {
+    if (locked) return;
+    slots.flat().forEach(free);
+    q.groups.forEach((g, i) => g.a.forEach((a, j) => fill(slots[i][j], takeChip(a))));
+    paint(checkFlow(q.groups, read()).marks);
+    finish(chk);
+  };
+  sonarHook = () => {
+    const marks = checkFlow(q.groups, read()).marks;
+    for (let i = 0; i < slots.length; i++) for (let j = 0; j < slots[i].length; j++){
+      if (marks[i][j]) continue;
+      const have = slots[i].filter((_, k) => marks[i][k]).map(s => s._chip.textContent), need = q.groups[i].a.slice();
+      have.forEach(h => need.splice(need.indexOf(h), 1));
+      let c = takeChip(need[0]);
+      if (!c){
+        const holder = slots.flat().find(s => s._chip && s._chip.textContent === need[0] && s !== slots[i][j]);
+        if (!holder) return null;
+        free(holder); c = takeChip(need[0]);
+      }
+      fill(slots[i][j], c); slots[i][j].classList.add("ok");
+      return "🦇 הסונאר מילא ריבוע אחד נכון";
+    }
+    return null;
+  };
+}
+
+/* ===================== נתוני ההרפתקה: עולמות, בוסים, חברים ===================== */
+const PER_FRIEND = 6, STAR_MAX = 3, BOSS_WIN = 2;
+const STARTERS = [{ e: "🐱", n: "חתולי" }, { e: "🐶", n: "כלבלב" }, { e: "🐼", n: "פנדה" }];
+const SCI_BG = ["⚡", "☀️", "🔋", "🔬", "⚙️", "🌍", "💡", "🧪", "🌬️", "🔥", "💧", "🛰️", "🌈", "🔧"];
+
+/* stages: בכל שלב 3 שאלות (מספרי קבוצות מהמאגר), מקל לקשה. אורך המסלול לפי גודל הנושא
+   bossGames: הקבוצות שמהן נבחרות שאלות הבוס
+   facts: סיפורים מהספר, לעניין בלבד ולא נבחנים עליהם */
+const WORLDS = [
+  { topic: 1, key: "storm", em: "⚡", n: "עולם הברק", t: "מהי אנרגיה",
+    stages: [[11, 11, 12], [12, 11, 12], [11, 12, 13], [13, 12, 11], [13, 13, 12], [11, 13, 12]], bossGames: [11, 12, 13],
+    plane: ["#8d7bff", "#6a55e8", "#4b3cc0", "#7a5af0", "#2c2480"], road: ["#2a2360", "#ffd23f", "#fff6c9"],
+    pond: ["#1c1850", "#8d7bff", "⛈️"], top: "🏔️",
+    decos: [["⚡", 2.2, 1], ["🌩️", 2.8, 1], ["☁️", 2.6, 1], ["⛈️", 2.8, 1], ["🌧️", 2.4, 1], ["💨", 1.8, 1], ["🌪️", 2.4, 1], ["🪁", 2, 1], ["🌲", 2.6, 0], ["🪨", 1.6, 0], ["🌿", 1.5, 1], ["🐦", 1.5, 1], ["🌋", 3, 0]],
+    bg: ["⚡", "🌩️", "☁️", "🌪️", "💨", "🌧️", "🪁", "🌈", "⛈️", "💧"],
+    boss: { e: "🌪️", n: "מפלצת הסערה", say: ["אני אעלים את כל האנרגיה מהעולם! 🌪️", "אוי, ידעת להסביר את זה? 😠", "לא! האנרגיה מנצחת... 💨"] },
+    friends: [{ e: "🦊", n: "שועלון ברק" }, { e: "🐝", n: "דבורת חשמל" }],
+    bossFriend: { e: "🦅", n: "נשר הסופה", key: "shield", pn: "🛡️ מגן ברק", pd: "מציל משגיאה אחת בשלב (כפתור, פעם בשלב)" },
+    facts: ["⚡ בנג'מין פרנקלין העיף עפיפון אל ענני סערה בשנת 1752 והוכיח שיש בברק אנרגיה חשמלית. אין לנסות את זה: זה מסוכן מאוד!", "🔥 כנראה בני האדם הראשונים גילו את האש בעקבות ברק שהצית שריפה, ואחר כך למדו להבעיר אותה בעזרת ניצוצות מאבני צור.", "⚡ ברק מחמם את האוויר סביבו לכ־30,000 מעלות. זה חם יותר מפני השמש!", "🧠 המוח שלנו משתמש בערך בחמישית מכל האנרגיה של הגוף, גם כשאנחנו נחים.", "🐦 יונק הדבש אוכל ביום אחד מזון במשקל של בערך חצי מגופו, כי הכנפיים המהירות שלו דורשות המון אנרגיה.", "😴 גם בשינה הגוף לא עוצר: הלב פועם, הריאות נושמות והמוח עובד. כל זה דורש אנרגיה.", "🌊 רוב גלי הים נוצרים מהרוח. ככל שהרוח חזקה יותר ונושבת זמן רב יותר, הגלים גבוהים יותר.", "🌱 כמעט כל האנרגיה שביצורים חיים על פני כדור הארץ התחילה באור השמש, שהצמחים קלטו."] },
+  { topic: 2, key: "city", em: "🌈", n: "עיר האנרגיות", t: "סוגי אנרגיה",
+    stages: [[21, 21, 22], [21, 22, 23], [22, 23, 21], [23, 22, 23], [23, 21, 22]], bossGames: [21, 22, 23],
+    plane: ["#ffd1ec", "#ff9fd0", "#ff7fbd", "#ff5fa2", "#c2458a"], road: ["#8a3d6d", "#ff7ab8", "#fff0f8"],
+    pond: ["#35c6ff", "#bfe6ff", "🐟"], top: "🏙️",
+    decos: [["🏠", 2.4, 0], ["🏢", 2.8, 0], ["💡", 1.8, 1], ["🔌", 1.8, 0], ["🔔", 1.8, 1], ["🎵", 1.5, 1], ["🚗", 2, 0], ["🚌", 2.2, 0], ["🔥", 1.8, 1], ["🧪", 1.8, 0], ["🌈", 3, 0], ["🎈", 2, 1], ["🌳", 2.4, 1], ["📺", 2, 0]],
+    bg: ["🌈", "💡", "🔌", "🔔", "🎵", "🚗", "🔥", "🧪", "🏃", "☀️"],
+    boss: { e: "🐲", n: "דרקון האנרגיות", say: ["ערבבתי את כל סוגי האנרגיה! 🐲", "פחחח! זו הייתה סתם התחממות! 🔥", "אאוץ', את זה לא ציפיתי... 😵"] },
+    friends: [{ e: "🦋", n: "פרפרי האור" }, { e: "🐸", n: "צפרדע הקול" }],
+    bossFriend: { e: "🦇", n: "עטלף הסונאר", key: "sonar", pn: "🦇 סונאר", pd: "מסלק תשובה שגויה, או מציב פריט אחד נכון (כפתור, פעם בשלב)" },
+    facts: ["💡 בתופעה אחת יכולים להופיע כמה סוגי אנרגיה יחד, כמו בנר: אנרגיית אור וגם אנרגיית חום.", "🔊 קול נע באוויר בערך 340 מטר בשנייה. לכן רואים את הברק לפני ששומעים את הרעם.", "☀️ אור השמש מגיע אלינו אחרי כ־8 דקות בלבד, למרות שהשמש רחוקה כ־150 מיליון קילומטר.", "✨ גחלילית מפיקה אור בעזרת אנרגיה כימית בגופה, כמעט בלי אנרגיית חום.", "🐟 צלופח חשמלי יכול להפיק מכה חשמלית של מאות וולט, יותר ממה שיש בשקע בבית.", "🥑 בגרם של שומן יש יותר מפי שניים אנרגיה כימית מאשר בגרם של פחמימות.", "🐋 קולות של לווייתנים כחולים נשמעים במים למרחק של מאות קילומטרים.", "🌡️ גוף של אדם במנוחה מפיץ אנרגיית חום בערך כמו נורת ליבון גדולה."] },
+  { topic: 3, key: "factory", em: "🔄", n: "מפעל ההמרות", t: "מעבר והמרה",
+    stages: [[31, 31, 33], [31, 33, 32], [33, 32, 31], [32, 31, 33], [32, 33, 32], [32, 31, 32]], bossGames: [31, 32, 33],
+    plane: ["#ffd9a8", "#ffb066", "#ff9140", "#e67a2a", "#a4501a"], road: ["#6b4423", "#c98a5a", "#ffe3bd"],
+    pond: ["#5a6470", "#c0c9d2", "⚙️"], top: "🏭",
+    decos: [["⚙️", 2, 1], ["🔧", 1.8, 0], ["🔩", 1.5, 0], ["🏭", 3, 0], ["🔥", 1.8, 1], ["🕯️", 1.8, 1], ["🔦", 1.8, 0], ["🚲", 2, 0], ["🌀", 2, 1], ["🎐", 1.8, 1], ["🪵", 1.6, 0], ["⛵", 2.2, 1], ["🫖", 1.8, 0]],
+    bg: ["🔄", "➡️", "⚙️", "🔥", "🕯️", "🔦", "🚴", "🌀", "⛵", "🔧"],
+    boss: { e: "👹", n: "מפלצת הבלבול", say: ["עברה? הפכה? אני אבלבל אותך! 👹", "אוף, גם את זה ידעת?! 😠", "אי אפשר לבלבל אותך! 💥"] },
+    friends: [{ e: "🐹", n: "אוגר הגלגל" }, { e: "🐧", n: "פינגווין הקרח" }],
+    bossFriend: { e: "🦜", n: "תוכי הדילוג", key: "parrot", pn: "🦜 דילוג חינם", pd: "מדלג על שאלה ונותן כוכב בלי לבזבז דילוג (כפתור, פעם בשלב)" },
+    facts: ["🐹 גם גוף של בעל חיים הוא \"מפעל המרות\": אנרגיה כימית מהמזון הופכת לתנועה ולאנרגיית חום.", "💡 בנורת ליבון רוב האנרגיה הופכת לאנרגיית חום ורק מעט לאור. לכן היא כל כך חמה.", "🚗 במכונית בנזין רוב האנרגיה שבדלק הופכת לאנרגיית חום, ורק חלק קטן מניע את הגלגלים.", "🚲 בבלימה הבלמים מתחממים: אנרגיית התנועה של האופניים הופכת לאנרגיית חום.", "🌞 תא סולרי הופך אור לחשמל בלי שום חלק שזז.", "🎸 בגיטרה אנרגיית התנועה של המיתר הופכת לאנרגיית קול, ותיבת העץ מגבירה אותה.", "🙌 כשמשפשפים ידיים בחורף הן מתחממות: אנרגיית תנועה הופכת לאנרגיית חום.", "🔋 בסוללה שמורה אנרגיה כימית, והיא הופכת לאנרגיה חשמלית כשמחברים אותה למעגל."] },
+  { topic: 4, key: "island", em: "☀️", n: "אי המקורות", t: "מתחדש או מתכלה",
+    stages: [[41, 41, 42], [41, 42, 42], [42, 41, 43], [43, 42, 41], [43, 42, 43], [41, 43, 42], [43, 43, 41]], bossGames: [41, 42, 43],
+    plane: ["#c8f5a0", "#7fd36a", "#3fa046", "#2a7a32", "#1f5c27"], road: ["#6b4423", "#b98a54", "#ecd2a2"],
+    pond: ["#3b9fd6", "#bfe6ff", "⛵"], top: "🌋",
+    decos: [["☀️", 2.8, 1], ["🌴", 3, 1], ["🌳", 2.8, 1], ["🌬️", 2, 1], ["⛵", 2.4, 1], ["🪨", 1.6, 0], ["🛢️", 2, 0], ["🐂", 2.4, 0], ["🌿", 1.8, 1], ["🌻", 1.8, 1], ["💧", 1.5, 1], ["🌊", 2.4, 1], ["🌾", 1.8, 1]],
+    bg: ["☀️", "🌬️", "💧", "🛢️", "🌴", "🌊", "♻️", "🔆", "🌾", "⛵"],
+    boss: { e: "🛢️", n: "ענק הנפט", say: ["אשרוף את כל הדלק שבעולם! 🛢️", "עוד לא נגמר לי הנפט! 🔥", "אוי... התכליתי! ♻️"] },
+    friends: [{ e: "🐢", n: "צב החול" }, { e: "🐬", n: "דולפין הגלים" }],
+    bossFriend: { e: "🦁", n: "אריה השמש", key: "magnet", pn: "☀️ מגנט שמש", pd: "אוטומטי: שלב שנגמר עם 2 כוכבים הופך ל־3" },
+    facts: ["🏞️ טחנת הרוח במשכנות שאננים בירושלים נבנתה בשנת 1858 בידי משה מונטיפיורי.", "🐂 גם היום יש איכרים, למשל בהודו, שחורשים את השדה בעזרת כוח השרירים של בעלי חיים.", "🛢️ נפט נוצר במשך מיליוני שנים משאריות של יצורים קטנים ששקעו לקרקעית הים.", "🏠 בישראל דוד שמש הוא חובה בחוק ברוב הבניינים החדשים למגורים כבר מאז שנות ה־80.", "🗼 במגדל השמש באשלים שבנגב, בגובה של כ־240 מטר, מראות רבות מרכזות את אור השמש כדי להפיק חשמל.", "🌋 באיסלנד רוב הבתים מחוממים בעזרת אנרגיית חום ממעמקי הקרקע.", "🇨🇳 סכר שלושת הערוצים בסין הוא תחנת הכוח הגדולה בעולם שמנצלת מים זורמים.", "🌬️ בדנמרק הרוח מספקת כמחצית מהחשמל של המדינה."] },
+  { topic: 5, key: "park", em: "🎡", n: "לונה פארק הרובוטים", short: "לונה פארק", t: "מערכות טכנולוגיות",
+    stages: [[51, 51, 52], [51, 52, 51], [52, 51, 52], [52, 53, 52], [53, 52, 53], [53, 53, 52], [54, 53, 54], [54, 52, 54], [54, 53, 54]], bossGames: [52, 53, 54],
+    plane: ["#bfe6ff", "#7cc8ff", "#35b6ff", "#1f8ae0", "#14599c"], road: ["#3b3b66", "#8c8cc4", "#d9dcff"],
+    pond: ["#ff7fbd", "#ffe3f1", "🍿"], top: "🎪",
+    decos: [["🎡", 3, 1], ["🎢", 3, 0], ["🎠", 2.6, 1], ["🎪", 2.8, 0], ["🎈", 2, 1], ["🍿", 1.6, 0], ["🤖", 2.2, 1], ["⚙️", 1.8, 1], ["🎟️", 1.5, 0], ["🍦", 1.6, 0], ["🧸", 1.8, 0], ["🔧", 1.5, 0], ["🚦", 2, 0]],
+    bg: ["🎡", "🎢", "🎠", "🤖", "⚙️", "🔧", "🎈", "🍿", "🛰️", "🔩"],
+    boss: { e: "👾", n: "מפלצת התקלות", say: ["אשבש לכם את כל המערכות! 👾", "ביפ! תקלה! עוד לא גמרתי! 🔧", "מערכת... נכבית... ביפ... 💥"] },
+    friends: [{ e: "🤖", n: "רובוטי" }, { e: "🐵", n: "קופיף הקרוסלה" }],
+    bossFriend: { e: "👽", n: "חייזר הטלסקופ", key: "scope", pn: "🔭 טלסקופ", pd: "מגלה באיזה עמוד בספר נמצאת התשובה (כפתור, פעם בשלב)" },
+    facts: ["🔭 טלסקופ החלל האבל שוגר בשנת 1990. מכשיר שבדק את המראה הוצב בטעות 1.3 מילימטר מהמקום הנכון, ולכן הגיעו מהטלסקופ תמונות מעוותות, ותיקון הטעות עלה כ־700 מיליון דולר.", "🛡️ כיפת ברזל היא מערכת טכנולוגית ישראלית: מכ\"ם מאתר את הרקטה, מערכת שליטה מחשבת את מקום הפגיעה, ורק אם צריך, משגרים טיל מיירט.", "🎡 גלגל הענק הראשון נבנה בשיקגו בשנת 1893 בידי מהנדס בשם ג'ורג' פריס. השם שלו באנגלית נשאר עד היום: Ferris wheel.", "🛗 בשנת 1854 הציג אלישע אוטיס מעלית עם בלם בטיחות, וזה עזר לאפשר בניית גורדי שחקים.", "🍿 את המיקרוגל גילו במקרה: מהנדס בשם פרסי ספנסר ראה שחטיף בכיס שלו נמס ליד מכשיר מכ\"ם.", "💻 המחשבים האלקטרוניים הראשונים מילאו חדר שלם. היום לטלפון בכיס יש הרבה יותר כוח חישוב.", "🫖 בקומקום חשמלי יש רכיב שמכבה אותו לבד כשהמים רותחים. גם רכיב קטן הוא חלק חשוב במערכת.", "🤖 רובוטים על מאדים מקבלים פקודות מכדור הארץ, והאות בדרך אליהם לוקח דקות ארוכות."] }
+];
+
+/* כל החברים: מתחילים (3) + בכל עולם 2 חברים לפי כוכבים + חבר מיוחד מהבוס */
+const FRIENDS = STARTERS.map(a => ({ e: a.e, n: a.n, w: -1, k: "start" }));
+WORLDS.forEach((w, i) => {
+  w.friends.forEach((f, j) => FRIENDS.push({ e: f.e, n: f.n, w: i, k: "star", need: PER_FRIEND * (j + 1) }));
+  FRIENDS.push({ e: w.bossFriend.e, n: w.bossFriend.n, w: i, k: "boss", power: w.bossFriend });
+});
+
+/* משפטי המסיבה */
+const SAYS = {
+  "🐱": ["מיאו מיאו! 💕", "איזה כיף! 😻", "בואו נרקוד עד הבוקר! 🌙"],
+  "🐶": ["הב הב! איזה כיף! 🐾", "מכשכש בזנב מרוב שמחה! 🐕", "הב! הב! עוד שיר! 🎵"],
+  "🐼": ["יאמי, במבוק ומסיבה! 🎋", "פנדות יודעות לרקוד! 💃", "חיבוק קבוצתי! 🤗"],
+  "🦊": ["זינוק כמו ברק! ⚡", "הזנב שלי מחושמל! 🦊", "מי מדליק את האורות? 💡"],
+  "🐝": ["בזזז בזזז! 🐝", "יש לי אנרגיה ליום שלם! ⚡", "רוקדת כמו דבורה! 💃"],
+  "🦅": ["עף מעל הסערה! 🌩️", "מלמעלה רואים הכול! 🦅", "כנפיים למעלה! 🎉"],
+  "🦋": ["מנצנץ באור השמש! ✨", "רפרוף של שמחה! 🦋", "כל הצבעים כאן! 🌈"],
+  "🐸": ["קוואק קוואק! 🎵", "שומעים אותי מרחוק! 🔊", "קפיצה על הקצב! 🐸"],
+  "🦇": ["פיפ פיפ! הסונאר עובד! 🦇", "רוקד גם בחושך! 🌙", "שומע כל צליל! 🎶"],
+  "🐹": ["הגלגל מסתובב! ⚙️", "כימית הופכת לתנועה! 🐹", "עוד סיבוב! 🌀"],
+  "🐧": ["מחליק על הקרח! ❄️", "ריקוד פינגווינים! 🐧", "איזה יופי! 🎉"],
+  "🦜": ["קרא קרא! 🦜", "חוזר אחריכם: מסיבה! מסיבה! 🎉", "נוצות צבעוניות לכולם! 🌈"],
+  "🐢": ["לאט לאט, אבל מרקד! 🐢", "השמש מחממת לי את השריון! ☀️", "גל אחרי גל! 🌊"],
+  "🐬": ["קפיצה מעל הגלים! 🌊", "קליק קליק! 🐬", "הים שלנו מתחדש! ♻️"],
+  "🦁": ["שאגת שמש! ☀️", "מלך המסיבה הגיע! 🦁", "רעמה זוהרת! ✨"],
+  "🤖": ["ריקוד... הופעל! 🤖", "קלט: מוזיקה. פלט: ריקוד! 🔊", "ביפ ביפ! ⚙️"],
+  "🐵": ["על הקרוסלה! 🎠", "או או אה אה! 🐒", "עוד סיבוב! 🎡"],
+  "👽": ["הגעתי מהחלל למסיבה! 🛸", "ראיתי אתכם בטלסקופ! 🔭", "ביפ בופ! 💫"]
+};
+
+/* ===================== הרפתקת המדע: מצב ומסכים ===================== */
+const KEY = "sciAdvState1";
+let boy = false;
+try { boy = localStorage.getItem("sciBoy") === "1"; } catch(e){}
+let locked = false, advTimer = 0, skipHook = null, sonarHook = null;
+const gt = (m, f) => boy ? m : f;
+
+/* ---------- מצב שמור ---------- */
+const fresh = () => ({ avatar: null, won: false, weak: [], seen: [], w: WORLDS.map(w => ({ best: w.stages.map(() => -1), boss: -1, skips: 2, facts: [] })) });
+const nStages = i => WORLDS[i].stages.length;
+const wMax = i => (nStages(i) + 1) * STAR_MAX;
+const bossNeed = i => nStages(i) * 2;
+let S = fresh(), noSave = false, cw = 0, cur = null;
+function load(){
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && Array.isArray(s.w) && s.w.length === WORLDS.length && s.w.every(x => x && Array.isArray(x.best))) return Object.assign(fresh(), s, { w: s.w.map((x, i) => Object.assign({ boss: -1, skips: 2, facts: [] }, x, { best: WORLDS[i].stages.map((_, k) => k < x.best.length ? x.best[k] : -1) })) });
+  } catch(e){}
+  return fresh();
+}
+function save(){ if (noSave) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+const wStars = i => S.w[i].best.reduce((a, b) => a + Math.max(0, b), 0);
+const wTotal = i => wStars(i) + Math.max(0, S.w[i].boss);
+const total = () => WORLDS.reduce((a, _, i) => a + wTotal(i), 0);
+const stageOpen = (i, s) => s === 0 || S.w[i].best[s - 1] >= 0;
+const bossOpen = i => S.w[i].best.every(b => b >= 0) && wStars(i) >= bossNeed(i);
+const bossBeaten = i => S.w[i].boss >= BOSS_WIN;
+function isUnlocked(f){
+  return f.k === "start" || (f.k === "star" ? wStars(f.w) >= f.need : bossBeaten(f.w));
+}
+const hasPower = key => FRIENDS.some(f => f.k === "boss" && f.power.key === key && isUnlocked(f));
+const gameName = id => GAMES[id].n;
+
+/* ---------- עיצוב: רקע צף לפי עולם ---------- */
+function setTheme(wi){
+  document.body.classList.remove("w0", "w1", "w2", "w3", "w4");
+  if (wi !== null) document.body.classList.add("w" + wi);
+  const emo = wi === null ? SCI_BG : WORLDS[wi].bg, bg = $("bg"), kinds = ["", "k2", "k3", "k4"];
+  bg.innerHTML = "";
+  for (let i = 0; i < 28; i++){
+    const s = document.createElement("span");
+    s.textContent = emo[i % emo.length]; s.className = kinds[i % kinds.length];
+    s.style.cssText = "left:" + Math.random() * 95 + "%;top:" + Math.random() * 92 + "%;animation-delay:" + (-Math.random() * 12) + "s;animation-duration:" + (6 + Math.random() * 10) + "s;font-size:" + (22 + Math.random() * 30) + "px";
+    bg.appendChild(s);
+  }
+}
+let toastT = 0;
+function toast(msg){
+  const t = $("toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("on"), 2600);
+}
+function pulse(el){ el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+function floatText(txt, bad, el){
+  const r = (el || $("stage")).getBoundingClientRect(), f = document.createElement("div");
+  f.className = "floatpts" + (bad ? " bad" : ""); f.textContent = txt;
+  f.style.left = (r.left + r.width / 2 - 30) + "px"; f.style.top = (r.top + r.height / 2 - 20) + "px";
+  document.body.appendChild(f); setTimeout(() => f.remove(), 1000);
+}
+
+/* ---------- בן / בת ---------- */
+function applyGender(){
+  document.body.classList.toggle("boy", boy);
+  $("gGirl").classList.toggle("on", !boy); $("gBoy").classList.toggle("on", boy);
+  try { localStorage.setItem("sciBoy", boy ? "1" : "0"); } catch(e){}
+  if (cur){ updateTools(); if (typeof lastSay === "function") $("bubble").textContent = lastSay(); const nb = $("next"); if (nb) nb.textContent = nextLabel(); }
+}
+$("gGirl").onclick = () => { boy = false; applyGender(); };
+$("gBoy").onclick = () => { boy = true; applyGender(); };
+
+/* ---------- מסכים ---------- */
+function show(id){ if (id !== "qscreen") document.body.classList.remove("compactq"); document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id)); }
+function updateTop(){
+  $("tally").textContent = total();
+  $("avBtn").textContent = S.avatar || "🐱";
+}
+function route(){
+  updateTop();
+  if (!S.avatar){ buildAvGrid($("startGrid"), true); setTheme(null); show("start"); }
+  else renderHome();
+}
+$("homeBtn").onclick = () => { closeTools(); closeParty(); clearTimeout(advTimer); cur = null; closeLearn(); if (S.avatar) renderHome(); };
+
+/* ---------- בחירת חבר ---------- */
+function lockText(f){
+  return f.k === "star" ? f.need + "⭐ ב" + WORLDS[f.w].n : "נצחו את " + WORLDS[f.w].boss.n;
+}
+function buildAvGrid(box, startOnly){
+  box.innerHTML = "";
+  (startOnly ? FRIENDS.slice(0, STARTERS.length) : FRIENDS).forEach(f => {
+    const ok = isUnlocked(f), b = document.createElement("button");
+    b.className = "avcard" + (f.e === S.avatar ? " sel" : "") + (ok ? "" : " lock") + (f.k === "boss" ? " boss" : "");
+    b.innerHTML = (ok ? f.e : "🔒") + "<small>" + (ok ? f.n + (f.k === "boss" ? "<br>" + f.power.pn : "") : lockText(f)) + "</small>";
+    if (ok) b.onclick = () => {
+      S.avatar = f.e; save(); updateTop(); $("avOv").classList.add("hidden");
+      if (startOnly){ confetti(60); renderHome(); } else if (cur) $("pav").textContent = S.avatar;
+      else if ($("home").classList.contains("on")) renderHome();
+    };
+    box.appendChild(b);
+  });
+}
+$("avBtn").onclick = () => { if (!S.avatar) return; buildAvGrid($("avGrid")); $("avOv").classList.remove("hidden"); };
+$("avClose").onclick = () => $("avOv").classList.add("hidden");
+$("resetBtn").onclick = () => {
+  if (!confirm("להתחיל הרפתקה חדשה? כל הכוכבים והחברים יימחקו.")) return;
+  S = fresh(); save(); cur = null; closeParty(); route();
+};
+
+/* ---------- מסך הבית: בחירת עולם ---------- */
+function renderHome(){
+  setTheme(null); cur = null; updateTop();
+  $("worlds").innerHTML = WORLDS.map((w, i) => {
+    const t = wTotal(i), done = S.w[i].best.filter(b => b >= 0).length;
+    const bt = bossBeaten(i) ? "✅ " + w.boss.e + " נוצח" : bossOpen(i) ? "⚔️ הבוס מחכה!" : "🔒 בוס " + done + "/" + nStages(i);
+    return '<button class="wcard wc' + i + '" data-w="' + i + '"><span class="wem">' + w.em + '</span><b>' + w.n + '</b><small>' + w.t + '</small>' +
+      '<div class="wbar"><i style="width:' + Math.round(t / wMax(i) * 100) + '%"></i></div><span class="wst">⭐ ' + t + ' / ' + wMax(i) + '</span><span class="wboss">' + bt + '</span></button>';
+  }).join("");
+  document.querySelectorAll("[data-w]").forEach(b => b.onclick = () => openWorld(+b.dataset.w));
+  show("home");
+}
+
+/* ---------- המפה התלת-ממדית של כל עולם ---------- */
+function rng(seed){ return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function curvePath(pts){
+  let d = "M" + pts[0][0] + "," + pts[0][1];
+  for (let i = 0; i < pts.length - 1; i++){
+    const p0 = pts[i - 1] || pts[i], p1 = pts[i], p2 = pts[i + 1], p3 = pts[i + 2] || p2;
+    d += " C" + (p1[0] + (p2[0] - p0[0]) / 6) + "," + (p1[1] + (p2[1] - p0[1]) / 6) + " " + (p2[0] - (p3[0] - p1[0]) / 6) + "," + (p2[1] - (p3[1] - p1[1]) / 6) + " " + p2[0] + "," + p2[1];
+  }
+  return d;
+}
+let N = 6, VH = 900, K = 9, NODE_Y = [], NODE_X = [];
+function setGeom(n){
+  N = n; VH = 150 * N; K = VH / 100;
+  const bend = Math.min(1.25, 1.12 + Math.max(0, N - 6) * .05);
+  NODE_Y = Array.from({ length: N }, (_, i) => +(96 - 82 * Math.pow(i / (N - 1), bend)).toFixed(1));
+  const r = rng(5);
+  NODE_X = Array.from({ length: N }, (_, i) => i === N - 1 ? 50 : Math.round(Math.max(16, Math.min(84, 50 + 30 * Math.sin(i * 1.05 + .6) + (r() - .5) * 14))));
+}
+function drawRoad(w){
+  const r = rng(11), pts = [[200, VH]];
+  NODE_X.forEach((x, i) => {
+    const p = [x * 4, NODE_Y[i] * K];
+    if (i > 0){ const q = pts[pts.length - 1]; pts.push([Math.max(50, Math.min(350, (q[0] + p[0]) / 2 + (r() - .5) * 110)), (q[1] + p[1]) / 2 + (r() - .5) * 24]); }
+    pts.push(p);
+  });
+  pts.push([200, 130 * K / 10]);
+  const d = curvePath(pts), c = w.road;
+  $("road").innerHTML =
+    '<path d="' + d + '" fill="none" stroke="' + c[0] + '" stroke-width="64" stroke-linecap="round" transform="translate(0,14)"/>' +
+    '<path d="' + d + '" fill="none" stroke="' + c[1] + '" stroke-width="64" stroke-linecap="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="' + c[2] + '" stroke-width="46" stroke-linecap="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="4" stroke-dasharray="14 14" stroke-linecap="round"/>' +
+    NODE_X.map((x, i) => '<ellipse cx="' + x * 4 + '" cy="' + NODE_Y[i] * K + '" rx="42" ry="15" fill="rgba(0,0,0,.3)"/>').join("");
+  return $("road").querySelectorAll("path")[1];
+}
+function addDeco(plane, x, y, e, size, sway, r){
+  const d = document.createElement("div");
+  d.className = "upright deco" + (sway ? " sway" : "");
+  d.style.cssText = "left:" + x + "%;top:" + y + "%;font-size:" + size + "em;animation-delay:" + (-r() * 3) + "s;animation-duration:" + (2.4 + r() * 2.5) + "s";
+  d.textContent = e; plane.appendChild(d);
+}
+function curNode(wi){
+  const i = S.w[wi].best.findIndex(b => b < 0);
+  return i >= 0 ? i : nStages(wi);
+}
+function openWorld(wi){
+  cw = wi; setTheme(wi); show("map"); renderMap(wi);
+}
+function renderMap(wi){
+  const w = WORLDS[wi], W = S.w[wi], plane = $("plane"), sc = document.querySelector(".scene"), pc = w.plane;
+  setGeom(w.stages.length + 1);
+  plane.style.cssText = "--p1:" + pc[0] + ";--p2:" + pc[1] + ";--p3:" + pc[2] + ";--pb:" + pc[3] + ";--ps:" + pc[4] + ";aspect-ratio:400 / " + VH;
+  $("road").setAttribute("viewBox", "0 0 400 " + VH);
+  sc.style.perspective = Math.round(VH * .507) + "px";
+  sc.style.marginTop = "-" + (VH / 400 * 45) + "%";
+  $("mapTitle").innerHTML = w.em + " " + (w.short || w.n) + "<small>" + w.t + "</small>";
+  $("mapStars").textContent = "⭐ " + wTotal(wi) + "/" + wMax(wi);
+  const road = drawRoad(w);
+  plane.querySelectorAll(".upright").forEach(e => e.remove());
+  const len = road.getTotalLength(), pts = [];
+  for (let l = 0; l <= len; l += 18){ const p = road.getPointAtLength(l); pts.push([p.x, p.y]); }
+  const r = rng(42 + wi), items = [];
+  const free = (x, y, rd, id) => !pts.some(p => Math.hypot(p[0] - x * 4, p[1] - y * K) < rd) && !items.some(it => Math.hypot((it.x - x) * 4, (it.y - y) * K) < id) && !(y < 22 && x > 22 && x < 78);
+  for (let k = 0, t = 0; k < 2 && t < 400; t++){
+    const x = 16 + r() * 68, y = 14 + r() * 80;
+    if (!free(x, y, 120, 170)) continue;
+    items.push({ x, y }); k++;
+    $("road").insertAdjacentHTML("beforeend", '<ellipse cx="' + x * 4 + '" cy="' + y * K + '" rx="62" ry="34" fill="' + w.pond[0] + '" stroke="' + w.pond[1] + '" stroke-width="6"/><ellipse cx="' + (x * 4 - 14) + '" cy="' + (y * K - 6) + '" rx="26" ry="9" fill="rgba(255,255,255,.45)"/>');
+    addDeco(plane, x, y, w.pond[2], 1.8, 1, r);
+  }
+  for (let t = 0, n = 0; n < 12 * N && t < 300 * N; t++){
+    const x = 4 + r() * 92, y = 3 + r() * 94;
+    if (!free(x, y, 64, 52)) continue;
+    const k = w.decos[Math.floor(r() * w.decos.length)];
+    items.push({ x, y }); n++;
+    addDeco(plane, x, y, k[0], (k[1] * (.85 + r() * .4)).toFixed(2), k[2], r);
+  }
+  addDeco(plane, 50, 7, w.top, 9, 0, r);
+  const here = curNode(wi);
+  for (let i = 0; i < N; i++){
+    const boss = i === N - 1, open = boss ? bossOpen(wi) : stageOpen(wi, i), b = Math.max(0, boss ? W.boss : W.best[i]);
+    const el = document.createElement("div");
+    el.className = "upright stand" + (!open ? " locked" : "") + (boss ? " boss" : "");
+    el.style.left = NODE_X[i] + "%"; el.style.top = NODE_Y[i] + "%";
+    const n = document.createElement("button");
+    n.className = "node" + ((boss ? W.boss : W.best[i]) >= 0 ? " done" : "") + (!open ? " locked" : "") + (boss ? " boss" : "") + (open && i === here ? " cur" : "");
+    n.textContent = !open ? "🔒" : boss ? w.boss.e : i + 1;
+    if (boss && !open) n.textContent = w.boss.e;
+    if (i === here) el.insertAdjacentHTML("beforeend", '<span class="you">' + S.avatar + "</span>");
+    if (open || boss) el.insertAdjacentHTML("beforeend", '<span class="nstars">' + "<b>★</b>".repeat(b) + "<i>★</i>".repeat(STAR_MAX - b) + "</span>");
+    el.appendChild(n);
+    n.onclick = () => {
+      if (open) startStage(wi, i);
+      else if (boss) toast(w.boss.e + " הבוס נפתח אחרי " + nStages(wi) + " שלבים ו־" + bossNeed(wi) + "⭐ בעולם הזה (יש לך " + wStars(wi) + "⭐ ו־" + W.best.filter(x => x >= 0).length + "/" + nStages(wi) + " שלבים)");
+      else toast("קודם מסיימים את השלב הקודם 🙂");
+    };
+    plane.appendChild(el);
+  }
+  updateTop();
+  setTimeout(() => { const y = plane.querySelector(".you"); if (y) y.scrollIntoView({ block: "center", behavior: "smooth" }); }, 120);
+}
+$("mapBack").onclick = renderHome;
+
+/* ===================== שלב ===================== */
+let qMistake = false, qSkipped = false;
+let lastSay = null;
+function bubbleSet(id, t){ const b = $(id); b.textContent = typeof t === "function" ? t() : t; b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; }
+function say(t){ lastSay = t; bubbleSet("bubble", t); }
+function bossSay(t){ bubbleSet("bossBubble", t); }
+const nextLabel = () => cur.q >= 2 ? "סיום שלב 🏁" : gt("הבנתי, ממשיך ←", "הבנתי, ממשיכה ←");
+function avatarReact(c){ const a = $("pav"); a.className = ""; void a.offsetWidth; a.className = c; setTimeout(() => a.className = "", 700); }
+function startStage(wi, s){
+  const w = WORLDS[wi], boss = s === w.stages.length;
+  let games;
+  if (boss){ const p = shuffle(w.bossGames); games = [p[0], p[1 % p.length], p[2 % p.length]]; }
+  else games = w.stages[s].slice();
+  cur = { wi, s, boss, q: 0, stars: [0, 0, 0], games, shield: false, used: {}, ids: [], subs: [] };
+  cw = wi;
+  $("pav").textContent = S.avatar;
+  $("bossRow").classList.toggle("hidden", !boss);
+  if (boss){ $("boss").textContent = w.boss.e; updateHearts(); bossSay(w.boss.say[0]); }
+  closeTools();
+  show("qscreen");
+  say(() => boss ? gt("בוא נראה אותך! 💪", "בואי נראה אותך! 💪") : gt("שלב " + (s + 1) + " - בהצלחה, אלוף! 💪", "שלב " + (s + 1) + " - בהצלחה, אלופה! 💪"));
+  renderQ();
+}
+function updateHearts(){
+  const lost = cur.stars.reduce((a, b) => a + b, 0);
+  $("bossHp").textContent = "❤️".repeat(STAR_MAX - lost) + "🖤".repeat(lost);
+}
+function renderDots(popIdx){
+  $("dots").innerHTML = cur.stars.map((v, i) => {
+    const done = i < cur.q || (i === cur.q && locked), cls = (v ? "gold" : done ? "miss" : "") + (i === cur.q && !locked ? " cur" : "") + (i === popIdx ? " pop" : "");
+    return '<span class="' + cls + '">★</span>';
+  }).join("");
+}
+/* שאלה שלא הופיעה עדיין בהרפתקה הזאת (אם נגמרו השאלות השונות, מותר לחזור) */
+let curQ = null;
+function genQ(gid){
+  curQ = GAMES[gid].gen(S.seen, S.weak, cur);
+  cur.ids.push(curQ.id); (curQ.subs || []).forEach(x => cur.subs.push(x));
+  save();
+  return curQ;
+}
+function renderQ(){
+  locked = false; skipHook = sonarHook = null; qMistake = false; qSkipped = false;
+  const g = GAMES[cur.games[cur.q]];
+  $("qinfo").textContent = "שאלה " + (cur.q + 1) + " מתוך 3 · " + g.n;
+  const st = $("stage"); st.innerHTML = ""; st.scrollTop = 0;
+  renderDots();
+  render(genQ(cur.games[cur.q]), st);
+  updateTools();
+}
+function tipBox(){
+  const t = document.createElement("div"); t.id = "tip";
+  const n = document.createElement("button"); n.id = "next";
+  n.textContent = nextLabel();
+  n.onclick = () => { if (cur.done) return; cur.q++; if (cur.q >= 3){ cur.done = true; n.disabled = true; finishStage(); } else renderQ(); };
+  return { t, n };
+}
+/* נקרא רק כשהתשובה נכונה (או בדילוג); טעות רק מסמנת ולא סוגרת את השאלה */
+function result(ok, q, st, tip, anchor, rightHtml){
+  locked = true;
+  const star = qSkipped || !qMistake;
+  cur.stars[cur.q] = star ? 1 : 0;
+  renderDots(star ? cur.q : undefined);
+  if (cur.boss) updateHearts();
+  if (star){
+    beep([660, 880], .12); confetti(qSkipped ? 20 : 34); avatarReact("hop"); floatText("⭐", false, anchor);
+    const qi = cur.q, praise = [() => "וואו! קיבלת כוכב ⭐", () => gt("אלוף! עוד כוכב ⭐", "אלופה! עוד כוכב ⭐"), () => "מדהים! כוכב ⭐"];
+    say(() => qSkipped ? gt("בסדר, עכשיו אתה יודע! ⭐", "בסדר, עכשיו את יודעת! ⭐") : praise[qi]());
+    if (cur.boss) bossSay(WORLDS[cur.wi].boss.say[qi === 2 ? 2 : 1]);
+  } else { beep([523, 659], .12); say("נכון! אבל בלי כוכב הפעם 🙂"); }
+  markResult(S.weak, q.id, !qSkipped && !qMistake); save();
+  tip.t.innerHTML = (qSkipped ? "התשובה " + rightHtml + ". " : "כל הכבוד! ") + q.why + '<small class="pref">' + (q.p ? "📖 עמוד " + q.p + " בספר" : "🌍 העשרה: לא מהספר") + '</small>';
+  tip.t.className = "show good";
+  tip.n.classList.add("show");
+  setTimeout(() => { try { tip.n.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){} }, 60);
+  updateTools();
+}
+function onWrong(q, st){
+  beep([300, 200], .18);
+  const f = $("flash"); f.classList.remove("on"); void f.offsetWidth; f.classList.add("on");
+  st.classList.remove("shake"); void st.offsetWidth; st.classList.add("shake");
+  avatarReact("shk");
+  if (cur.shield){ cur.shield = false; say("🛡️ המגן הציל אותך! הכוכב נשאר. נסו שוב"); updateTools(); return; }
+  qMistake = true; renderDots();
+  say(() => gt("לא נורא, נסה שוב 💪", "לא נורא, נסי שוב 💪"));
+}
+
+/* ---------- כפתורי עזר: דילוג וכוחות ---------- */
+function updateTools(){
+  if (!cur) return;
+  const W = S.w[cur.wi], sk = $("skipBtn");
+  sk.textContent = gt("🤷 לא יודע", "🤷 לא יודעת") + " (" + W.skips + ")";
+  sk.disabled = W.skips <= 0 || locked;
+  const box = $("powers"); box.innerHTML = "";
+  WORLDS.forEach(w => {
+    const f = FRIENDS.find(x => x.k === "boss" && x.e === w.bossFriend.e);
+    if (!isUnlocked(f) || w.bossFriend.key === "magnet") return;
+    const b = document.createElement("button"), key = w.bossFriend.key;
+    b.className = "tbtn pw";
+    b.textContent = w.bossFriend.pn + (key === "shield" && cur.shield ? " ✓" : "");
+    b.title = w.bossFriend.pd;
+    b.disabled = locked || !!cur.used[key];
+    b.onclick = () => usePower(key);
+    box.appendChild(b);
+  });
+}
+function usePower(key){
+  if (locked || cur.used[key]) return;
+  if (key === "shield"){ cur.used.shield = cur.shield = true; say("🛡️ מגן הברק פעיל! הטעות הבאה לא תעלה לך בכוכב"); }
+  else if (key === "sonar"){
+    const m = sonarHook && sonarHook();
+    if (!m){ toast("הסונאר לא עוזר בשאלה הזאת"); return; }
+    cur.used.sonar = true; say(m);
+  } else if (key === "scope"){
+    if (!curQ) return;
+    cur.used.scope = true; say(curQ.p ? "🔭 הטלסקופ מצא: התשובה בעמוד " + curQ.p + " בספר" : "🔭 הטלסקופ מצא: זו שאלת העשרה, לא מהספר");
+  } else if (key === "parrot"){
+    if (!skipHook) return;
+    cur.used.parrot = true; qSkipped = true; skipHook();
+  }
+  updateTools();
+}
+$("skipBtn").onclick = () => {
+  if (locked || !skipHook) return;
+  const W = S.w[cur.wi];
+  if (W.skips <= 0) return;
+  W.skips--; save(); qSkipped = true; skipHook(); updateTools();
+};
+$("backMap").onclick = () => { closeTools(); clearTimeout(advTimer); cur = null; openWorld(cw); };
+function closeLearn(){ $("learnOv").classList.add("hidden"); }
+$("learnBtn").onclick = () => {
+  const t = TOPICS.find(x => x.id === WORLDS[cur.wi].topic);
+  lsd = 0;
+  $("learnTitle").textContent = t.em + " הסבר: " + t.n;
+  $("learnBody").innerHTML = LEARN[t.id]().join("");
+  $("learnOv").classList.remove("hidden"); $("learnOv").firstElementChild.scrollTop = 0;
+};
+$("learnClose").onclick = closeLearn;
+
+/* ---------- סוף שלב ---------- */
+function finishStage(){
+  closeTools();
+  const wi = cur.wi, sIdx = cur.s, W = S.w[wi], w = WORLDS[wi], boss = cur.boss;
+  endCtx = { wi, s: sIdx };
+  let earned = cur.stars.reduce((a, b) => a + b, 0), magnet = false;
+  if (!boss && earned === 2 && hasPower("magnet")){ earned = 3; magnet = true; }
+  const had = FRIENDS.filter(isUnlocked).map(f => f.e), before = wTotal(wi), prev = Math.max(0, boss ? W.boss : W.best[cur.s]);
+  if (boss) W.boss = Math.max(W.boss, earned); else W.best[cur.s] = Math.max(W.best[cur.s], earned);
+  const gained = wTotal(wi) - before;
+  const newF = FRIENDS.filter(f => isUnlocked(f) && !had.includes(f.e));
+  const justWon = !S.won && WORLDS.every((_, i) => bossBeaten(i));
+  if (justWon) S.won = true;
+  save();
+
+  $("eoAv").textContent = boss ? w.boss.e : S.avatar;
+  $("eoTitle").textContent = boss
+    ? (earned >= BOSS_WIN ? "ניצחת את " + w.boss.n + "! 🏆" : earned > 0 ? w.boss.n + " נחלש! 💪 (צריך " + BOSS_WIN + "⭐ לנצח)" : w.boss.n + " ניצח הפעם...")
+    : earned === 3 ? "שלב מושלם! 🎉" : earned > 0 ? "כל הכבוד!" : gt("נסה שוב, אתה יכול!", "נסי שוב, את יכולה!");
+  const spans = [...$("eoStars").children];
+  spans.forEach(sp => sp.classList.remove("lit"));
+  $("eoTally").textContent = "⭐ " + before + " / " + wMax(wi);
+  $("eoNote").textContent = magnet ? "☀️ מגנט השמש הוסיף כוכב!" : "";
+  $("eoFact").innerHTML = "<b>💡 הידעת?</b> " + w.facts[pickFact(w.facts.length, W.facts)]; save();
+  $("eoNew").innerHTML = ""; $("eoWin").classList.add("hidden"); $("eoBtns").classList.add("hidden");
+  const next = $("eoNext");
+  if (!boss && cur.s < nStages(wi) - 1){ next.textContent = "שלב הבא ←"; next.classList.remove("hidden"); }
+  else if (!boss && bossOpen(wi)){ next.textContent = "⚔️ לקרב עם הבוס"; next.classList.remove("hidden"); }
+  else next.classList.add("hidden");
+  const need = !boss && cur.s === nStages(wi) - 1 && !bossOpen(wi) ? " · לבוס צריך עוד " + Math.max(0, bossNeed(wi) - wStars(wi)) + "⭐ בעולם הזה (חזרו לשלבים לאסוף)" : "";
+  $("endOv").classList.remove("hidden");
+
+  spans.forEach((sp, i) => { if (i < earned) setTimeout(() => { sp.classList.add("lit"); beep([600 + i * 150], .25); }, 600 + i * 700); });
+  setTimeout(() => {
+    const dur = 900, t0 = performance.now();
+    (function tick(now){
+      const p = Math.min(1, (now - t0) / dur);
+      $("eoTally").textContent = "⭐ " + Math.round(before + gained * p) + " / " + wMax(wi);
+      if (p < 1) return requestAnimationFrame(tick);
+      pulse($("starPill")); updateTop();
+      $("eoNote").innerHTML = (magnet ? "☀️ מגנט השמש הוסיף כוכב! " : "") + (gained > 0 ? '<span class="ltr">+' + gained + ' ⭐</span>' + (earned > prev && prev > 0 ? " · שיא חדש! 🏅" : "") : (prev > 0 ? "השיא שלך נשאר " + prev + "⭐" : "")) + need;
+      if (earned === 3){ confetti(160); beep([523, 659, 784, 1047], .15); }
+      newF.forEach(f => {
+        const d = document.createElement("div"); d.className = "newf";
+        d.innerHTML = '<div class="bigem">' + f.e + '</div>' + (f.k === "boss" ? "חבר מיוחד חדש: " : "חבר חדש נפתח: ") + f.n + '! 🎁' + (f.k === "boss" ? '<span class="pdesc">' + f.power.pn + ': ' + f.power.pd + '</span>' : "");
+        const yes = document.createElement("button"); yes.className = "tbtn green"; yes.textContent = gt("שחק איתו!", "שחקי איתו!");
+        yes.onclick = () => { S.avatar = f.e; save(); updateTop(); yes.remove(); };
+        d.appendChild(yes); $("eoNew").appendChild(d);
+        confetti(200); beep([523, 659, 784, 1047], .15);
+      });
+      if (justWon){ $("eoWin").classList.remove("hidden"); confetti(300); setTimeout(() => confetti(300), 700); }
+      $("eoBtns").classList.remove("hidden");
+    })(t0);
+  }, 600 + earned * 700 + 300);
+}
+let endCtx = null;
+$("eoMap").onclick = () => { $("endOv").classList.add("hidden"); cur = null; openWorld(cw); };
+$("eoAgain").onclick = () => { $("endOv").classList.add("hidden"); startStage(endCtx.wi, endCtx.s); };
+$("eoNext").onclick = () => { $("endOv").classList.add("hidden"); startStage(endCtx.wi, endCtx.s + 1); };
+$("winParty").onclick = () => { $("endOv").classList.add("hidden"); cur = null; openWorld(cw); openParty(); };
+
+/* ===================== מסיבת החברים ===================== */
+const MEL = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
+const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
+const ARP = [523, 659, 784, 1046];
+let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+function partyTick(){
+  const i = partyStep++ % 16, n = partyLvl + 3;
+  if (MEL[i]) beep([MEL[i]], .2);
+  if (BASS[i]) beep([BASS[i]], .25);
+  if (n >= 5 && MEL[i] && i % 4 === 0) beep([MEL[i] * 1.25], .2);
+  if (n >= 6) beep([ARP[i % 4] * 2], .08);
+  if (n >= 8 && Math.random() < .5) beep([1500 + Math.random() * 1500], .06);
+}
+function openParty(){
+  const list = FRIENDS.filter(isUnlocked), n = list.length, p = $("party"), grid = $("pgrid"), all = FRIENDS.length;
+  grid.innerHTML = "";
+  list.forEach((f, i) => {
+    const d = document.createElement("div"); d.className = "dancer"; d.dataset.e = f.e;
+    d.innerHTML = '<span>' + f.e + '</span><div class="fbub"></div>';
+    d.style.animationDelay = (-i * .17) + "s"; grid.appendChild(d);
+  });
+  const k = partyLvl = Math.round((n - STARTERS.length) / (all - STARTERS.length) * 5);
+  p.style.setProperty("--dsz", n > 12 ? "40px" : n > 8 ? "50px" : "62px");
+  p.style.setProperty("--dance", Math.max(.22, .6 - k * .08) + "s");
+  p.style.setProperty("--spin", Math.max(2.5, 9 - k * 1.3) + "s");
+  p.style.setProperty("--bgs", Math.max(2, 6 - k * .8) + "s");
+  p.classList.toggle("crazy", k >= 4);
+  $("partyNote").innerHTML = "💡 המסיבה משתפרת עם כל חבר חדש! יותר חברים = יותר ריקודים, אורות ומוזיקה.<br>" +
+    "רמת הפראות: " + "🔥".repeat(k + 1) + "⚪".repeat(5 - k) + (n < all ? "<br>עוד " + (all - n) + (all - n === 1 ? " חבר מחכה" : " חברים מחכים") + " בעולמות" : "<br>🎊 כל החברים כאן - זו המסיבה הכי פרועה!");
+  p.querySelectorAll(".note").forEach(x => x.remove());
+  for (let i = 0; i < 8 + Math.min(n, 10) * 3; i++){
+    const e = document.createElement("div"); e.className = "note"; e.textContent = ["🎵", "🎶", "✨", "🎈"][i % 4];
+    e.style.left = (Math.random() * 94) + "%"; e.style.animationDelay = (-Math.random() * 5) + "s"; e.style.animationDuration = Math.max(2.2, 7 - k * .8 + Math.random() * 2) + "s";
+    p.appendChild(e);
+  }
+  p.classList.remove("hidden");
+  partyStep = 0; clearInterval(partyTimer); partyTimer = setInterval(partyTick, 250 - k * 24);
+  clearInterval(partyFx); if (k >= 1) partyFx = setInterval(() => confetti(20 + k * 12), Math.max(700, 3200 - k * 450));
+  confetti(150);
+  clearInterval(partyMoveT); clearInterval(partySayT);
+  const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
+  setTimeout(() => {
+    dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
+    const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+    const move = () => dancers.forEach(d => {
+      const h = d._home, R = 30 + k * 55;
+      d.style.translate = clamp((Math.random() * 2 - 1) * R, 8 - h.l, innerWidth - 8 - h.r) + "px " + clamp((Math.random() * 2 - 1) * R, 80 - h.t, innerHeight - 8 - h.b) + "px";
+      d.style.rotate = k >= 2 ? ((Math.random() * 2 - 1) * k * 12) + "deg" : "0deg";
+    });
+    move(); partyMoveT = setInterval(move, T);
+  }, 120);
+  const sayOne = () => {
+    dancers.forEach(x => x.classList.remove("say"));
+    const d = pick(dancers), lines = SAYS[d.dataset.e] || ["🎉"], fb = d.querySelector(".fbub");
+    fb.textContent = pick(lines); fb.classList.remove("below"); fb.style.marginLeft = "0";
+    d.classList.add("say");
+    const r = fb.getBoundingClientRect();
+    if (r.top < 70) fb.classList.add("below");
+    const shift = r.left < 6 ? 6 - r.left : r.right > innerWidth - 6 ? innerWidth - 6 - r.right : 0;
+    fb.style.marginLeft = shift + "px";
+    setTimeout(() => d.classList.remove("say"), 2300);
+  };
+  sayOne(); partySayT = setInterval(sayOne, Math.max(2000, 3000 - k * 150));
+}
+function closeParty(){
+  clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT);
+  partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden");
+}
+function closeTools(){}
+
+$("partyBtn").onclick = openParty;
+$("partyBtn2").onclick = openParty;
+$("partyClose").onclick = closeParty;
+
+/* ---------- התחלה ---------- */
+S = load();
+applyGender();
+/* קישורים ישירים לבדיקה: #w2 = מפת עולם 2, #w1s3 = שלב 3 בעולם 1 */
+route();
+{
+  const m = /#w(\d)(?:s(\d))?/.exec(location.hash);
+  if (m && S.avatar && +m[1] < WORLDS.length){ const wi = +m[1]; if (m[2] !== undefined && +m[2] < nStages(wi) && stageOpen(wi, +m[2])) startStage(wi, +m[2]); else if (m[2] !== undefined && +m[2] === nStages(wi) && bossOpen(wi)) startStage(wi, +m[2]); else openWorld(wi); }
+}
+
+</script>
+</body>
+</html>

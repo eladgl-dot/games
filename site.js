@@ -4,9 +4,10 @@
   var TOPICS = {
     math:    { name: "מתמטיקה", icon: "➗", color: "blue" },
     english: { name: "אנגלית",  icon: "🔤", color: "pink" },
-    hebrew:  { name: "עברית",   icon: "📖", color: "purple" }
+    hebrew:  { name: "עברית",   icon: "📖", color: "purple" },
+    science: { name: "מדע",     icon: "🔬", color: "green" }
   };
-  var TOPIC_ORDER = ["math", "english", "hebrew"];
+  var TOPIC_ORDER = ["math", "english", "hebrew", "science"];
   var MONTHS = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
   var EN2 = "אנגלית · 20 מילים";
   // grade, topic, folder, icon, color, title, desc, date (newest first inside a topic), isNew
@@ -21,6 +22,7 @@
     { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3", desc: "אנגלית", date: "2026-11-05", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure-2", icon: "🔤", color: "pink",   title: "הרפתקת המילים 2", desc: "אנגלית", date: "2026-10-31", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure", icon: "🔤", color: "pink",   title: "הרפתקת המילים",   desc: "אנגלית", date: "2026-10-28" },
+    { grade: 6, topic: "science", dir: "science-adventure", icon: "🔬", color: "green", title: "הרפתקת המדע", desc: "אנרגיה ומערכות טכנולוגיות", date: "2026-11-07", isNew: 1 },
     { grade: 6, topic: "hebrew",  dir: "smichut",         icon: "📖", color: "purple", title: "משחק הסמיכות",    desc: "עברית",  date: "2026-10-25" }
   ];
 
