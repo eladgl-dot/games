@@ -36,7 +36,27 @@ a.grade .big{font-size:56px;line-height:1}
 a.grade .t{font-size:28px}
 .install{display:block;margin:26px auto 0;border:0;border-radius:999px;background:var(--yellow);color:var(--ink);font:bold 18px var(--font);padding:12px 26px;box-shadow:0 5px 0 rgba(58,42,99,.35);cursor:pointer}
 .install[hidden]{display:none}
-.soon{opacity:.75}</style>
+.soon{opacity:.75}
+a.tests-btn{display:flex;align-items:center;gap:14px;margin:0 0 16px;padding:14px 18px;border-radius:22px;background:var(--yellow);color:var(--ink);text-decoration:none;box-shadow:0 6px 0 rgba(58,42,99,.3);transition:transform .12s}
+a.tests-btn:hover,a.tests-btn:focus-visible{transform:translateY(-3px);outline:3px solid #fff}
+.tests-btn .ic{font-size:38px;line-height:1}.tests-btn b{display:block;font-size:22px}.tests-btn small{font-size:15px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 6px}
+.tab{border:0;border-radius:999px;padding:9px 0;background:#ffffff99;color:var(--ink);font:bold 15px var(--font);cursor:pointer}
+.tab.on{background:#fff;box-shadow:0 4px 0 rgba(58,42,99,.3);outline:3px solid var(--yellow)}
+.tab:focus-visible{outline:3px solid var(--yellow)}
+h2.half{color:#fff;font-size:20px;margin:18px 4px 10px;text-shadow:0 2px 0 rgba(58,42,99,.3)}
+.test{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:20px;background:var(--card);box-shadow:0 5px 0 rgba(58,42,99,.25)}
+.test.next{outline:4px solid var(--yellow)}
+.test.past{opacity:.55}
+.date{flex:none;width:60px;text-align:center;border-radius:16px;color:#fff;padding:6px 0;line-height:1.15}
+.date b{display:block;font-size:24px}.date span{font-size:12px}
+.info{flex:1;min-width:0}.info .t{display:block;font-weight:bold;font-size:18px}.info .d{display:block;font-size:13px;opacity:.8}
+.badge{display:inline-block;background:var(--pink);color:#fff;border-radius:999px;padding:1px 9px;font-size:13px;vertical-align:middle}
+.go{flex:none;border-radius:999px;padding:7px 12px;font-size:14px;font-weight:bold;color:#fff;background:var(--green);text-decoration:none;box-shadow:0 3px 0 rgba(58,42,99,.25);white-space:nowrap}
+a.go:hover,a.go:focus-visible{outline:3px solid var(--yellow)}
+.go.soon{background:#a9a2bd;box-shadow:none}
+.nw{white-space:nowrap}
+.sec{color:#fff;font-size:14px;font-weight:bold;margin:14px 4px 8px}</style>
 </head>
 <body data-grade="6">
 <main id="app"></main>
