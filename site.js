@@ -20,6 +20,7 @@
     { grade: 2, topic: "hebrew",  dir: "shoresh-b-2",     icon: "👕", color: "green",  title: "הכתבה 2: השורש ל.ב.שׁ", desc: "שורש וניקוד", date: "2026-11-09", isNew: 1 },
     { grade: 2, topic: "hebrew",  dir: "shoresh-b",       icon: "🧩", color: "orange", title: "הכתבה 1: השורש שׂ.ח.ק", desc: "שורש וניקוד", date: "2026-11-02", isNew: 1 },
     { grade: 6, topic: "math",    dir: "math-adventure",  icon: "➗", color: "blue",   title: "הרפתקת המתמטיקה", desc: "שברים, עשרוניים וגיאומטריה", date: "2026-10-30", isNew: 1 },
+    { grade: 6, topic: "english", dir: "english-test", icon: "🚀", color: "blue", title: "משימת המבחן באנגלית", desc: "Present Simple & Progressive · חזרה למבחן", date: "2026-11-12", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3", desc: "אנגלית", date: "2026-11-05", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure-2", icon: "🔤", color: "pink",   title: "הרפתקת המילים 2", desc: "אנגלית", date: "2026-10-31", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure", icon: "🔤", color: "pink",   title: "הרפתקת המילים",   desc: "אנגלית", date: "2026-10-28" },
@@ -34,7 +35,7 @@
   var TESTS = [
     { grade: 6, half: 1, topic: "hebrew",  note: "שכבתי", dates: { "מעוף": "2026-10-30", "דיאלוג": "2026-10-30", "מקוריות": "2026-10-30", "חדשנות": "2026-10-30" } },
     { grade: 6, half: 1, topic: "math",    dir: "math-adventure", dates: { "מעוף": "2026-11-12", "דיאלוג": "2026-11-08", "מקוריות": "2026-11-10", "חדשנות": "2026-11-11" } },
-    { grade: 6, half: 1, topic: "english", dates: { "מעוף": "2026-11-18", "דיאלוג": "2026-11-18", "מקוריות": "2026-11-19", "חדשנות": "2026-11-19" } },
+    { grade: 6, half: 1, topic: "english", dir: "english-test", dates: { "מעוף": "2026-11-18", "דיאלוג": "2026-11-18", "מקוריות": "2026-11-19", "חדשנות": "2026-11-19" } },
     { grade: 6, half: 1, topic: "science", dir: "science-adventure", dates: { "מעוף": "2026-12-01", "דיאלוג": "2026-11-30", "מקוריות": "2026-11-29", "חדשנות": "2026-12-03" } },
     { grade: 6, half: 1, topic: "hebrew",  dates: { "מעוף": "2026-12-16", "דיאלוג": "2026-12-18", "מקוריות": "2026-12-15", "חדשנות": "2026-12-14" } },
     { grade: 6, half: 1, topic: "math",    dates: { "מעוף": "2026-12-31", "דיאלוג": "2026-12-27", "מקוריות": "2026-12-29", "חדשנות": "2026-12-30" } },

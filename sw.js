@@ -1,6 +1,6 @@
 // Network-first: online users always get the newest games; offline falls back to the saved copy.
-const CACHE = "games-v10";
-const PAGES = ["./", "grade2/", "grade6/", "math-adventure/", "words-adventure/", "words-adventure-2/", "words-adventure-3/", "science-adventure/", "smichut/",
+const CACHE = "games-v11";
+const PAGES = ["./", "grade2/", "grade6/", "math-adventure/", "words-adventure/", "words-adventure-2/", "words-adventure-3/", "english-test/", "science-adventure/", "smichut/",
   "words-b-animals/", "words-b-colors/", "words-b-food/", "words-b-home/", "words-b-body/", "shoresh-b/", "shoresh-b-2/",
   "manifest.webmanifest", "pwa.js", "site.js", "icon-192.png", "icon-512.png"];
 

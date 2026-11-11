@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:,">
+<title>מְשִׂימַת הַמִּבְחָן - אנגלית</title>
+<style>
+:root { --ink: #e8e6ff; --good: #22c55e; --bad: #ef4444; --gold: #ffd23f; --glass: rgba(255,255,255,.09); --line: rgba(255,255,255,.28); }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-height: 100vh; font-family: "Varela Round", "Segoe UI", Arial, sans-serif; color: var(--ink); overflow-x: hidden;
+  background: radial-gradient(circle at 70% 8%, #3b2a7a 0, #141433 55%, #0a0a1f 100%) fixed; }
+.hidden { display: none !important; }
+.sky { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+.st { position: absolute; inset: 0; background-repeat: repeat; }
+.st.a { background-image: radial-gradient(1.5px 1.5px at 20px 30px, #fff, transparent), radial-gradient(1.5px 1.5px at 180px 60px, #fff, transparent), radial-gradient(1.5px 1.5px at 60px 300px, #fff, transparent), radial-gradient(1.5px 1.5px at 250px 220px, #cfe, transparent); background-size: 300px 360px; animation: tw 2.2s ease-in-out infinite; }
+.st.b { background-image: radial-gradient(1px 1px at 90px 120px, #fff, transparent), radial-gradient(2px 2px at 140px 220px, #ffe9a8, transparent), radial-gradient(1px 1px at 270px 90px, #fff, transparent), radial-gradient(1.5px 1.5px at 30px 180px, #bdf, transparent); background-size: 290px 340px; animation: tw 3.1s ease-in-out infinite .8s; }
+.st.c { background-image: radial-gradient(2px 2px at 120px 40px, #fff, transparent), radial-gradient(1px 1px at 220px 330px, #fff, transparent), radial-gradient(2px 2px at 50px 260px, #fdd, transparent); background-size: 310px 380px; animation: tw 1.7s ease-in-out infinite .3s; }
+@keyframes tw { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+canvas#fx { position: fixed; inset: 0; pointer-events: none; z-index: 60; }
+.wrap { position: relative; z-index: 1; max-width: 520px; margin: 0 auto; padding: 8px 10px 30px; }
+.wrap.shake { animation: shake .45s; }
+@keyframes shake { 0%, 100% { transform: translate(0, 0); } 15% { transform: translate(-9px, 4px); } 30% { transform: translate(9px, -5px); } 45% { transform: translate(-7px, -4px); } 60% { transform: translate(7px, 4px); } 80% { transform: translate(-3px, 2px); } }
+h1 { text-align: center; font-size: 1.5em; margin: 6px 0 2px; text-shadow: 0 0 14px #8d7bff; }
+.sub { text-align: center; margin: 0 0 8px; opacity: .85; font-size: .92em; line-height: 1.45; }
+button { font: inherit; font-weight: 800; border: 0; border-radius: 14px; padding: 10px 16px; cursor: pointer; color: #fff; background: #7c5cff; box-shadow: 0 4px 0 #4b32b3; margin: 4px 3px; }
+button:active { transform: translateY(2px); box-shadow: 0 2px 0 #4b32b3; }
+button:disabled { opacity: .5; cursor: default; }
+button.gold { background: var(--gold); color: #3a2a00; box-shadow: 0 4px 0 #c99700; }
+button.green { background: #15803d; box-shadow: 0 4px 0 #14532d; }
+button.grey { background: #64748b; box-shadow: 0 4px 0 #475569; }
+#top { position: sticky; top: 0; z-index: 15; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; padding: 6px; border-radius: 18px; background: rgba(10,10,40,.7); backdrop-filter: blur(6px); }
+#who { display: inline-flex; background: rgba(255,255,255,.14); border-radius: 99px; padding: 3px; }
+#who button { margin: 0; padding: 4px 10px; font-size: .9em; background: transparent; box-shadow: none; }
+#who button.on { background: #7c5cff; }
+.chip { background: rgba(255,255,255,.16); border-radius: 99px; padding: 5px 12px; font-weight: 800; font-size: .95em; margin: 0; color: var(--ink); box-shadow: none; }
+button.chip { padding: 5px 11px; }
+#mapBtns { text-align: center; }
+/* ---------- map (scrolls sideways) ---------- */
+body.onmap { overflow: hidden; }
+#map { position: relative; height: calc(100vh - 66px); height: calc(100dvh - 66px); display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+#mapwrap { flex: 1; min-height: 280px; position: relative; overflow-x: auto; overflow-y: hidden; direction: ltr; border-radius: 18px; scrollbar-width: thin; }
+#mapin { position: relative; }
+#mapin svg.orb { position: absolute; left: 0; top: 0; pointer-events: none; }
+.planet { position: absolute; width: 92px; height: 92px; border-radius: 50%; display: block; font-size: 36px; cursor: pointer; z-index: 3; border: 0; padding: 0; margin: 0; color: #fff; background: none; }
+.planet .pl { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 6px; width: max-content; max-width: 140px; text-align: center; direction: rtl; background: rgba(8,8,34,.85); border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: 1px 9px; font-size: 12.5px; font-weight: 800; line-height: 1.35; color: #fff; z-index: 9; pointer-events: none; }
+.planet.dark { box-shadow: 0 0 0 4px rgba(26,6,48,.7), 0 0 34px 12px rgba(58,10,102,.8); }
+.planet.dark:before { content: ""; position: absolute; inset: -26px; border-radius: 50%; background: radial-gradient(circle, #1a0630 0, rgba(42,10,74,.8) 40%, transparent 72%); animation: fogp 3s ease-in-out infinite; z-index: -1; }
+.planet.dark:after { content: ""; position: absolute; inset: -10px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(0,0,0,.5) 0, transparent 60%), radial-gradient(circle at 70% 75%, rgba(74,20,140,.4) 0, transparent 55%); animation: fogp 2.2s ease-in-out infinite reverse; mix-blend-mode: multiply; pointer-events: none; }
+@keyframes fogp { 50% { transform: scale(1.12); opacity: .8; } }
+.planet.light { box-shadow: 0 0 0 5px rgba(255,255,255,.55), 0 0 40px 16px rgba(255,244,170,.8); animation: glowl 2.4s ease-in-out infinite; }
+@keyframes glowl { 50% { box-shadow: 0 0 0 7px rgba(255,255,255,.7), 0 0 52px 22px rgba(255,244,170,.95); } }
+.planet.lock { opacity: .7; filter: grayscale(.6); cursor: default; }
+.planet.sel { outline: 4px solid var(--gold); outline-offset: 6px; }
+.planet .psvg { position: absolute; left: -14px; top: -14px; overflow: visible; pointer-events: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,.45)); }
+.planet .accb { position: absolute; right: -8px; top: -8px; font-size: 20px; background: #fff; border-radius: 50%; width: 32px; height: 32px; display: grid; place-items: center; box-shadow: 0 2px 6px rgba(0,0,0,.5); }
+.wait { position: absolute; z-index: 4; pointer-events: none; }
+.wait.lock { filter: brightness(.55) grayscale(.8); }
+.sunbox { position: absolute; z-index: 2; width: 150px; height: 150px; }
+.evilhide { position: absolute; left: 92px; top: 44px; z-index: 0; transform: rotate(8deg); }
+.evilsay { display: none; position: absolute; left: 78px; top: -52px; z-index: 12; width: max-content; min-width: 150px; max-width: 210px; background: #fff; color: #2a0a3a; border-radius: 14px; padding: 6px 12px; font-size: 13px; font-weight: 900; line-height: 1.35; direction: rtl; text-align: center; }
+.evilsay.on { display: block; animation: popin2 .25s; }
+.evilsay:after { content: ""; position: absolute; left: 20px; top: 100%; border: 8px solid transparent; border-top-color: #fff; border-bottom: 0; }
+@keyframes popin2 { from { transform: scale(.6); opacity: 0; } }
+#helperArt { cursor: pointer; }
+.sunbody { position: relative; z-index: 1; width: 150px; height: 150px; border-radius: 50%; cursor: pointer;
+  background: radial-gradient(circle at 38% 32%, #fffff2 0, #fff59d 26%, #ffc107 60%, #ff8f00 100%);
+  box-shadow: 0 0 50px 20px rgba(255,193,7,.75), 0 0 120px 50px rgba(255,140,0,.45); animation: sunglow 3s ease-in-out infinite; }
+.sunbody:before { content: ""; position: absolute; inset: -46px; border-radius: 50%; background: repeating-conic-gradient(from 0deg, rgba(255,236,130,.6) 0 7deg, transparent 7deg 22deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 76px, #000 77px 116px, transparent 121px); mask: radial-gradient(circle, transparent 0 76px, #000 77px 116px, transparent 121px); animation: rays 26s linear infinite; pointer-events: none; }
+.sunbody:after { content: ""; position: absolute; left: 24px; top: 18px; width: 52px; height: 32px; border-radius: 50%; background: radial-gradient(rgba(255,255,255,.95), transparent 70%); transform: rotate(-30deg); }
+.sunbody.nr:before { display: none; }
+@keyframes rays { to { transform: rotate(360deg); } }
+@keyframes sunglow { 50% { box-shadow: 0 0 70px 30px rgba(255,193,7,.9), 0 0 150px 70px rgba(255,140,0,.5); } }
+.cnt { position: absolute; left: -8px; top: -4px; min-width: 36px; text-align: center; direction: ltr; z-index: 10; pointer-events: none; font-size: 12px; font-weight: 900; padding: 2px 7px; border-radius: 99px; background: rgba(10,10,40,.92); border: 1.5px solid rgba(255,255,255,.5); color: #fff; }
+.cnt.g3 { border-color: #4ade80; color: #bbf7d0; }
+.cnt.g5 { border-color: var(--gold); color: var(--gold); background: rgba(60,40,0,.92); }
+.toast { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 80; background: #15803d; color: #fff; font-weight: 800; padding: 10px 18px; border-radius: 99px; box-shadow: 0 4px 14px rgba(0,0,0,.5); }
+.modal.win { max-width: 460px; border-color: var(--gold); box-shadow: 0 0 60px rgba(255,210,63,.55); position: relative; overflow-x: hidden; }
+.sunwin { position: absolute; left: 50%; top: -90px; width: 220px; height: 220px; margin-left: -110px; border-radius: 50%; background: radial-gradient(circle, rgba(255,245,170,.9) 0, rgba(255,193,7,.45) 45%, transparent 70%); pointer-events: none; }
+#winTitle { position: relative; font-size: 1.6em; margin-top: 4px; }
+#winLulu { position: relative; display: flex; justify-content: center; }
+#winCrew { display: flex; justify-content: center; flex-wrap: wrap; margin: 4px 0; }
+#winNote { line-height: 1.6; margin: 6px 0; }
+#winBtns { display: flex; flex-wrap: wrap; justify-content: center; }
+.sunl { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 8px; width: max-content; direction: rtl; background: rgba(8,8,34,.85); border: 1px solid rgba(255,255,255,.3); border-radius: 10px; padding: 1px 9px; font-size: 12.5px; font-weight: 800; color: #fff; z-index: 9; pointer-events: none; }
+.fleet { position: absolute; width: 0; height: 0; z-index: 6; }
+.rk { display: inline-block; transition: transform 1s ease; }
+.ship { position: absolute; z-index: 2; font-size: 40px; transform: translate(-50%, -50%); filter: drop-shadow(0 0 10px #ff9f43); animation: shipb 3s ease-in-out infinite; pointer-events: none; }
+@keyframes shipb { 50% { transform: translate(-50%, -58%); } }
+.crew { position: absolute; z-index: 3; cursor: pointer; animation: crewfl 3.4s ease-in-out infinite; }
+@keyframes crewfl { 0%, 100% { transform: translate(0, 0); } 33% { transform: translate(3px, -4px); } 66% { transform: translate(-3px, -2px); } }
+.crew.hop { animation: hopj .5s 2; }
+@keyframes hopj { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-22px) scale(1.12); } 70% { transform: translateY(0) scale(1.08, .92); } }
+.trail { position: absolute; z-index: 5; width: 14px; height: 14px; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; background: radial-gradient(circle, #fff 0, #ffd23f 38%, rgba(255,140,0,0) 72%); animation: trailf 1s forwards; }
+.trail.sp { width: 8px; height: 8px; background: radial-gradient(circle, #fff 0, #9fd8ff 45%, rgba(100,160,255,0) 75%); }
+@keyframes trailf { to { opacity: 0; transform: translate(-50%, -50%) scale(.2); } }
+.scrollhint { position: absolute; left: 0; right: 0; top: 8px; z-index: 12; text-align: center; font-size: 12.5px; font-weight: 800; pointer-events: none; }
+.scrollhint span { background: rgba(0,0,0,.65); border-radius: 99px; padding: 4px 14px; }
+#info { flex: none; display: flex; gap: 10px; align-items: center; background: rgba(18,16,60,.96); border: 1.5px solid var(--line); border-radius: 18px; padding: 8px 10px; min-height: 120px; }
+#info .iart { flex: none; text-align: center; }
+#info .it { flex: 1; font-size: .88em; line-height: 1.5; text-align: right; }
+#info .it b { color: var(--gold); }
+#info .go { flex: none; margin: 0; }
+.nametag { display: block; text-align: center; background: var(--gold); color: #3a2a00; border-radius: 99px; font-size: 12px; font-weight: 900; padding: 1px 10px; margin-top: -4px; position: relative; }
+button.site { background: rgba(255,255,255,.2); }
+/* ---------- stage ---------- */
+#stageHead { display: flex; align-items: center; gap: 5px; margin-top: 8px; }
+#stageHead button { margin: 0; padding: 8px 11px; }
+#stageTitle { flex: 1; min-width: 0; text-align: center; font-weight: 800; font-size: .9em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; background: rgba(255,255,255,.12); border-radius: 99px; padding: 6px 8px; }
+#fuel { flex: none; display: flex; gap: 4px; align-items: center; background: rgba(255,255,255,.12); border-radius: 99px; padding: 6px 10px; font-size: 1.1em; }
+#fuel i { width: 15px; height: 15px; border-radius: 4px; background: rgba(255,255,255,.2); display: inline-block; }
+#fuel i.on { background: var(--gold); box-shadow: 0 0 9px var(--gold); }
+#fuel i.miss { background: #94a3b8; }
+#fuel i.pop { animation: pop .5s; }
+@keyframes pop { 50% { transform: scale(1.7); } }
+#helper { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; }
+#helperArt svg { display: block; }
+#helperArt.hit svg { animation: hit .5s; }
+@keyframes hit { 0%, 100% { filter: none; } 40% { filter: brightness(2.2) saturate(2); } }
+.bub { position: relative; flex: 1; background: #fff; color: #2a1b5c; border-radius: 16px; padding: 8px 12px; font-size: .95em; font-weight: 800; line-height: 1.4; min-height: 2.4em; }
+.bub::before { content: ""; position: absolute; right: -9px; top: 22px; border: 9px solid transparent; border-left-color: #fff; border-right: 0; }
+#hint { text-align: center; min-height: 1.3em; font-size: .9em; opacity: .9; margin: 4px 0; font-weight: 700; }
+.card { background: var(--glass); border: 1.5px solid var(--line); border-radius: 20px; padding: 12px; text-align: center; }
+#ptext { margin-bottom: 6px; }
+.sname { font-size: .78em; opacity: .65; font-weight: 700; }
+#ptext .inst { font-size: 1.02em; font-weight: 800; }
+#ptext .he { font-size: 1.3em; margin: 4px 0; font-weight: 800; }
+#ptext .en { font-size: 1.35em; margin: 4px 0; font-weight: 800; }
+.en { direction: ltr; unicode-bidi: isolate; }
+.g { color: #6ee7a0; }
+#msg { min-height: 1.8em; font-size: 1.1em; font-weight: 800; margin-top: 6px; }
+#msg .en { font-size: 1.05em; }
+#msg small { font-weight: 600; opacity: .8; }
+#btns { margin-top: 4px; }
+#quiz { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 6px; }
+#quiz.col1, #quiz.col1 .ropts { grid-template-columns: 1fr; }
+#quiz button.optb { margin: 0; font-size: 1.1em; line-height: 1.35; padding: 12px 8px; background: rgba(255,255,255,.14); border: 2px solid var(--line); box-shadow: 0 4px 0 rgba(0,0,0,.35); color: #fff; }
+#quiz button.optb:hover:not(:disabled) { background: rgba(255,255,255,.24); }
+#quiz button.optb.right, .ropts button.optb.right, .sbtns button.optb.right { background: #15803d; border-color: #86efac; box-shadow: 0 4px 0 #14532d; color: #fff; }
+#quiz button.optb.bad, .ropts button.optb.bad, .sbtns button.optb.bad { background: #5a2330; border-color: var(--bad); color: #fca5a5; box-shadow: 0 4px 0 #7f1d1d; opacity: 1; }
+#quiz.swipeMode, #quiz.fillMode, #quiz.buildMode, #quiz.readMode { display: block; }
+#quiz.swipeMode { overflow-x: clip; }
+.wide { width: 100%; margin: 10px 0 0; }
+#swipeStage { position: relative; height: 150px; margin: 6px 0 12px; touch-action: pan-y; }
+.scard { position: absolute; inset: 0 4%; background: rgba(255,255,255,.2); border: 2px solid var(--line); border-radius: 22px; box-shadow: 0 8px 0 rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 14px;
+  font-size: 1.4em; font-weight: 800; cursor: grab; user-select: none; touch-action: pan-y; transition: transform .25s, opacity .25s; }
+.sbtns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sbtns button.optb { margin: 0; font-size: 1.05em; padding: 14px 6px; background: rgba(255,255,255,.14); border: 2px solid var(--line); box-shadow: 0 4px 0 rgba(0,0,0,.35); }
+.shint { font-size: .85em; opacity: .7; margin-top: 6px; }
+.fillbox { font-size: 1.3em; font-weight: 700; line-height: 2.5; text-align: left; margin-top: 4px; }
+.fillbox input { font: inherit; font-weight: 800; text-align: center; border: 3px solid #8d7bff; border-radius: 10px; padding: 0 4px; margin: 0 3px; color: #fff; background: rgba(5,5,30,.7); outline: none; max-width: 100%; }
+.fillbox input:focus { border-color: var(--gold); box-shadow: 0 4px 0 var(--gold); }
+.fillbox input.ok { background: #15803d; border-color: #86efac; }
+.fillbox input.hint { background: #b7791f; border-color: var(--gold); }
+.fillbox input.wrong { background: #5a2330; border-color: var(--bad); animation: tshake .35s; }
+@keyframes tshake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+.bzone { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-content: flex-start; min-height: 58px; padding: 8px; border-radius: 16px; margin: 8px 0; }
+.bzone.ans { background: rgba(5,5,30,.55); border: 2px dashed rgba(255,255,255,.45); min-height: 66px; }
+.bzone.ans.good { border-color: #86efac; background: rgba(34,197,94,.2); }
+.bzone.ans.bad { border-color: var(--bad); animation: tshake .35s; }
+.bzone.bank { background: rgba(255,255,255,.08); }
+.chip2, .chip.w { }
+.bzone .chip { padding: 8px 14px; background: #7c5cff; border-radius: 12px; font-size: 1.15em; font-weight: 800; color: #fff; box-shadow: 0 4px 0 #4b32b3; cursor: grab; user-select: none; touch-action: none; margin: 0; }
+.bzone.ans .chip { background: #fff; color: #2a1b5c; box-shadow: 0 4px 0 #cbbdf5; }
+.bzone .chip.lifted { opacity: .3; }
+.chip.ghost { position: fixed; z-index: 90; pointer-events: none; transform: rotate(-4deg) scale(1.08); box-shadow: 0 10px 20px rgba(0,0,0,.5); padding: 8px 14px; background: #7c5cff; border-radius: 12px; font-weight: 800; color: #fff; font-size: 1.15em; }
+.flipwrap { perspective: 1200px; margin: 6px 0; }
+.flipper { display: grid; transition: transform .55s; transform-style: preserve-3d; }
+.flipper.flipped { transform: rotateY(180deg); }
+.face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 18px; padding: 10px 14px; text-align: left; }
+.face.front { background: #fff8e1; color: #2a1b5c; border: 3px solid #f0d58a; }
+.face.back { transform: rotateY(180deg); background: rgba(20,18,70,.92); border: 2px solid var(--line); }
+.face h3 { margin: 4px 0 8px; font-size: 1.05em; }
+.rtext p { margin: 0 0 8px; font-size: 1em; line-height: 1.5; font-weight: 600; }
+.rq { font-weight: 800; font-size: 1.2em; margin: 4px 0 10px; }
+.ropts { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.ropts button.optb { margin: 0; font-size: 1em; padding: 10px 8px; background: rgba(255,255,255,.14); border: 2px solid var(--line); box-shadow: 0 4px 0 rgba(0,0,0,.35); text-align: left; color: #fff; }
+#cheer { display: flex; justify-content: center; flex-wrap: wrap; gap: 0; margin-top: 12px; min-height: 40px; }
+#cheer svg { margin: 0 -2px; }
+/* ---------- overlays ---------- */
+.ov { position: fixed; inset: 0; z-index: 40; background: rgba(5,5,25,.78); display: flex; align-items: center; justify-content: center; padding: 14px; }
+.modal { width: 100%; max-width: 440px; background: #1d1b4a; border: 2px solid var(--line); border-radius: 22px; padding: 16px; text-align: center; box-shadow: 0 0 40px rgba(124,92,255,.4); max-height: 92vh; overflow-y: auto; }
+.modal h2 { margin: 6px 0; }
+#eoArt svg { display: block; margin: 0 auto; }
+#eoFuel { display: flex; gap: 5px; justify-content: center; margin: 8px 0; }
+#eoFuel i { width: 18px; height: 18px; border-radius: 5px; background: rgba(255,255,255,.2); }
+#eoFuel i.on { background: var(--gold); box-shadow: 0 0 9px var(--gold); }
+#eoNote { min-height: 1.5em; font-weight: 700; line-height: 1.5; }
+#eoCrew { display: flex; justify-content: center; flex-wrap: wrap; margin: 6px 0; }
+.rules { text-align: right; }
+.rules h3 { margin: 14px 0 4px; background: rgba(255,255,255,.12); border-radius: 10px; padding: 3px 10px; }
+.rules p, .rules li { line-height: 1.55; margin: 4px 0; }
+.rules ul { padding: 0 18px; }
+.rules table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: .92em; }
+.rules td, .rules th { border: 1px solid var(--line); padding: 3px 6px; }
+.rules th { background: rgba(255,255,255,.12); }
+/* alien animation */
+.al { overflow: visible; }
+.al .bd { animation: bob 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.al .eye { animation: blink 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+.al.help .bd { animation: wob .9s ease-in-out infinite; }
+.al.cheer .bd { animation: jump .8s ease-in-out infinite; }
+.al .arm { transform-box: fill-box; transform-origin: 50% 100%; }
+.al.cheer .arm.l { animation: wave .5s ease-in-out infinite alternate; }
+.al.cheer .arm.r { animation: wave .5s ease-in-out infinite alternate-reverse; }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes wob { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes jump { 0%, 100% { transform: translateY(0) scale(1, 1); } 40% { transform: translateY(-12px) scale(.96, 1.05); } 70% { transform: translateY(0) scale(1.06, .94); } }
+@keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.08); } }
+@keyframes wave { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+.xbtn { position: sticky; top: 0; float: left; z-index: 3; margin: 0; padding: 6px 12px; }
+@media (max-width: 400px) { h1 { font-size: 1.3em; } .modal { padding: 12px; } }
+
+#helperCol { flex: none; width: 96px; }
+#cheer { display: flex; justify-content: center; align-items: flex-end; flex-wrap: wrap; margin-top: 40px; min-height: 50px; }
+#cheer .c { position: relative; }
+#cheer .say, #eoCrew .say { display: none; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 4px; white-space: nowrap; background: #fff; color: #2a1b5c; border-radius: 12px; padding: 3px 10px; font-size: 12px; font-weight: 900; z-index: 3; }
+#cheer .say.on { display: block; animation: popin .25s; }
+#cheer .say:after { content: ""; position: absolute; left: 50%; top: 100%; margin-left: -6px; border: 6px solid transparent; border-top-color: #fff; border-bottom: 0; }
+@keyframes popin { from { transform: translateX(-50%) scale(.6); opacity: 0; } }
+#eoCrew .c { position: relative; }
+.modal.rulesm { max-width: 440px; display: flex; flex-direction: column; }
+#rulesTop { display: flex; align-items: center; gap: 8px; }
+#rulesTop .bub { flex: 1; font-size: 1em; }
+.xbtn { margin: 0; padding: 6px 12px; flex: none; }
+#rulesCard { margin: 8px 0; min-height: 330px; touch-action: pan-y; }
+.rc { margin: 7px 0; border-radius: 14px; padding: 8px 12px; background: rgba(255,255,255,.1); border: 1.5px solid rgba(255,255,255,.25); text-align: center; }
+.rc .ex { direction: ltr; font-size: 1.25em; font-weight: 800; }
+.rc .ex b { color: var(--gold); border-bottom: 3px solid var(--gold); }
+.rc .tag { font-size: .82em; opacity: .85; margin-bottom: 2px; }
+.rc.small { font-size: .88em; }
+.big { font-size: 3em; line-height: 1.1; direction: ltr; }
+.dots { display: flex; gap: 6px; justify-content: center; margin: 8px 0; }
+.dots i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255,255,255,.3); }
+.dots i.on { background: var(--gold); }
+#rnav { display: flex; justify-content: space-between; }
+.modal.pre { text-align: center; position: relative; padding-top: 22px; }
+#preArt { min-height: 200px; display: grid; place-items: center; }
+#preText { margin: 8px 0; font-size: 1.05em; line-height: 1.55; }
+.bub.d::before { display: none; }
+#preSkip { position: absolute; top: 8px; left: 10px; margin: 0; font-size: .85em; }
+.presun { position: relative; width: 210px; height: 170px; }
+.presun .sunbody { position: absolute; right: 10px; top: 14px; width: 110px; height: 110px; }
+.presun .evilhide2 { position: absolute; right: 70px; top: 44px; z-index: 0; transform: rotate(6deg); }
+
+</style>
+</head>
+<body>
+<div class="sky"><div class="st a"></div><div class="st b"></div><div class="st c"></div></div>
+<canvas id="fx"></canvas>
+<div class="wrap" id="app">
+  <div id="top">
+    <button class="chip btn site" id="siteBtn" onclick="location.href='../grade6/#english'">⬅ חזרה לאתר</button>
+    <div id="who"><button data-g="boy" title="בן">👦</button><button data-g="girl" title="בת">👧</button></div>
+    <div class="chip" id="chipCrew">👽 <span id="crewN">0</span>/<span id="crewMax">9</span></div>
+    <div class="chip" id="chipSkips">🤷 <span id="skipsLeft">2</span></div>
+    <button class="chip btn" id="helpBtn" title="הסיפור">❓</button>
+    <button class="chip btn" id="rulesBtn" title="חוקים">📘</button>
+    <button class="chip btn" id="newBtn" title="להתחיל מחדש">🔄</button>
+  </div>
+
+  <section id="map">
+    <div id="mapwrap"><div id="mapin"></div></div>
+    <div id="info"></div>
+  </section>
+
+  <section class="hidden" id="stage">
+    <div id="stageHead">
+      <button class="grey" id="backMap">🗺️ למפה</button>
+      <button class="gold" id="rulesBtn2" title="חוקים">📘</button>
+      <div id="stageTitle"></div>
+      <div id="fuel"></div>
+    </div>
+    <div id="helper">
+      <div id="helperCol"><div id="helperArt"></div><span class="nametag" id="helperName"></span></div>
+      <div class="bub" id="helperBub"></div>
+    </div>
+    <div id="hint"></div>
+    <div class="card" id="qcard">
+      <div id="ptext"></div>
+      <div id="quiz"></div>
+      <div id="msg"></div>
+      <div id="btns">
+        <button class="gold hidden" id="speakBtn">🔊 השמע</button>
+        <button class="grey" id="skipBtn"></button>
+        <button class="green hidden" id="nextQ">הבאה ➜</button>
+      </div>
+    </div>
+    <div id="cheer"></div>
+  </section>
+</div>
+
+<div class="ov hidden" id="endOv"><div class="modal">
+  <div id="eoArt"></div>
+  <h2 id="eoTitle"></h2>
+  <div id="eoFuel"></div>
+  <div id="eoNote"></div>
+  <div id="eoCrew"></div>
+  <div id="eoBtns">
+    <button class="grey" id="eoMap">🗺️ למפה</button>
+    <button class="gold" id="eoAgain">🔁 עוד פעם</button>
+    <button class="green" id="eoNext">✈️ לכוכב הבא</button>
+  </div>
+</div></div>
+
+<div class="ov hidden" id="winOv"><div class="modal win">
+  <div class="sunwin"></div>
+  <h2 id="winTitle">ניצחתם! 🏆</h2>
+  <div id="winLulu"></div>
+  <div id="winCrew"></div>
+  <div id="winNote"></div>
+  <div id="winBtns">
+    <button class="gold" id="winMap">🗺️ למפה</button>
+    <button class="green" id="winNew">🔄 משימה חדשה</button>
+    <button class="grey" id="winSite" onclick="location.href='../grade6/#english'">⬅ חזרה לאתר</button>
+  </div>
+</div></div>
+
+<div class="ov hidden" id="rulesOv"><div class="modal rulesm">
+  <div id="rulesTop"><button class="grey xbtn" id="rulesX">✖</button><div id="rulesLulu"></div><div class="bub" id="rulesBub"></div></div>
+  <div id="rulesCard"></div>
+  <div class="dots" id="rdots"></div>
+  <div id="rnav"><button class="grey" id="rprev">➡ הקודם</button><button class="gold" id="rnext">הבא ⬅</button></div>
+</div></div>
+
+<div class="ov hidden" id="preOv"><div class="modal pre">
+  <div id="preArt"></div>
+  <div class="bub d" id="preText"></div>
+  <div class="dots" id="preDots"></div>
+  <div><button class="gold" id="preNext">הבא ⬅</button></div>
+  <button class="chip btn" id="preSkip">דלגו</button>
+</div></div>
+
+<script>
+// ============================================================
+//  מאגר השאלות של המבחן  /  Question bank (Present Simple & Present Progressive)
+//  כדי להוסיף שאלה: להעתיק שורה באותה קבוצה ולשנות. כל שורה מסתיימת בפסיק, חוץ מהאחרונה בקבוצה.
+//  - fill:  [משפט עם ___ , תשובה]  (כמה חסרים? מפרידים תשובות ב-| ותשובות חלופיות ב-/ )
+//  - choose: [משפט עם (a / b / c) , התשובה הנכונה]
+// ============================================================
+window.TEST = {
+  // [verb, he/she form]
+  verbsS: [["watch", "watches"], ["study", "studies"], ["play", "plays"], ["go", "goes"], ["fly", "flies"], ["have", "has"], ["wash", "washes"], ["enjoy", "enjoys"],
+    ["kiss", "kisses"], ["mix", "mixes"], ["carry", "carries"], ["fix", "fixes"], ["try", "tries"]],
+  // [verb, ing form, 3 wrong spellings]
+  verbsIng: [["make", "making", ["makeing", "makking", "makeng"]], ["run", "running", ["runing", "runeing", "runnig"]], ["sit", "sitting", ["siting", "siteing", "sittng"]],
+    ["play", "playing", ["playying", "plaing", "playeing"]], ["write", "writing", ["writeing", "writting", "writng"]], ["swim", "swimming", ["swiming", "swimeing", "swimng"]],
+    ["lie", "lying", ["lieing", "liing", "liying"]], ["dance", "dancing", ["danceing", "dancng", "dancening"]], ["shop", "shopping", ["shoping", "shopeing", "shopng"]],
+    ["stop", "stopping", ["stoping", "stopeing", "stopng"]], ["begin", "beginning", ["begining", "begineing", "beginng"]], ["drive", "driving", ["driveing", "drivving", "drivng"]],
+    ["cut", "cutting", ["cuting", "cuteing", "cutng"]], ["read", "reading", ["reding", "readding", "readng"]]],
+  // [sentence, PS or PC, clue]
+  swipe: [
+    ["He usually walks to school.", "PS", "usually"], ["Look! It is snowing.", "PC", "Look!"], ["We never eat fish on Sundays.", "PS", "never / on Sundays"],
+    ["Mom is talking on the phone at the moment.", "PC", "at the moment"], ["I often visit my grandma.", "PS", "often"], ["They are doing homework now.", "PC", "now"],
+    ["Water boils at 100 degrees.", "PS", "a fact"], ["She is wearing a red dress today.", "PC", "today"], ["Cats usually sleep during the day.", "PS", "usually"],
+    ["Listen! The dog is barking.", "PC", "Listen!"], ["My parents work in an office.", "PS", "a fixed routine"], ["Right now, we are cleaning the classroom.", "PC", "Right now"],
+    ["Dana helps her mother every Friday.", "PS", "every Friday"], ["The students are writing a test at the moment.", "PC", "at the moment"], ["Fish live in water.", "PS", "a fact"],
+    ["Be careful! You are standing on my bag.", "PC", "it is happening now"], ["We visit the library once a week.", "PS", "once a week"], ["The baby is crying at the moment.", "PC", "at the moment"],
+    ["Birds have wings.", "PS", "a fact"], ["Please wait. I am writing an email now.", "PC", "now"], ["She always arrives early.", "PS", "always"],
+    ["Look! The bus is coming.", "PC", "Look!"], ["They sometimes eat dinner at a restaurant.", "PS", "sometimes"], ["The kids are jumping on the trampoline right now.", "PC", "right now"]
+  ],
+  // [sentence with (a / b), correct]
+  choose: [
+    ["She (play / plays) tennis every Monday.", "plays"], ["Look! The children (play / are playing) in the yard.", "are playing"], ["My dad (doesn't work / isn't working) on Fridays.", "doesn't work"],
+    ["We (watch / are watching) a movie right now.", "are watching"], ["(Do / Does) your brother like pizza?", "Does"], ["I (don't know / am not knowing) the answer.", "don't know"],
+    ["Listen! Someone (sings / is singing).", "is singing"], ["The sun (rise / rises) in the east.", "rises"],
+    ["Tom usually (wakes up / is waking up) at six o'clock.", "wakes up"], ["Right now, we (clean / are cleaning) the classroom.", "are cleaning"],
+    ["My parents (work / are working) in an office.", "work"], ["Listen! The dog (barks / is barking).", "is barking"], ["Dana (helps / is helping) her mother every Friday.", "helps"],
+    ["We (don't eat / aren't eating) lunch right now.", "aren't eating"], ["(Does / Is / Do / Are) your father drive to work every day?", "Does"], ["Cats usually (sleep / are sleeping) during the day.", "sleep"],
+    ["Please be quiet. The teacher (talks / is talking).", "is talking"], ["I (don't like / am not liking) scary movies.", "don't like"], ["Look! It (rains / is raining).", "is raining"],
+    ["(Are / Do / Is / Does) you listening to music at the moment?", "Are"], ["Fish (live / are living) in water.", "live"], ["Be careful! You (stand / are standing) on my bag.", "are standing"],
+    ["He (doesn't like / isn't liking) cold weather.", "doesn't like"], ["She usually (arrives / is arriving) early.", "arrives"]
+  ],
+  // [sentence with ___ , answers]  ( | between blanks, / between accepted variants )
+  fill: [
+    ["Tom usually ___ (wake up) at six o'clock.", "wakes up"], ["Right now, we ___ (clean) the classroom.", "are cleaning"], ["My parents ___ (work) in an office.", "work"],
+    ["Listen! The dog ___ (bark).", "is barking"], ["I ___ (read) a very interesting book at the moment.", "am reading"], ["Dana ___ (help) her mother every Friday.", "helps"],
+    ["Look! The bus ___ (come).", "is coming"], ["We ___ (not eat) lunch right now.", "are not eating"], ["___ your father ___ (drive) to work every day?", "Does|drive"],
+    ["The students ___ (write) a test at the moment.", "are writing"], ["Cats usually ___ (sleep) during the day.", "sleep"], ["Please be quiet. The teacher ___ (talk).", "is talking"],
+    ["I ___ (not like) scary movies.", "do not like"], ["They ___ (play) football in the yard right now.", "are playing"], ["My sister ___ (brush) her teeth every morning.", "brushes"],
+    ["Look! It ___ (rain).", "is raining"], ["We ___ (visit) the library once a week.", "visit"], ["The baby ___ (cry) at the moment.", "is crying"],
+    ["___ you usually ___ (walk) to school?", "Do|walk"], ["I ___ (do) my homework now.", "am doing"],
+    ["Every summer, we ___ (travel) to Eilat.", "travel"], ["Right now, my uncle ___ (fix) the car.", "is fixing"], ["Sara ___ (love) chocolate.", "loves"],
+    ["Listen! Someone ___ (sing).", "is singing"], ["The children ___ (draw) pictures at the moment.", "are drawing"], ["I usually ___ (go) to bed at nine.", "go"],
+    ["Look! The bird ___ (fly) very high.", "is flying"], ["We ___ (not watch) TV right now.", "are not watching"], ["___ your friends ___ (play) chess at school?", "Do|play"],
+    ["The teacher ___ (check) the notebooks now.", "is checking"], ["Fish ___ (live) in water.", "live"], ["Be careful! You ___ (stand) on my bag.", "are standing"],
+    ["My brother ___ (not eat) vegetables.", "does not eat"], ["They ___ (run) in the park at the moment.", "are running"], ["I ___ (drink) water after sports.", "drink"],
+    ["Look! The sun ___ (shine).", "is shining"], ["She usually ___ (arrive) early.", "arrives"], ["The baby ___ (sleep) right now.", "is sleeping"],
+    ["___ you ___ (listen) to music at the moment?", "Are|listening"], ["We ___ (prepare) dinner now.", "are preparing"],
+    ["My best friend ___ (live) near my house.", "lives"], ["At the moment, I ___ (study) English.", "am studying"], ["We usually ___ (eat) breakfast together.", "eat"],
+    ["Listen! The phone ___ (ring).", "is ringing"], ["Dad ___ (wash) the dishes right now.", "is washing"], ["I ___ (not understand) this question.", "do not understand"],
+    ["Look! The kids ___ (jump) on the trampoline.", "are jumping"], ["She ___ (bring) her lunch to school every day.", "brings"], ["___ your sister ___ (help) you now?", "Is|helping"],
+    ["The class ___ (practice) for the show at the moment.", "is practicing/is practising"], ["Birds ___ (have) wings.", "have"], ["Please wait. I ___ (write) an email now.", "am writing"],
+    ["He ___ (not like) cold weather.", "does not like"], ["They ___ (build) a model right now.", "are building"], ["I usually ___ (take) the bus to school.", "take"],
+    ["Look! The teacher ___ (enter) the room.", "is entering"], ["We ___ (play) board games on weekends.", "play"], ["The baby ___ (drink) milk at the moment.", "is drinking"],
+    ["___ you usually ___ (do) your homework in the afternoon?", "Do|do"], ["I ___ (pack) my bag now.", "am packing"],
+    ["Ron usually ___ (walk) to school, but today he ___ (ride) his bike.", "walks|is riding"], ["My brothers ___ (play) basketball every Friday.", "play"],
+    ["Shhh! The baby ___ (sleep) right now.", "is sleeping"], ["Dana ___ (not like) milk.", "does not like"], ["Look! The cat ___ (climb) the tree.", "is climbing"],
+    ["I ___ (study) for the test at the moment.", "am studying"], ["They always ___ (eat) lunch at 1:00.", "eat"], ["___ you ___ (watch) TV now?", "Are|watching"],
+    ["The students ___ (have) English class every Monday.", "have"], ["Listen! The teacher ___ (speak).", "is speaking"], ["Mom ___ (cook) dinner right now.", "is cooking"],
+    ["Tom ___ (not play) football on weekends.", "does not play"], ["The birds ___ (sing) every morning.", "sing"], ["We ___ (go) to the beach every summer.", "go"],
+    ["I can't talk. I ___ (do) my homework.", "am doing"],
+    ["Ben usually ___ (read) a book before bed, but tonight he ___ (watch) a movie.", "reads|is watching"], ["My dad ___ (drive) to work every morning.", "drives"],
+    ["Shh! The teacher ___ (help) a student at the moment.", "is helping"], ["Nina ___ (not like) pizza, but she ___ (eat) pasta now.", "does not like|is eating"],
+    ["Be careful! He ___ (carry) something heavy.", "is carrying"], ["The bus ___ (arrive) at 8:15 every day.", "arrives"], ["Listen! Someone ___ (knock) on the door.", "is knocking"],
+    ["They ___ (not play) basketball now; they ___ (talk).", "are not playing|are talking"], ["Dana ___ (write) in her diary every night.", "writes"],
+    ["Look outside! The kids ___ (build) a snowman.", "are building"], ["Maya usually ___ (eat) lunch at school, but today she ___ (eat) at home.", "eats|is eating"],
+    ["___ he taking the bus today?", "Is"], ["Right now, we ___ (meet) our friends at the mall.", "are meeting"], ["They ___ (take) the train to work every morning.", "take"],
+    ["It ___ (snow) outside right now!", "is snowing"], ["Dana always ___ (help) her mom in the kitchen.", "helps"], ["___ you listening to music right now?", "Are"],
+    ["I ___ (not do) my homework now. I ___ (relax).", "am not doing|am relaxing"], ["They sometimes ___ (eat) dinner at a restaurant.", "eat"],
+    ["___ we going to the park today?", "Are"], ["Birds ___ (not fly) at night.", "do not fly"],
+    ["Dana ___ (go) to school by bus every day.", "goes"], ["Right now, Dana ___ (read) a book.", "is reading"], ["They ___ (not eat) meat.", "do not eat"],
+    ["I ___ (not watch) TV at the moment.", "am not watching"], ["My mother ___ (teach) English.", "teaches"], ["The dog ___ (sleep) under the table now.", "is sleeping"],
+    ["Be quiet! We ___ (take) a test.", "are taking"], ["Tom ___ (not like) vegetables.", "does not like"], ["___ you ___ (speak) French?", "Do|speak"], ["Birds ___ (fly) south in winter.", "fly"]
+  ],
+  // [kind, source sentence or Hebrew prompt, accepted sentences (a/b/c), word bank]
+  build: [
+    ["neg", "She eats breakfast at 7.", "She doesn't eat breakfast at 7.", ["She", "doesn't", "eat", "breakfast", "at", "7", "eats", "don't"]],
+    ["neg", "They are playing football.", "They aren't playing football.", ["They", "aren't", "playing", "football", "play", "don't"]],
+    ["neg", "I like spinach.", "I don't like spinach.", ["I", "don't", "like", "spinach", "likes", "am"]],
+    ["neg", "He is writing a letter.", "He isn't writing a letter.", ["He", "isn't", "writing", "a", "letter", "write", "doesn't"]],
+    ["neg", "My cat sleeps on the sofa.", "My cat doesn't sleep on the sofa.", ["My", "cat", "doesn't", "sleep", "on", "the", "sofa", "sleeps", "don't"]],
+    ["neg", "We are cleaning the room.", "We aren't cleaning the room.", ["We", "aren't", "cleaning", "the", "room", "clean", "don't"]],
+    ["q", "You speak English at home.", "Do you speak English at home?", ["Do", "you", "speak", "English", "at", "home", "Are", "speaks"]],
+    ["q", "She is cooking dinner.", "Is she cooking dinner?", ["Is", "she", "cooking", "dinner", "Does", "cook"]],
+    ["q", "Ron plays the guitar.", "Does Ron play the guitar?", ["Does", "Ron", "play", "the", "guitar", "plays", "Do"]],
+    ["q", "They are waiting for the bus.", "Are they waiting for the bus?", ["Are", "they", "waiting", "for", "the", "bus", "Do", "wait"]],
+    ["q", "Your friends live near school.", "Do your friends live near school?", ["Do", "your", "friends", "live", "near", "school", "Does", "lives"]],
+    ["q", "It is raining.", "Is it raining?", ["Is", "it", "raining", "Does", "rain", "Are"]],
+    ["own", "כתבו משפט על השגרה שלכם (Present Simple)", "I wake up at seven every day.", ["I", "wake", "up", "at", "seven", "every", "day", "always", "am", "waking"],
+      ["Every day I wake up at seven.", "I always wake up at seven.", "I wake up every day at seven.", "I always wake up at seven every day."]],
+    ["own", "כתבו משפט על מה שקורה עכשיו בכיתה (Present Progressive)", "We are learning English now.", ["We", "are", "learning", "English", "now", "learn", "right", "at", "the", "moment"],
+      ["Now we are learning English.", "We are learning English right now.", "Right now we are learning English.", "We are learning English at the moment.", "At the moment we are learning English."]]
+  ],
+  // [wrong sentence, the correct fix, 3 other (still wrong) sentences]
+  mistakes: [
+    ["She go to school every day.", "She goes to school every day.", ["She going to school every day.", "She is go to school every day.", "She go to school every days."]],
+    ["He doesn't likes apples.", "He doesn't like apples.", ["He don't likes apples.", "He doesn't liking apples.", "He not like apples."]],
+    ["I am play football now.", "I am playing football now.", ["I playing football now.", "I am plays football now.", "I does playing football now."]],
+    ["Does she plays the piano?", "Does she play the piano?", ["Do she play the piano?", "Does she playing the piano?", "Is she plays the piano?"]],
+    ["They runing in the park.", "They are running in the park.", ["They running in the park.", "They are runing in the park.", "They runs in the park."]],
+    ["We are knowing the answer.", "We know the answer.", ["We are know the answer.", "We knowing the answer.", "We knows the answer."]],
+    ["She is liking chocolate.", "She likes chocolate.", ["She like chocolate.", "She is like chocolate.", "She liking chocolate."]],
+    ["My mom cook dinner every day.", "My mom cooks dinner every day.", ["My mom cooking dinner every day.", "My mom is cook dinner every day.", "My mom cookes dinner every day."]],
+    ["Look! The baby sleeps.", "Look! The baby is sleeping.", ["Look! The baby sleeping.", "Look! The baby is sleep.", "Look! The baby are sleeping."]],
+    ["Do he play chess?", "Does he play chess?", ["Does he plays chess?", "Is he play chess?", "Do he plays chess?"]],
+    ["I not like scary movies.", "I don't like scary movies.", ["I doesn't like scary movies.", "I am not like scary movies.", "I not likes scary movies."]],
+    ["He is wanting a new bike.", "He wants a new bike.", ["He want a new bike.", "He is want a new bike.", "He wanting a new bike."]]
+  ],
+  // state verbs: [sentence with ___ , correct, [wrong]]
+  state: [
+    ["I ___ the answer. (know)", "know", ["am knowing"]], ["She ___ pizza. (love)", "loves", ["is loving", "love"]], ["We ___ a new bike. (want)", "want", ["are wanting", "wants"]],
+    ["He ___ this song. (hate)", "hates", ["is hating", "hate"]], ["I ___ this question. (not understand)", "don't understand", ["am not understanding", "doesn't understand"]],
+    ["They ___ in magic. (believe)", "believe", ["are believing", "believes"]], ["I ___ lunch right now. (have = eat)", "am having", ["have", "has"]], ["I ___ a dog. (have = own)", "have", ["am having", "has"]]
+  ],
+  // [Hebrew, correct English, 3 wrong]
+  translate: [
+    ["אני קמה בשבע בבוקר כל יום.", "I wake up at seven in the morning every day.", ["I am waking up at seven in the morning every day.", "I wakes up at seven in the morning every day.", "I waking up at seven in the morning every day."]],
+    ["אחי משחק עכשיו במחשב.", "My brother is playing on the computer now.", ["My brother plays on the computer now.", "My brother play on the computer now.", "My brother playing on the computer now."]],
+    ["היא לא אוהבת חלב.", "She doesn't like milk.", ["She isn't like milk.", "She don't like milk.", "She doesn't likes milk."]],
+    ["האם אתם לומדים עכשיו?", "Are you studying now?", ["Do you study now?", "Are you study now?", "Is you studying now?"]],
+    ["הילדים משחקים בחוץ כל יום.", "The children play outside every day.", ["The children are playing outside every day.", "The children plays outside every day.", "The children playing outside every day."]],
+    ["תקשיבי! מישהו שר.", "Listen! Someone is singing.", ["Listen! Someone sings.", "Listen! Someone singing.", "Listen! Someone are singing."]]
+  ],
+  // reading texts: [question, correct answer, 3 wrong]
+  texts: [
+    { title: "Text 1 – A Busy Morning",
+      text: "Every morning, Tom wakes up at 6:30. He eats breakfast with his family and then walks to school. Today, he is running because he is late. His little sister couldn't find her homework, so they left the house later than usual.\n\nWhile he is walking fast, Tom listens to music on his phone and checks the time every few minutes. He is a responsible student and doesn't like to miss the first lesson. Tom likes mornings because he feels full of energy and ready for the day, and he enjoys seeing his friends when he arrives at school.",
+      qs: [["Why is Tom late today?", "His little sister couldn't find her homework.", ["He woke up at 7:30.", "He couldn't find his phone.", "He didn't eat breakfast."]],
+        ["What does Tom do on his way to school?", "He listens to music and checks the time.", ["He talks to his friends.", "He eats breakfast.", "He does his homework."]],
+        ["Why doesn't Tom like to be late?", "He doesn't like to miss the first lesson.", ["He wants to see his sister.", "He is afraid of the teacher.", "He wants to eat breakfast at school."]],
+        ["What does Tom like about mornings?", "He feels full of energy and enjoys seeing his friends.", ["He can sleep late.", "He likes the quiet streets.", "He likes eating breakfast alone."]]] },
+    { title: "Text 2 – Lily's Weekend Plans",
+      text: "Lily usually spends her weekends at home, but this weekend is different. She is visiting her aunt in the countryside. Lily loves the countryside because it is quiet, green, and full of animals. Her aunt has a small farm with chickens and three friendly dogs.\n\nRight now, Lily is packing her bag and choosing a book to take with her. She is also writing a short list of things she wants to do there, like riding a bike and helping her aunt feed the animals. Lily is very excited about the trip because she doesn't go to the countryside very often.",
+      qs: [["Why is this weekend different for Lily?", "She is visiting her aunt in the countryside.", ["She is staying at home.", "She is going to the beach.", "She is going to school."]],
+        ["What animals does her aunt have?", "Chickens and three friendly dogs.", ["Horses and cows.", "Cats and rabbits.", "Sheep and three birds."]],
+        ["What is Lily doing at the moment?", "She is packing her bag and choosing a book.", ["She is riding a bike.", "She is feeding the animals.", "She is talking to her aunt."]],
+        ["Why is Lily excited about the trip?", "She doesn't go to the countryside very often.", ["She goes there every weekend.", "She wants to stay at home.", "She doesn't like animals."]]] },
+    { title: "Text 3 – Liam's Science Club",
+      text: "Liam loves science. Every day after school, he goes to the science club at the community center. He usually builds small robots or does simple experiments with his friends. The club has many tools and materials, and the teacher always helps them.\n\nToday the club is very exciting because a new 3D printer arrived. Liam is learning how to use it. He is printing a small blue robot for a school project. He feels very happy because he wants to be an engineer in the future.",
+      qs: [["What does Liam usually do at the science club?", "He builds small robots or does simple experiments.", ["He plays games with his friends.", "He prints blue robots.", "He helps the teacher."]],
+        ["Why is today special at the club?", "A new 3D printer arrived.", ["The teacher is absent.", "There is a new tool box.", "The club is closed."]],
+        ["What is Liam printing today?", "A small blue robot.", ["A school project report.", "A big red robot.", "A model of a house."]],
+        ["What does Liam want to be in the future?", "An engineer.", ["A teacher.", "A doctor.", "A scientist at school."]]] }
+  ]
+};
+
+</script>
+<script>
+const T = window.TEST;
+const ITEMS = [], STAGES = [];
+const addItem = it => ITEMS.push(it) - 1;
+const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+const enSpan = h => '<span class="en" dir="ltr">' + h + "</span>";
+const bold = s => '<b class="g">' + esc(s) + "</b>";
+const plain = s => String(s).replace(/\s*\([^)]*\)/g, "").replace(/\s+/g, " ").trim();
+const uniq = a => [...new Set(a)];
+function fillItem(pre, ansStr, inst) {
+  const ans = ansStr.split("|").map(x => x.split("/").map(y => y.trim()));
+  const parts = pre.split("___");
+  return { k: "fill", inst: inst || "השלימו את הפועל בצורה הנכונה", pre, ans,
+    fb: enSpan(parts.map((p, k) => esc(p.replace(/\s*\([^)]*\)/g, "")) + (k < ans.length ? bold(ans[k][0]) : "")).join("")),
+    say: plain(parts.map((p, k) => p + (k < ans.length ? ans[k][0] : "")).join("")) };
+}
+// wrong spellings that look real
+const wrongS = (v, c) => uniq([v + "s", v + "es", v.replace(/y$/, "ies"), v.replace(/y$/, "es"), v + "ies", v + "ed"]).filter(x => x !== c && x !== v);
+const wrongIng = (v, c) => uniq([v + "ing", v + v[v.length - 1] + "ing", v.replace(/e$/, "") + "ing", v + "eing", v.replace(/ie$/, "y") + "ing", v + v[v.length - 1] + v[v.length - 1] + "ing"]).filter(x => x !== c && x !== v);
+function stage(name, icon, ids, read) { STAGES.push({ name, icon, pool: ids, read: !!read }); }
+
+// 1-2: spelling
+stage("s / es / ies", "🔤", [].concat(...T.verbsS.map(([v, c]) => [
+  addItem(Object.assign(fillItem(v + " → (he / she) ___", c, "כתבו את הצורה של he / she"), { say: c })),
+  addItem({ k: "mc", inst: "he / she - בחרו את הכתיב הנכון", en: v + " → ?", c, w: wrongS(v, c), pick: 3, fb: enSpan(esc(v) + " → " + bold(c)), say: c })])));
+stage("ing", "🔡", [].concat(...T.verbsIng.map(([v, c, w]) => [
+  addItem(Object.assign(fillItem(v + " → ___", c, "כתבו את הצורה עם ing"), { say: c })),
+  addItem({ k: "mc", inst: "בחרו את הכתיב הנכון של הפועל עם ing", en: v + " → ?", c, w, pick: 3, fb: enSpan(esc(v) + " → " + bold(c)), say: c })])));
+// 3: time words
+stage("מילות זמן", "⏱️", T.swipe.map(([s, a, clue]) => addItem({ k: "swipe", en: s, a, clue,
+  fb: enSpan(esc(s)) + "<br>" + (a === "PS" ? "Present Simple ✅" : "Present Progressive ✅") + " <small>(" + esc(clue) + ")</small>", say: s })));
+// 4: choose the form
+stage("בחרו צורה", "✅", T.choose.map(([s, c]) => {
+  const m = s.match(/\(([^()]*\/[^()]*)\)/), opts = m[1].split(" / ");
+  return addItem({ k: "mc", inst: "בחרו את הצורה הנכונה", en: s.replace(m[0], "_____"), c, w: opts.filter(o => o !== c), pick: 3,
+    fb: enSpan(esc(s.replace(m[0], "\u0001")).replace("\u0001", bold(c))), say: s.replace(m[0], c) });
+}));
+// 5: fill in the verb
+stage("השלימו פועל", "✍️", T.fill.map(([s, a]) => addItem(fillItem(s, a))));
+// 6: build a sentence
+stage("בנו משפט", "🧩", T.build.map(([kind, src, ok, bank, more]) => addItem({ k: "build", kind, src, ok: [ok].concat(more || []), bank,
+  fb: enSpan(bold(ok)), say: ok })));
+// 7: find the mistake
+stage("מצאו טעות", "🔎", T.mistakes.map(([bad, c, w]) => addItem({ k: "mc", inst: "מצאו את התיקון הנכון למשפט השגוי:", en: bad, c, w, pick: 3, fb: enSpan(bold(c)), say: c })));
+// 8: state verbs + translation
+stage("פעלי מצב ותרגום", "🌍", [].concat(
+  T.state.map(([s, c, w]) => addItem({ k: "mc", inst: "בחרו את הצורה הנכונה", en: s, c, w, pick: 3,
+    fb: enSpan(esc(s.replace("___", "\u0001")).replace("\u0001", bold(c)).replace(/\s*\([^)]*\)\s*$/, "")), say: plain(s.replace("___", c)) })),
+  T.translate.map(([he, c, w]) => addItem({ k: "mc", inst: "איך אומרים באנגלית?", he, c, w, pick: 3, fb: enSpan(bold(c)), say: c }))));
+// 9: reading (the pool = the texts)
+stage("הבנת הנקרא", "📖", T.texts.map((_, i) => i), true);
+// 10: boss = mixed test
+stage("מבחן מסכם", "🐙", ITEMS.map((_, i) => i));
+
+const $ = id => document.getElementById(id);
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+// ---------- constants ----------
+const KEY = "spaceTest2", PASS = 3, QN = 5;          // PASS correct (first try) out of QN frees the alien
+const N = STAGES.length;                              // 9 planets + the sun
+const SIG = "space2|" + STAGES.map(x => x.name).join("|") + "|" + ITEMS.length;   // a changed bank = a new mission
+const PLANET_COL = ["#4fc3f7", "#ef5350", "#ffca28", "#7e57c2", "#26a69a", "#ff8a65", "#ab47bc", "#66bb6a", "#42a5f5"];
+// ---------- the aliens (drawn in code) ----------
+const K = [
+ { n:"גּוּפִי", c:"#7be07b", d:"#2e7d32", eyes:[[50,50,14]], my:72,
+   back:'<path d="M50 20 Q50 8 60 8" stroke="#2e7d32" stroke-width="3" fill="none"/><circle cx="60" cy="8" r="5" fill="#ffd23f" stroke="#c99700" stroke-width="2"/>',
+   body:'<path d="M50 18 C82 18 92 48 88 72 C84 92 16 92 12 72 C8 48 18 18 50 18Z"/>',
+   acc:{ n:"כובע הקוסם", e:"🎩", front:'<g transform="rotate(-8 50 20)"><path d="M30 24 L50 -12 L70 24Z" fill="#7b1fa2" stroke="#38006b" stroke-width="2"/><ellipse cx="50" cy="24" rx="27" ry="6" fill="#9c27b0" stroke="#38006b" stroke-width="2"/><text x="43" y="14" font-size="11">⭐</text></g>' } },
+ { n:"תַּמְנוּנִי", c:"#b388ff", d:"#5e35b1", eyes:[[38,46,10],[62,46,10]], my:64,
+   body:'<path d="M18 52 C18 14 82 14 82 52 L82 72 C82 86 72 86 70 74 C68 90 56 90 56 76 C54 92 42 92 42 76 C40 90 30 90 30 74 C28 86 18 86 18 72Z"/>',
+   acc:{ n:"משקפי השמש", e:"😎", front:'<g><rect x="25" y="38" width="24" height="15" rx="6" fill="#111"/><rect x="51" y="38" width="24" height="15" rx="6" fill="#111"/><path d="M49 44 h2" stroke="#111" stroke-width="3"/><path d="M29 41 l7 0 M55 41 l7 0" stroke="#fff" stroke-width="2" opacity=".55"/></g>' } },
+ { n:"בְּלוּפִּי", c:"#5ec8ff", d:"#0277bd", eyes:[[38,56,10],[62,56,10]], my:74,
+   back:'<path d="M36 26 Q30 8 22 10" stroke="#0277bd" stroke-width="3" fill="none"/><circle cx="22" cy="10" r="5" fill="#ff6b9d"/><path d="M64 26 Q70 8 78 10" stroke="#0277bd" stroke-width="3" fill="none"/><circle cx="78" cy="10" r="5" fill="#ff6b9d"/>',
+   body:'<circle cx="50" cy="58" r="36"/>',
+   acc:{ n:"האוזניות", e:"🎧", front:'<g><path d="M17 58 C15 16 85 16 83 58" stroke="#37474f" stroke-width="6" fill="none"/><rect x="9" y="50" width="13" height="22" rx="6" fill="#ff5252" stroke="#b71c1c" stroke-width="2"/><rect x="78" y="50" width="13" height="22" rx="6" fill="#ff5252" stroke="#b71c1c" stroke-width="2"/></g>' } },
+ { n:"אַרְנְבוֹנִי", c:"#ff9ec7", d:"#c2185b", eyes:[[38,58,10],[62,58,10]], my:76,
+   back:'<ellipse cx="34" cy="20" rx="9" ry="20" fill="#ff9ec7" stroke="#c2185b" stroke-width="3"/><ellipse cx="66" cy="20" rx="9" ry="20" fill="#ff9ec7" stroke="#c2185b" stroke-width="3"/><ellipse cx="34" cy="21" rx="4" ry="13" fill="#ffd6e8"/><ellipse cx="66" cy="21" rx="4" ry="13" fill="#ffd6e8"/>',
+   body:'<ellipse cx="50" cy="62" rx="36" ry="32"/>',
+   acc:{ n:"הפפיון", e:"🎀", front:'<g><path d="M50 90 L33 80 L33 99Z M50 90 L67 80 L67 99Z" fill="#e53935" stroke="#7f0000" stroke-width="2"/><circle cx="50" cy="90" r="5" fill="#ff8a80" stroke="#7f0000" stroke-width="2"/></g>' } },
+ { n:"פְּרוּוִי", c:"#ffb74d", d:"#e65100", eyes:[[32,56,8],[50,48,9],[68,56,8]], my:74,
+   back:'<path d="M24 34 L16 12 L38 28Z" fill="#ff7043" stroke="#bf360c" stroke-width="3"/><path d="M76 34 L84 12 L62 28Z" fill="#ff7043" stroke="#bf360c" stroke-width="3"/>',
+   body:'<circle cx="50" cy="58" r="36"/><path d="M18 52 l-8 -3 l7 -5 M82 52 l8 -3 l-7 -5 M24 84 l-6 6 M76 84 l6 6" stroke="#e65100" stroke-width="3" fill="none" stroke-linecap="round"/>',
+   acc:{ n:"הכתר", e:"👑", front:'<g><path d="M33 28 L36 8 L44 20 L50 4 L56 20 L64 8 L67 28Z" fill="#ffd23f" stroke="#b8860b" stroke-width="2"/><circle cx="50" cy="7" r="3" fill="#ff5252"/><circle cx="37" cy="11" r="2.4" fill="#5ec8ff"/><circle cx="63" cy="11" r="2.4" fill="#5ec8ff"/></g>' } },
+ { n:"סְפִּירָלִי", c:"#4dd0c0", d:"#00796b", eyes:[[40,46,10],[62,46,10]], my:66,
+   back:'<path d="M50 20 C50 6 66 6 66 16 C66 24 54 24 54 16 C54 12 60 12 60 15" stroke="#00796b" stroke-width="3" fill="none"/>',
+   body:'<ellipse cx="50" cy="58" rx="28" ry="38"/>',
+   acc:{ n:"הצעיף", e:"🧣", front:'<g><path d="M24 76 Q50 92 76 76 L76 88 Q50 104 24 88Z" fill="#e53935" stroke="#7f0000" stroke-width="2"/><path d="M34 82 l4 -6 M46 86 l4 -6 M58 86 l4 -6" stroke="#fff" stroke-width="3"/><path d="M64 88 L69 108 L79 103 L74 85Z" fill="#c62828" stroke="#7f0000" stroke-width="2"/></g>' } },
+ { n:"כּוֹכָבִי", c:"#ffe066", d:"#c99700", eyes:[[42,48,8],[60,48,8]], my:64,
+   body:'<polygon points="50,6 62,36 94,38 69,58 78,92 50,72 22,92 31,58 6,38 38,36"/>',
+   acc:{ n:"הגלימה", e:"🦸", back:'<path d="M28 36 L8 100 L50 86 L92 100 L72 36Z" fill="#e53935" stroke="#7f0000" stroke-width="2.5"/>', front:'<g><circle cx="38" cy="38" r="4" fill="#ffd23f" stroke="#7f0000" stroke-width="1.5"/><circle cx="62" cy="38" r="4" fill="#ffd23f" stroke="#7f0000" stroke-width="1.5"/></g>' } },
+ { n:"סְלַיְמִי", c:"#ff8a80", d:"#c62828", eyes:[[38,50,10],[62,50,10]], my:66,
+   body:'<path d="M12 82 C12 30 88 30 88 82 Q80 94 74 82 Q68 98 62 82 Q56 94 50 82 Q44 98 38 82 Q32 94 26 82 Q18 96 12 82Z"/>',
+   acc:{ n:"כובע השף", e:"👨‍🍳", front:'<g fill="#fff" stroke="#b0bec5" stroke-width="2"><circle cx="36" cy="24" r="11"/><circle cx="50" cy="16" r="13"/><circle cx="64" cy="24" r="11"/><rect x="31" y="26" width="38" height="14" rx="3"/></g>' } },
+ { n:"עֲנָנִי", c:"#d1c4e9", d:"#7e57c2", eyes:[[40,54,10],[60,54,10]], my:72,
+   body:'<g><circle cx="28" cy="62" r="20"/><circle cx="72" cy="62" r="20"/><circle cx="50" cy="46" r="26"/><rect x="28" y="62" width="44" height="20" stroke="none"/></g>',
+   acc:{ n:"הקשת", e:"🌈", front:'<g fill="none" stroke-width="4"><path d="M22 32 A28 28 0 0 1 78 32" stroke="#ef5350"/><path d="M27 32 A23 23 0 0 1 73 32" stroke="#ffd23f"/><path d="M32 32 A18 18 0 0 1 68 32" stroke="#66bb6a"/><path d="M37 32 A13 13 0 0 1 63 32" stroke="#42a5f5"/></g>' } }
+];
+function eyeSvg([x, y, r], mood) {
+  if (mood === "cheer") return `<path d="M${x - r * .8} ${y + 2} Q${x} ${y - r * 1.1} ${x + r * .8} ${y + 2}" stroke="#222" stroke-width="3.2" fill="none" stroke-linecap="round"/>`;
+  const look = mood === "help" ? 0 : 1;
+  return `<g class="eye"><circle cx="${x}" cy="${y}" r="${r}" fill="#fff" stroke="#222" stroke-width="1.5"/><circle cx="${x + look}" cy="${y + (mood === "help" ? r * .2 : 1)}" r="${r * .58}" fill="#222"/><circle cx="${x + r * .22}" cy="${y - r * .14}" r="${r * .2}" fill="#fff"/></g>`;
+}
+function alien(i, mood = "idle", size = 110, acc = false) {
+  const k = K[i], mx = 50, my = k.my;
+  const eyes = k.eyes.map(e => eyeSvg(e, mood)).join("");
+  const brows = mood === "help" ? k.eyes.map(([x, y, r], j) => `<path d="M${x - r} ${y - r - 3} L${x + r} ${y - r - 8}" stroke="#222" stroke-width="2.6" stroke-linecap="round" transform="${j % 2 ? "scale(-1 1) translate(-" + 2 * x + " 0)" : ""}"/>`).join("") : "";
+  const mouth = mood === "cheer" ? `<path d="M${mx - 9} ${my} Q${mx} ${my + 16} ${mx + 9} ${my}Z" fill="#7a1230" stroke="#222" stroke-width="2"/><path d="M${mx - 5} ${my + 6} Q${mx} ${my + 11} ${mx + 5} ${my + 6}" fill="#ff6b8a"/>`
+    : mood === "help" ? `<path d="M${mx - 7} ${my + 4} Q${mx} ${my - 5} ${mx + 7} ${my + 4}" stroke="#222" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+    : `<path d="M${mx - 8} ${my} Q${mx} ${my + 9} ${mx + 8} ${my}" stroke="#222" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const cheeks = `<ellipse cx="${mx - 22}" cy="${my - 2}" rx="5" ry="3.2" fill="#ff7aa8" opacity=".55"/><ellipse cx="${mx + 22}" cy="${my - 2}" rx="5" ry="3.2" fill="#ff7aa8" opacity=".55"/>`;
+  const arms = mood === "cheer" ? `<g class="arm l"><path d="M16 66 Q4 50 8 36" stroke="${k.d}" stroke-width="6" fill="none" stroke-linecap="round"/></g><g class="arm r"><path d="M84 66 Q96 50 92 36" stroke="${k.d}" stroke-width="6" fill="none" stroke-linecap="round"/></g>` : "";
+  const extra = mood === "cheer" ? '<text x="6" y="14" font-size="14">✨</text><text x="80" y="14" font-size="14">⭐</text>' : mood === "help" ? '<text x="78" y="22" font-size="16">💧</text>' : "";
+  return `<svg viewBox="0 0 100 100" class="al ${mood}" width="${size}" height="${size}"><g class="bd">${arms}${acc && k.acc.back ? k.acc.back : ""}${k.back || ""}<g fill="${k.c}" stroke="${k.d}" stroke-width="3" stroke-linejoin="round">${k.body}</g>${eyes}${brows}${cheeks}${mouth}${acc ? k.acc.front : ""}${extra}</g></svg>`;
+}
+// the evil alien (hides behind the sun); hurt = X eyes
+function evil(size = 150, hurt = false, grin = false) {
+  const eyes = hurt
+    ? '<path d="M32 54 l20 16 m0 -16 l-20 16" stroke="#fff" stroke-width="5" stroke-linecap="round"/><path d="M68 54 l20 16 m0 -16 l-20 16" stroke="#fff" stroke-width="5" stroke-linecap="round"/>'
+    : '<g class="eye"><ellipse cx="42" cy="62" rx="11" ry="9" fill="#fff"/><circle cx="44" cy="63" r="5.5" fill="#e00000"/></g><g class="eye"><ellipse cx="78" cy="62" rx="11" ry="9" fill="#fff"/><circle cx="76" cy="63" r="5.5" fill="#e00000"/></g>';
+  const brows = hurt ? '<path d="M28 44 Q42 36 54 46 M92 44 Q78 36 66 46" stroke="#12001c" stroke-width="5" fill="none" stroke-linecap="round"/>' : '<path d="M28 48 L52 58 M92 48 L68 58" stroke="#12001c" stroke-width="5" stroke-linecap="round"/>';
+  const mouth = hurt ? '<path d="M44 90 Q52 82 60 90 Q68 98 76 90" stroke="#12001c" stroke-width="4" fill="none" stroke-linecap="round"/><text x="96" y="46" font-size="14">💧</text><text x="4" y="32" font-size="14">💫</text>'
+    : grin ? '<path d="M28 80 Q60 118 92 80 Q60 92 28 80Z" fill="#12001c"/><path d="M33 83 l5 9 l5 -7 l5 10 l5 -8 l5 11 l5 -9 l5 11 l5 -8 l5 10 l5 -7 l5 8 l4 -6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linejoin="round"/><path d="M30 78 Q22 70 24 62 M90 78 Q98 70 96 62" stroke="#12001c" stroke-width="3" fill="none"/>'
+    : '<path d="M42 86 Q60 100 78 86 Q60 92 42 86Z" fill="#12001c"/><path d="M48 88 l3 6 l4 -5 M62 90 l4 6 l3 -7" stroke="#fff" stroke-width="2" fill="none"/>';
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" class="al"><g class="bd"><path d="M30 34 L18 6 L46 22Z M90 34 L102 6 L74 22Z" fill="#2a0a3a" stroke="#12001c" stroke-width="3"/><path d="M60 22 C100 22 112 62 104 96 C96 118 24 118 16 96 C8 62 20 22 60 22Z" fill="#3b0f57" stroke="#12001c" stroke-width="3"/>${eyes}${brows}${mouth}</g></svg>`;
+}
+const boss = (hurt, size = 150) => evil(size, hurt);
+// Lulu: the friendly narrator (a tiny fluffy star-sprite)
+function lulu(size = 180) {
+  return `<svg viewBox="0 0 120 120" width="${size}" height="${size}" class="al cheer"><g class="bd">
+ <path d="M60 12 C52 2 40 8 48 18 C54 24 60 20 60 12Z" fill="#ff8fb8" stroke="#d81b60" stroke-width="2"/><path d="M60 24 C60 16 62 14 66 10" stroke="#d81b60" stroke-width="3" fill="none" stroke-linecap="round"/><text x="58" y="12" font-size="14">💖</text>
+ <ellipse cx="38" cy="108" rx="11" ry="6" fill="#f48fb1" stroke="#d81b60" stroke-width="2"/><ellipse cx="82" cy="108" rx="11" ry="6" fill="#f48fb1" stroke="#d81b60" stroke-width="2"/>
+ <g class="arm l"><path d="M20 70 Q6 58 10 40" stroke="#f48fb1" stroke-width="9" fill="none" stroke-linecap="round"/></g><path d="M100 72 Q112 82 106 94" stroke="#f48fb1" stroke-width="9" fill="none" stroke-linecap="round"/>
+ <path d="M60 24 C96 24 106 56 100 82 C94 106 26 106 20 82 C14 56 24 24 60 24Z" fill="#fff4f8" stroke="#f48fb1" stroke-width="3"/>
+ <g class="eye"><ellipse cx="44" cy="62" rx="14" ry="16" fill="#3b1d5a"/><circle cx="49" cy="55" r="5.5" fill="#fff"/><circle cx="40" cy="68" r="3" fill="#fff"/><circle cx="46" cy="64" r="1.5" fill="#bde"/></g>
+ <g class="eye"><ellipse cx="76" cy="62" rx="14" ry="16" fill="#3b1d5a"/><circle cx="81" cy="55" r="5.5" fill="#fff"/><circle cx="72" cy="68" r="3" fill="#fff"/><circle cx="78" cy="64" r="1.5" fill="#bde"/></g>
+ <ellipse cx="28" cy="78" rx="7" ry="4.5" fill="#ff80ab" opacity=".6"/><ellipse cx="92" cy="78" rx="7" ry="4.5" fill="#ff80ab" opacity=".6"/>
+ <path d="M52 80 Q60 92 68 80Z" fill="#c2185b" stroke="#880e4f" stroke-width="2" stroke-linejoin="round"/><path d="M56 85 Q60 90 64 85" fill="#ff80ab"/>
+ <text x="2" y="28" font-size="13">✨</text><text x="100" y="24" font-size="13">✨</text></g></svg>`;
+}
+// ---------- the planets (each one has its own look; the topic's emblem sits on it) ----------
+const PLANET_ART = [
+  { base: "#2b8cff", hi: "#9bd6ff", dark: "#0b3d91", moon: 1, feat: '<path d="M20 38 Q30 26 42 36 Q46 48 34 54 Q22 52 20 38Z" fill="#5fcf6f"/><path d="M58 62 Q72 54 82 64 Q80 80 64 82 Q54 74 58 62Z" fill="#5fcf6f"/><path d="M12 64 Q26 56 40 64 Q52 58 64 66" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/><path d="M52 26 Q66 20 82 30" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".75"/>' },
+  { base: "#e8573d", hi: "#ffa384", dark: "#7a1d12", moon: 1, feat: '<ellipse cx="32" cy="42" rx="9" ry="6" fill="#b83a26"/><ellipse cx="68" cy="34" rx="7" ry="5" fill="#b83a26"/><ellipse cx="58" cy="70" rx="11" ry="7" fill="#b83a26"/><ellipse cx="28" cy="72" rx="5" ry="3.5" fill="#b83a26"/><path d="M22 20 Q50 2 78 20 Q50 30 22 20Z" fill="#fff" opacity=".8"/>' },
+  { base: "#f4b942", hi: "#ffe9a8", dark: "#8a5a00", ring: "#fff0b8", feat: '<rect x="0" y="30" width="100" height="8" fill="#d99a22" opacity=".7"/><rect x="0" y="48" width="100" height="11" fill="#e6a92e" opacity=".7"/><rect x="0" y="69" width="100" height="7" fill="#d99a22" opacity=".7"/>' },
+  { base: "#8f5cf0", hi: "#d4baff", dark: "#35167a", feat: '<path d="M20 62 Q30 28 56 38 Q78 46 64 64 Q50 74 44 58" stroke="#e8dcff" stroke-width="4.5" fill="none" stroke-linecap="round" opacity=".75"/><circle cx="72" cy="28" r="4" fill="#e8dcff" opacity=".6"/><circle cx="26" cy="36" r="3" fill="#e8dcff" opacity=".6"/>' },
+  { base: "#2ec4b0", hi: "#a6f5e6", dark: "#0b5d52", moon: 1, feat: '<path d="M18 52 Q28 34 46 40 Q52 54 40 64 Q24 66 18 52Z" fill="#b9f06a"/><path d="M60 28 Q78 26 84 44 Q70 56 60 46Z" fill="#b9f06a"/><path d="M50 72 Q66 66 82 74" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>' },
+  { base: "#ff8a5c", hi: "#ffd0b4", dark: "#8a2f0e", ring: "#ffe0cc", feat: '<circle cx="30" cy="40" r="6" fill="#ffd9c2"/><circle cx="56" cy="28" r="4" fill="#ffd9c2"/><circle cx="72" cy="56" r="7" fill="#ffd9c2"/><circle cx="40" cy="70" r="5" fill="#ffd9c2"/>' },
+  { base: "#d14fe0", hi: "#f6b6ff", dark: "#5a0f6b", moon: 1, feat: '<circle cx="36" cy="40" r="10" fill="none" stroke="#f9c6ff" stroke-width="3" opacity=".75"/><circle cx="64" cy="64" r="13" fill="none" stroke="#f9c6ff" stroke-width="3" opacity=".75"/><circle cx="64" cy="30" r="5" fill="#f9c6ff" opacity=".65"/>' },
+  { base: "#4fc36a", hi: "#b3f5c0", dark: "#145c2a", feat: '<ellipse cx="50" cy="50" rx="18" ry="46" fill="none" stroke="#eafff0" stroke-width="2" opacity=".6"/><ellipse cx="50" cy="50" rx="36" ry="46" fill="none" stroke="#eafff0" stroke-width="2" opacity=".6"/><path d="M4 50 H96 M10 30 H90 M10 70 H90" stroke="#eafff0" stroke-width="2" opacity=".6"/>' },
+  { base: "#4f8cff", hi: "#b4ceff", dark: "#14307a", ring: "#cfe0ff", feat: '<path d="M16 40 Q30 30 44 40 Q56 34 70 42" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" opacity=".75"/><path d="M30 68 Q46 60 60 68 Q72 64 84 70" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round" opacity=".75"/><text x="68" y="28" font-size="10">✨</text>' }
+];
+function planetSvg(i, emblem) {
+  const p = PLANET_ART[i], id = "pg" + i, ring = p.ring ? `<ellipse cx="50" cy="52" rx="62" ry="15" transform="rotate(-18 50 52)" fill="none" stroke="${p.ring}" stroke-width="7" opacity=".9"/>` : "";
+  const ringFront = p.ring ? `<path d="M-12 52 A62 15 0 0 0 112 52" transform="rotate(-18 50 52)" fill="none" stroke="${p.ring}" stroke-width="7"/>` : "";
+  const moon = p.moon ? '<circle cx="96" cy="14" r="8" fill="#cfd3e6" stroke="#8f95b8" stroke-width="1.5"/><circle cx="94" cy="12" r="2" fill="#aab0d0"/><circle cx="99" cy="17" r="1.6" fill="#aab0d0"/>' : "";
+  return `<svg class="psvg" viewBox="-10 -10 120 120" width="120" height="120"><defs><radialGradient id="${id}" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="${p.hi}"/><stop offset=".5" stop-color="${p.base}"/><stop offset="1" stop-color="${p.dark}"/></radialGradient><clipPath id="c${id}"><circle cx="50" cy="50" r="46"/></clipPath></defs>${ring}<circle cx="50" cy="50" r="46" fill="url(#${id})"/><g clip-path="url(#c${id})">${p.feat}<circle cx="72" cy="76" r="52" fill="rgba(0,0,40,.28)"/><circle cx="50" cy="50" r="46" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="3"/></g>${ringFront}${moon}<circle cx="50" cy="52" r="20" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.55)" stroke-width="1.5"/><text x="50" y="61" font-size="26" text-anchor="middle">${emblem}</text></svg>`;
+}
+
+// ---------- state ----------
+let gender = "boy";
+try { gender = localStorage.getItem("gender") || "boy"; } catch (e) {}
+const gt = (b, g) => gender === "girl" ? g : b;
+let S = null;   // best[stage] = most first-try-correct answers so far (-1 = never played); skips left; decks
+function freshState() { return { sig: SIG, best: Array(N).fill(-1), skips: 2, decks: {}, lasts: {}, finished: false }; }
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && s.sig === SIG && s.best.length === N) return Object.assign(freshState(), s);
+  } catch (e) {}
+  return freshState();
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+const isBoss = s => s === N - 1;
+const rescued = s => S.best[s] >= PASS;
+const crewList = () => [...Array(N - 1).keys()].filter(rescued);
+const isOpen = s => !!S.cheat || s === 0 || S.best[s - 1] >= 0;
+const curStage = () => { const i = S.best.findIndex(b => b < PASS); return i < 0 ? N - 1 : i; };
+// ---------- dealing: every stage has its own saved deck, so every question comes up evenly and mistakes come back sooner ----------
+function dealStage(s) {
+  const pool = STAGES[s].pool, need = STAGES[s].read ? 1 : QN, seen = new Set();
+  S.decks = S.decks || {}; S.lasts = S.lasts || {};
+  let deck = (Array.isArray(S.decks[s]) ? S.decks[s] : []).filter(i => pool.includes(i) && !seen.has(i) && seen.add(i));
+  if (deck.length < need) deck = deck.concat(shuffle(pool.filter(i => !seen.has(i))));
+  const hand = deck.slice(0, need);   // taken off the deck only when the stage is finished, so a left stage keeps its questions
+  if (need > 1 && hand[0] === S.lasts[s]) [hand[0], hand[1]] = [hand[1], hand[0]];
+  S.decks[s] = deck; save();
+  if (STAGES[s].read) {
+    const ti = hand[0], tx = T.texts[ti];
+    return { idx: hand, items: tx.qs.map(([q, c, w]) => ({ k: "read", ti, q, c, w, fb: enSpan(bold(c)), say: c })) };   // all 4 questions of the text
+  }
+  return { idx: hand, items: hand.map(i => ITEMS[i]) };
+}
+function reinsertWeak() {
+  const s = st.s, deck = (S.decks[s] || []).filter(i => !st.idx.includes(i));
+  if (st.reading) { if (st.weak.some(Boolean)) deck.splice(Math.min(deck.length, 1), 0, st.idx[0]); }
+  else st.idx.forEach((id, q) => { if (st.weak[q]) deck.splice(Math.min(deck.length, 3 + Math.floor(Math.random() * 4)), 0, id); });   // back in a stage or two
+  S.decks[s] = deck; S.lasts[s] = st.idx[st.idx.length - 1];
+}
+// ---------- confetti ----------
+const cv = $("fx"), cx = cv.getContext("2d");
+let bits = [], bitsRun = false;
+function sizeCanvas() { cv.width = innerWidth; cv.height = innerHeight; }
+addEventListener("resize", sizeCanvas); sizeCanvas();
+function confetti(n = 120) {
+  for (let i = 0; i < n; i++) bits.push({ x: innerWidth / 2 + (Math.random() - .5) * 200, y: innerHeight * .4, vx: (Math.random() - .5) * 12, vy: -Math.random() * 12 - 3, r: 3 + Math.random() * 4, c: ["#ffd23f", "#ff6b9d", "#5ec8ff", "#7be07b", "#b388ff"][i % 5], life: 90 + Math.random() * 40 });
+  if (!bitsRun) { bitsRun = true; requestAnimationFrame(tick); }
+}
+function tick() {
+  cx.clearRect(0, 0, cv.width, cv.height);
+  bits = bits.filter(b => b.life-- > 0);
+  bits.forEach(b => { b.x += b.vx; b.y += b.vy; b.vy += .35; cx.fillStyle = b.c; cx.fillRect(b.x, b.y, b.r, b.r * 1.6); });
+  if (bits.length) requestAnimationFrame(tick); else { bitsRun = false; cx.clearRect(0, 0, cv.width, cv.height); }
+}
+
+let audio;
+function beep(freq, dur = 0.12, type = "sine", delay = 0) {
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audio.createOscillator(), g = audio.createGain();
+    o.type = type; o.frequency.value = freq; g.gain.value = 0.08;
+    o.connect(g); g.connect(audio.destination);
+    const t = audio.currentTime + delay;
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.start(t); o.stop(t + dur);
+  } catch (e) {}
+}
+const sndOk = () => beep(700, .1), sndBad = () => beep(150, .2, "sawtooth");
+const sndWin = () => [523, 659, 784, 1046].forEach((f, i) => beep(f, .18, "triangle", i * .1));
+function womanVoice() {
+  const en = speechSynthesis.getVoices().filter(v => /^en[-_]/i.test(v.lang));
+  const female = /zira|jenny|aria|samantha|susan|hazel|karen|victoria|moira|tessa|libby|sonia|serena|fiona|allison|ava|google us english|female|woman/i;
+  const male = /david|mark|guy|daniel|george|james|ryan|alex|fred|\bmale\b/i;
+  return en.find(v => female.test(v.name) && /en[-_]US/i.test(v.lang)) || en.find(v => female.test(v.name)) || en.find(v => !male.test(v.name));
+}
+function speak(text) {
+  if (!("speechSynthesis" in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text || speakText || "");
+  u.lang = "en-US"; u.rate = 0.8; u.pitch = 1.1;
+  const v = womanVoice(); if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+let revealFn = null, feedback = "", speakText = null, doneEmoji = null, swipeChoose = null;
+// the same sentence written differently is still right: don't = do not, isn't = is not, I'm = I am, case and final punctuation ignored
+const normTxt = s => String(s).toLowerCase().replace(/[’`]/g, "'").replace(/\b(do|does|is|are|was|were|did|can|could|would|have|has)n't\b/g, "$1 not")
+  .replace(/\bi'm\b/g, "i am").replace(/[.?!,;]+/g, " ").replace(/\s+/g, " ").trim();
+function setPrompt(inst, en, he) {
+  $("ptext").innerHTML = (inst ? '<div class="inst">' + inst + "</div>" : "") +
+    (he ? '<div class="he">' + he + "</div>" : "") + (en ? '<div class="en" dir="ltr">' + esc(en) + "</div>" : "");
+}
+
+function optClick(b, ok) {
+  if (solved || b.disabled) return;
+  if (ok) { b.classList.add("right"); done(mistakes === 0); }
+  else { mistakes++; sndBad(); b.classList.add("bad"); b.disabled = true; avatarReact("shake"); say(gt("אופס! נסה שוב 💪", "אופס! נסי שוב 💪")); if (st.boss) bossSay("חה חה, טעית! 😈"); }
+}
+function optButtons(items, host) {
+  shuffle(items.slice()).forEach(o => {
+    const b = document.createElement("button");
+    b.className = "optb"; b.dir = "ltr"; b.dataset.ans = o.ok ? "1" : ""; b.textContent = o.t;
+    b.addEventListener("click", () => optClick(b, !!o.ok));
+    host.appendChild(b);
+  });
+  revealFn = () => host.querySelectorAll(".optb").forEach(b => { b.disabled = true; if (b.dataset.ans) b.classList.add("right"); });
+}
+function buildMc(it) {
+  setPrompt(it.inst, it.he ? "" : it.en, it.he);
+  say(st.boss ? "בחרו את התשובה הנכונה" : "בחרו את התשובה הנכונה 👇");
+  const items = [{ t: it.c, ok: true }].concat(shuffle(it.w.slice()).slice(0, it.pick || 3).map(t => ({ t })));
+  const q = $("quiz");
+  if (items.some(o => o.t.length > 16)) q.classList.add("col1");
+  optButtons(items, q);
+}
+// type the missing verb(s) right inside the sentence
+function buildFill(it) {
+  setPrompt(it.inst, "", "");
+  say("כתבו באנגלית ולחצו על \"בדקו\" ✍️");
+  const q = $("quiz"); q.classList.add("fillMode");
+  const box = document.createElement("div"); box.className = "fillbox"; box.dir = "ltr";
+  const inputs = [];
+  it.pre.split("___").forEach((p, i) => {
+    box.appendChild(document.createTextNode(p));
+    if (i < it.ans.length) {
+      const inp = document.createElement("input");
+      inp.type = "text"; inp.autocomplete = "off"; inp.autocapitalize = "none"; inp.spellcheck = false; inp.setAttribute("autocorrect", "off");
+      inp.size = Math.max(6, Math.max(...it.ans[i].map(a => a.length)) + 1);
+      inp.addEventListener("input", () => inp.classList.remove("wrong"));
+      inp.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); e.stopPropagation(); check(); } });
+      inputs.push(inp); box.appendChild(inp);
+    }
+  });
+  q.appendChild(box);
+  const chk = document.createElement("button"); chk.className = "green wide"; chk.textContent = "✔️ בדקו"; chk.addEventListener("click", check); q.appendChild(chk);
+  function check() {
+    if (solved) return;
+    if (inputs.some(x => !x.value.trim())) { say("מלאו את כל החסרים ✍️"); inputs.find(x => !x.value.trim()).focus(); return; }
+    let all = true;
+    inputs.forEach((inp, i) => {
+      const ok = it.ans[i].some(a => normTxt(a) === normTxt(inp.value));
+      if (ok) { inp.classList.remove("wrong"); inp.classList.add("ok"); inp.readOnly = true; } else { all = false; inp.classList.remove("wrong"); void inp.offsetWidth; inp.classList.add("wrong"); }
+    });
+    if (all) { chk.classList.add("hidden"); done(mistakes === 0); return; }
+    mistakes++; sndBad(); avatarReact("shake"); say(gt("כמעט! בדקו שוב את הצורה 💪", "כמעט! בדקי שוב את הצורה 💪"));
+    if (st.boss) bossSay("חה חה, טעית! 😈");
+    inputs.find(x => x.classList.contains("wrong")).focus();
+  }
+  revealFn = () => { chk.classList.add("hidden"); inputs.forEach((inp, i) => { inp.value = it.ans[i][0]; inp.readOnly = true; inp.classList.remove("wrong"); inp.classList.add("hint"); }); };
+  setTimeout(() => inputs[0].focus(), 60);
+}
+// the sliding card: right = Present Simple, left = Present Progressive
+function buildSwipeItem(it) {
+  setPrompt('<span dir="ltr">Present Simple</span> או <span dir="ltr">Present Progressive?</span>', "", "");
+  say("החליקו את הכרטיס ימינה (Simple) או שמאלה (Progressive)");
+  buildSwipe(it.en, "Present Simple", "Present Progressive", it.a === "PS");
+}
+function buildSwipe(text, rightLabel, leftLabel, rightIsCorrect) {
+  const q = $("quiz"); q.classList.add("swipeMode");
+  q.innerHTML = '<div id="swipeStage"><div class="scard" id="scard"></div></div><div class="sbtns"></div><div class="shint">אפשר גם ללחוץ על הכפתורים</div>';
+  const card = $("scard"); card.textContent = text; card.dir = "ltr";
+  const correct = rightIsCorrect ? 0 : 1;
+  const bs = [rightLabel, leftLabel].map((lab, i) => {
+    const b = document.createElement("button"); b.className = "optb"; b.textContent = lab; b.dir = "ltr";
+    b.addEventListener("click", () => choose(i)); q.querySelector(".sbtns").appendChild(b); return b;
+  });
+  function choose(i) {
+    if (solved || bs[i].disabled) return;
+    if (i === correct) {
+      card.style.transform = "translateX(" + (i === 0 ? 130 : -130) + "%) rotate(" + (i === 0 ? 22 : -22) + "deg)"; card.style.opacity = ".25";
+      bs[i].classList.add("right"); done(mistakes === 0);
+    } else {
+      mistakes++; sndBad(); bs[i].classList.add("bad"); bs[i].disabled = true; avatarReact("shake"); card.style.transform = "";
+      say(gt("אופס! נסה שוב 💪", "אופס! נסי שוב 💪")); if (st.boss) bossSay("חה חה, טעית! 😈");
+    }
+  }
+  swipeChoose = choose;
+  let sx = null;
+  card.addEventListener("pointerdown", e => { if (solved) return; sx = e.clientX; card.setPointerCapture(e.pointerId); card.style.transition = "none"; });
+  card.addEventListener("pointermove", e => { if (sx === null) return; const dx = e.clientX - sx; card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 12 + "deg)"; });
+  const end = e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; card.style.transition = ""; if (Math.abs(dx) > 70) choose(dx > 0 ? 0 : 1); else card.style.transform = ""; };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+  revealFn = () => { bs.forEach(b => b.disabled = true); bs[correct].classList.add("right"); };
+}
+document.addEventListener("keydown", e => {
+  if (!swipeChoose || solved) return;
+  if (e.key === "ArrowRight") swipeChoose(0); else if (e.key === "ArrowLeft") swipeChoose(1);
+});
+// drag words from the bank into the sentence (a tap works too)
+function buildBuild(it) {
+  const inst = it.kind === "neg" ? "הפכו את המשפט לשלילה:" : it.kind === "q" ? "הפכו את המשפט לשאלה:" : "גררו מילים ובנו משפט נכון:";
+  setPrompt(inst, it.kind === "own" ? "" : it.src, it.kind === "own" ? it.src : "");
+  say("גררו את המילים (או לחצו עליהן) כדי לבנות את המשפט 🧩");
+  const q = $("quiz"); q.classList.add("buildMode");
+  q.innerHTML = '<div class="bzone ans" id="bAns" dir="ltr"></div><div class="bzone bank" id="bBank" dir="ltr"></div><button class="green wide" id="bChk">✔️ בדקו</button>';
+  const ans = $("bAns"), bank = $("bBank");
+  shuffle(it.bank.map((t, i) => ({ t, i }))).forEach(w => {
+    const c = document.createElement("div"); c.className = "chip"; c.textContent = w.t; bank.appendChild(c); wire(c);
+  });
+  function zoneAt(x, y) { const el = document.elementFromPoint(x, y); return el && el.closest ? el.closest(".bzone") : null; }
+  function insertAt(zone, chip, x) {
+    const kids = [...zone.children].filter(k => k !== chip);
+    const before = kids.find(k => { const r = k.getBoundingClientRect(); return x < r.left + r.width / 2; });
+    zone.insertBefore(chip, before || null);
+  }
+  function wire(chip) {
+    let sx, sy, ghost = null, moved = false;
+    chip.addEventListener("pointerdown", e => {
+      if (solved) return;
+      sx = e.clientX; sy = e.clientY; moved = false; chip.setPointerCapture(e.pointerId);
+    });
+    chip.addEventListener("pointermove", e => {
+      if (sx === undefined || solved) return;
+      if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) > 8) {
+        moved = true; ghost = chip.cloneNode(true); ghost.classList.add("ghost");
+        ghost.style.width = chip.offsetWidth + "px"; document.body.appendChild(ghost); chip.classList.add("lifted");
+      }
+      if (moved) { ghost.style.left = e.clientX - ghost.offsetWidth / 2 + "px"; ghost.style.top = e.clientY - ghost.offsetHeight / 2 + "px"; }
+    });
+    const up = e => {
+      if (sx === undefined) return;
+      sx = undefined;
+      if (ghost) { ghost.remove(); ghost = null; }
+      chip.classList.remove("lifted");
+      if (solved) return;
+      if (moved) { const z = zoneAt(e.clientX, e.clientY); if (z) insertAt(z, chip, e.clientX); }
+      else (chip.parentNode === bank ? ans : bank).appendChild(chip);
+    };
+    chip.addEventListener("pointerup", up); chip.addEventListener("pointercancel", up);
+  }
+  const chk = $("bChk");
+  chk.addEventListener("click", () => {
+    if (solved) return;
+    const got = normTxt([...ans.children].map(c => c.textContent).join(" "));
+    if (!got) { say("בנו את המשפט מהמילים 🧩"); return; }
+    if (it.ok.some(o => normTxt(o) === got)) { chk.classList.add("hidden"); ans.classList.add("good"); done(mistakes === 0); return; }
+    mistakes++; sndBad(); avatarReact("shake"); ans.classList.remove("bad"); void ans.offsetWidth; ans.classList.add("bad");
+    say(gt("עוד לא נכון, נסה לסדר מחדש 💪", "עוד לא נכון, נסי לסדר מחדש 💪")); if (st.boss) bossSay("חה חה, טעית! 😈");
+  });
+  revealFn = () => {
+    chk.classList.add("hidden"); bank.querySelectorAll(".chip").forEach(c => c.remove()); ans.innerHTML = ""; ans.classList.add("good");
+    it.ok[0].replace(/[.?!]+$/, "").split(" ").forEach(w => { const c = document.createElement("div"); c.className = "chip"; c.textContent = w; ans.appendChild(c); });
+  };
+}
+// reading: the text on one side of a card, the question on the other side
+function buildRead(it) {
+  const tx = T.texts[it.ti];
+  setPrompt("הבנת הנקרא · שאלה " + (st.q + 1) + " מתוך " + st.n, "", "");
+  say("אפשר להפוך את הכרטיס ולחזור לטקסט בכל רגע 📖");
+  const q = $("quiz"); q.classList.add("readMode");
+  q.innerHTML = '<button class="gold wide" id="flipBtn" style="margin:0 0 8px"></button><div class="flipwrap"><div class="flipper" id="flipper"><div class="face front" dir="ltr"><h3></h3><div class="rtext"></div></div><div class="face back" dir="ltr"><div class="rq"></div><div class="ropts"></div></div></div></div>';
+  q.querySelector("h3").textContent = tx.title;
+  tx.text.split("\n\n").forEach(p => { const e = document.createElement("p"); e.textContent = p; q.querySelector(".rtext").appendChild(e); });
+  q.querySelector(".rq").textContent = it.q;
+  optButtons([{ t: it.c, ok: true }].concat(it.w.map(t => ({ t }))), q.querySelector(".ropts"));
+  const fl = $("flipper"), btn = $("flipBtn"), front = fl.querySelector(".front"), back = fl.querySelector(".back");
+  function face(flipped) {
+    st.flipped = flipped;
+    fl.classList.toggle("flipped", flipped); front.inert = flipped; back.inert = !flipped;
+    btn.textContent = flipped ? "📖 חזרה לטקסט" : "❓ לשאלה";
+  }
+  face(st.q > 0);   // first question: the text first; after that the question side, the text stays on the other side
+  btn.addEventListener("click", () => face(!st.flipped));
+}
+
+// ---------- stage flow ----------
+let st = null, word = null, solved = false, mistakes = 0, slots = [];
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const sndHit = () => { beep(220, .12, "square"); beep(110, .2, "sawtooth", .08); };
+const need5 = s => STAGES[s].read ? 4 : QN;            // all answers right = the alien's own accessory
+const perfect = s => S.best[s] >= need5(s);
+const TIPS = ["he / she / it מקבלים s. watch → watch<b>es</b>, study → stud<b>ies</b>", "מוחקים e: make → mak<b>ing</b>. מכפילים: run → run<b>ning</b>",
+  "now / Look! = Progressive. always / every day = Simple", "קודם מחפשים מילת זמן, ואז בוחרים", "שאלה ושלילה: do / does. עכשיו: am / is / are + ing",
+  "שלילה: don't / doesn't. שאלה: Do / Does / Is / Are בהתחלה", "אחרי does הפועל בלי s. am / is / are + ing", "know, like, want - בדרך כלל לא ב-ing", "אפשר להפוך את הכרטיס ולחזור לטקסט בכל רגע"];
+function show(id) { ["map", "stage"].forEach(x => $(x).classList.toggle("hidden", x !== id)); document.body.classList.toggle("onmap", id === "map"); }
+function applyGender() {
+  document.querySelectorAll("#who button").forEach(b => b.classList.toggle("on", b.dataset.g === gender));
+  if (S) updateSkipBtn();
+}
+document.querySelectorAll("#who button").forEach(b => b.addEventListener("click", () => {
+  gender = b.dataset.g; try { localStorage.setItem("gender", gender); } catch (e) {}
+  applyGender();
+}));
+function updateTop() {
+  $("crewN").textContent = crewList().length; $("crewMax").textContent = N - 1;
+  $("skipsLeft").textContent = S.skips;
+  updateSkipBtn();
+}
+function updateSkipBtn() {
+  if (!S) return;
+  $("skipBtn").textContent = gt("🤷 לא יודע", "🤷 לא יודעת") + " (" + S.skips + ")";
+  $("skipBtn").disabled = S.skips <= 0 || solved;
+}
+const talk = t => { $("helperBub").textContent = t; };
+const say = t => { $("hint").textContent = t; };
+const bossSay = t => talk(t);
+function setHelper(mood) {
+  const showAcc = !st.boss && (st.hadAcc || goodCount() >= st.n);
+  $("helperArt").innerHTML = st.boss ? evil(96, mood === "hurt") : alien(st.s, mood === "hurt" ? "help" : mood, 92, showAcc);
+}
+function avatarReact() { const a = $("helperArt"); a.classList.remove("hit"); void a.offsetWidth; a.classList.add("hit"); }
+function renderDots(popIdx) {
+  const n = st.n;
+  let h = "";
+  if (st.boss) { const hits = st.stars.filter(x => x === 1).length; h = "❤️".repeat(Math.max(0, n - hits)) + "🤍".repeat(Math.min(n, hits)); }
+  else for (let i = 0; i < n; i++) h += '<i class="' + (st.stars[i] === 1 ? "on" : st.stars[i] === 0 ? "miss" : "") + (i === popIdx ? " pop" : "") + '"></i>';
+  $("fuel").innerHTML = h;
+}
+// Lulu is always with the player; the rescued aliens are with him, and they all cheer
+function crewRow(box, size) {
+  const m = crewList().length; size = Math.max(24, size - m * 1.8);   // the more friends, the smaller
+  box.innerHTML = '<div class="c lulu"><span class="say"></span>' + lulu(size + 18) + "</div>" +
+    crewList().map(i => '<div class="c"><span class="say"></span>' + alien(i, "cheer", size, perfect(i)) + "</div>").join("");
+}
+const CHEER_OK = ["אתם אלופים! 💪", "יאללה, עוד אחת!", "כמעט שם! ⭐", "וואו! 🤩", "ככה עושים את זה!", "אתם גאונים! 🌟"];
+const CHEER_TRY = ["לא נורא, ממשיכים! 💪", "אתם יכולים! 🌟", "עוד קצת ותצליחו!"];
+const CHEER_GO = ["בהצלחה! 🍀", "אני מאמין בכם!", "קדימה! 🚀"];
+function cheerSay(list) {
+  const els = [...document.querySelectorAll("#cheer .c")];
+  if (!els.length) return;
+  els.forEach(e => e.querySelector(".say").classList.remove("on"));   // one bubble at a time
+  const b = pick(els).querySelector(".say");
+  b.textContent = pick(list); b.classList.add("on"); clearTimeout(b._t); b._t = setTimeout(() => b.classList.remove("on"), 2300);
+}
+function goodCount() { return st.stars.filter(x => x === 1).length; }
+const cnt = n => n === 1 ? "תשובה נכונה אחת" : n + " תשובות נכונות";
+function progressLine() {
+  const k = K[st.s], g = goodCount(), left = st.n - g, accTxt = k.acc.n + " שלי " + k.acc.e;
+  if (g >= st.n) return "וואו! קיבלתי את " + accTxt + "! 🎉";
+  if (st.hadAcc) return "אני כבר עם " + accTxt + "! בואו נתרגל 💪";
+  if (g >= PASS) return "יש! אני חופשי! 🎉 עוד " + cnt(left) + " ואקבל את " + accTxt;
+  if (st.wasRescued) return "אני כבר איתכם! פתרו את כולן ואקבל את " + accTxt;
+  return "עוד " + cnt(PASS - g) + " ואני חופשי! 🙏";
+}
+const BOSS_LINES = ["אני החייזר הרע! 😈 השמש שלי ואף אחד לא מנצח אותי!", "חה חה, עוד לא פגעתם בי!", "אוי... זה כואב! 😵", "אל תפסיקו, אני נחלש!", "עוד מכה אחת ואני גמור!"];
+function startStage(s) {
+  const d = dealStage(s);   // the stage's questions from its saved deck
+  st = { s, q: 0, stars: [], weak: [], boss: isBoss(s), idx: d.idx, words: d.items, n: d.items.length, reading: !!STAGES[s].read, flipped: false, wasRescued: rescued(s), hadAcc: !isBoss(s) && perfect(s) };
+  show("stage"); window.scrollTo(0, 0);
+  $("stageTitle").textContent = st.boss ? "קרב השמש" : STAGES[s].name;
+  $("helperName").textContent = st.boss ? "החייזר הרע" : K[s].n;
+  crewRow($("cheer"), 40);
+  renderQuestion();
+  talk(st.boss ? BOSS_LINES[0] : (st.wasRescued || st.hadAcc) ? progressLine() : "תעזרו לי! אני תקוע על הכוכב. פתרו לפחות " + PASS + " מתוך " + st.n + " ואצטרף אליכם 🙏");
+}
+function renderQuestion() {
+  solved = false; mistakes = 0; revealFn = null; swipeChoose = null; speakText = null; doneEmoji = null;
+  word = st.words[st.q];
+  feedback = word.fb || "";
+  $("msg").textContent = ""; $("hint").textContent = ""; $("nextQ").classList.add("hidden"); $("skipBtn").classList.remove("hidden");
+  $("quiz").innerHTML = ""; $("quiz").className = "";
+  $("speakBtn").classList.add("hidden");
+  speakText = word.say || null;
+  renderDots(); updateSkipBtn();
+  setHelper(!st.boss && (st.wasRescued || st.hadAcc) ? "cheer" : "help");
+  if (st.q > 0) { talk(st.boss ? BOSS_LINES[st.q % BOSS_LINES.length] : progressLine()); if (Math.random() < .4) cheerSay(CHEER_GO); }
+  ({ mc: buildMc, fill: buildFill, swipe: buildSwipeItem, build: buildBuild, read: buildRead })[word.k](word);
+}
+function hitBoss() {
+  const w = $("app"); w.classList.remove("shake"); void w.offsetWidth; w.classList.add("shake");   // the screen shakes ONLY when the boss is hurt
+  setTimeout(() => w.classList.remove("shake"), 500);
+  $("helperArt").innerHTML = evil(96, true); setTimeout(() => { if (st && st.boss && !$("stage").classList.contains("hidden")) $("helperArt").innerHTML = evil(96, false); }, 900);
+  sndHit();
+}
+function done(star, skipped) {
+  solved = true;
+  $("skipBtn").classList.add("hidden");
+  st.stars[st.q] = star ? 1 : 0;
+  st.weak[st.q] = !star || !!skipped;
+  renderDots(star ? st.q : undefined); updateSkipBtn();
+  $("hint").textContent = "";
+  if (star) {
+    if (st.boss) { talk(["אאוץ'! 😵", "אוי, זה כאב!", "לא!! אני נחלש!"][Math.min(2, goodCount() - 1)] || "אאוץ'! 😵"); hitBoss(); }
+    else { sndWin(); setHelper("cheer"); confetti(24); talk(skipped ? "בסדר, עכשיו אתם יודעים! ⭐" : goodCount() === PASS && !st.wasRescued ? "יש!!! אני חופשי! 🎉 " + progressLine().replace(/^יש! אני חופשי! 🎉 /, "") : progressLine()); }
+    cheerSay(CHEER_OK);
+  } else {
+    sndOk();
+    talk(st.boss ? "חה חה, לא פגעתם בי! 😈" : "נכון! אבל לא בניסיון הראשון 🙂");
+    cheerSay(CHEER_TRY);
+  }
+  $("msg").innerHTML = feedback;
+  $("speakBtn").classList.remove("hidden");
+  speak();
+  $("nextQ").textContent = st.q >= st.n - 1 ? "סיום שלב 🏁" : "הבאה ➜";
+  $("nextQ").classList.remove("hidden"); $("nextQ").focus();
+}
+$("skipBtn").addEventListener("click", () => {
+  if (solved || S.skips <= 0) return;
+  S.skips--; save(); updateTop();
+  if (revealFn) revealFn();
+  done(true, true);
+});
+$("speakBtn").addEventListener("click", () => speak());
+$("nextQ").addEventListener("click", () => { st.q++; if (st.q >= st.n) finishStage(); else renderQuestion(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden") && $("rulesOv").classList.contains("hidden") && $("preOv").classList.contains("hidden")) $("nextQ").click(); });
+$("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
+$("newBtn").addEventListener("click", () => {
+  if (!confirm("להתחיל את המשימה מחדש? כל החייזרים יחזרו לכוכבים.")) return;
+  S = freshState(); save(); selPlanet = null; renderMap(); openPrelude();
+});
+// ---------- end of stage ----------
+function finishStage() {
+  if (st.finished) return;   // a double-click must not run it twice
+  st.finished = true;
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+  const good = goodCount(), ok = good >= PASS, wasRescued = rescued(st.s), wasPerfect = !st.boss && perfect(st.s);
+  S.best[st.s] = Math.max(S.best[st.s], good);
+  const justNew = ok && !wasRescued, justPerfect = !st.boss && good >= st.n && !wasPerfect;
+  if (st.boss && ok) S.finished = true;
+  reinsertWeak(); save(); updateTop();
+  const k = K[st.s] || {};
+  $("eoArt").innerHTML = st.boss ? evil(130, ok) : alien(st.s, ok ? "cheer" : "help", 130, perfect(st.s));
+  $("eoTitle").textContent = st.boss ? (ok ? "ניצחתם את החייזר הרע! 🏆" : "החייזר הרע עדיין חזק!")
+    : justPerfect ? k.n + " קיבל את " + k.acc.n + "! " + k.acc.e : ok ? (justNew ? "הצלתם את " + k.n + "!" : "כל הכבוד!") : "כמעט!";
+  $("eoFuel").innerHTML = Array.from({ length: st.n }, (_, i) => '<i class="' + (st.stars[i] === 1 ? "on" : "") + '"></i>').join("");
+  $("eoNote").innerHTML = good + " מתוך " + st.n + " תשובות נכונות בניסיון ראשון<br>" +
+    (st.boss ? (ok ? "הכוכבים חופשיים והערפל נעלם! כל החייזרים חוגגים איתכם! 🎉" : "צריך לפחות " + PASS + " מתוך " + st.n + " כדי להביס אותו. נסו שוב!")
+      : justPerfect ? "כל התשובות נכונות - מגיע לו משהו מיוחד! 🎁"
+      : ok ? (justNew ? "\"תודה! עכשיו אני טס איתכם!\"<br>👽 בצוות: <bdi dir=\"ltr\">" + crewList().length + "/" + (N - 1) + "</bdi><br><small>ואם תפתרו את כל " + st.n + " הוא יקבל את " + k.acc.n + " שלו " + k.acc.e + "</small>" : k.n + " כבר בצוות!" + (perfect(st.s) ? "" : "<br><small>פתרו את כולן והוא יקבל את " + k.acc.n + " שלו " + k.acc.e + "</small>"))
+        : k.n + " עוד מחכה. צריך לפחות " + PASS + " מתוך " + st.n + " - נסו שוב, אתם יכולים!");
+  crewRow($("eoCrew"), 36);
+  $("eoNext").classList.toggle("hidden", st.boss);
+  if (st.boss && ok) { showEnd(); return; }
+  $("endOv").classList.remove("hidden");
+  if (ok) { sndWin(); confetti(st.boss ? 240 : justPerfect ? 160 : 90); }
+}
+$("eoMap").addEventListener("click", () => { $("endOv").classList.add("hidden"); selPlanet = null; renderMap(); });
+$("eoAgain").addEventListener("click", () => { $("endOv").classList.add("hidden"); startStage(st.s); });
+$("eoNext").addEventListener("click", () => { $("endOv").classList.add("hidden"); selPlanet = Math.min(N - 1, st.s + 1); renderMap(); });   // fly there and wait: the player starts the level
+// ---------- the end screen (after the evil alien is beaten) ----------
+function showEnd() {
+  const crew = crewList(), accs = crew.filter(perfect).length;
+  $("winLulu").innerHTML = lulu(120);
+  $("winCrew").innerHTML = crew.map(i => alien(i, "cheer", 52, perfect(i))).join("");
+  $("winNote").innerHTML = "החייזר הרע נעלם, הערפל התפוגג וכל הכוכבים זורחים!<br>לולו וחבריו מודים לכם 💖<br><b>👽 <bdi dir=\"ltr\">" + crew.length + "/" + (N - 1) + "</bdi> חברים · 🎁 <bdi dir=\"ltr\">" + accs + "/" + (N - 1) + "</bdi> אביזרים</b>" + (accs < N - 1 ? "<br><small>אפשר לחזור לכוכבים ולפתור את כל השאלות כדי שכל חבר יקבל את האביזר שלו</small>" : "<br>אספתם את כל האביזרים - מושלם! 🌟");
+  $("winOv").classList.remove("hidden");
+  sndWin(); confetti(260); setTimeout(() => confetti(160), 900); setTimeout(() => confetti(160), 1900);
+}
+$("winMap").addEventListener("click", () => { $("winOv").classList.add("hidden"); selPlanet = null; renderMap(); });
+$("winNew").addEventListener("click", () => { if (!confirm("להתחיל משימה חדשה? כל החייזרים יחזרו לכוכבים.")) return; $("winOv").classList.add("hidden"); S = freshState(); save(); selPlanet = null; renderMap(); openPrelude(); });
+// ---------- the map: scrolls sideways, planets on orbits around the sun ----------
+const SUNX = 90, ORB = [1600, 1440, 1280, 1120, 960, 800, 640, 470, 300], OFFS = [120, -130, 140, -110, 130, -140, 110, -100, 90];
+let selPlanet = null;
+function geom() {
+  const H = Math.max(320, $("mapwrap").clientHeight || 480), k = H / 488, cy = H / 2;
+  const pos = ORB.map((r, i) => { const dy = OFFS[i] * k, th = Math.asin(Math.max(-.95, Math.min(.95, dy / r))); return { x: SUNX + r * Math.cos(th), y: cy + dy }; });
+  return { H, k, cy, pos, W: SUNX + ORB[0] + 220 };
+}
+function laneFor(c, g) {
+  let lx, ly;
+  if (c === N - 1) { lx = 250; ly = g.cy; } else { const p = g.pos[c]; lx = p.x; ly = p.y > g.cy ? p.y - 135 * g.k : p.y + 165 * g.k; }
+  return { lx, ly: Math.max(78, Math.min(g.H - 88, ly)) };
+}
+function renderMap(opts = {}) {
+  if (window._flightStop) window._flightStop();
+  const wasHidden = $("map").classList.contains("hidden");
+  show("map"); updateTop();
+  $("map").style.height = Math.max(420, innerHeight - $("top").offsetHeight - 50) + "px";
+  const wrap = $("mapwrap"), inn = $("mapin"), prevScroll = wrap.scrollLeft, first = !inn.innerHTML || wasHidden;   // coming back from a stage: centre on the planet
+  const g = geom(), { H, k, cy, pos } = g, cur = curStage();
+  if (selPlanet === null) selPlanet = cur;
+  inn.style.width = g.W + "px"; inn.style.height = H + "px"; inn.innerHTML = "";
+  let svg = '<svg class="orb" width="' + g.W + '" height="' + H + '" viewBox="0 0 ' + g.W + " " + H + '">';
+  ORB.forEach((r, i) => { svg += '<circle cx="' + SUNX + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,' + (rescued(i) ? .6 : .36) + ')" stroke-width="2.5" stroke-dasharray="' + (rescued(i) ? "0" : "4 9") + '"/>'; });
+  inn.insertAdjacentHTML("beforeend", svg + "</svg>");
+  // the friendly sun, with the evil alien hiding behind it
+  const sb = document.createElement("div"); sb.className = "sunbox";
+  sb.style.cssText = "left:" + (SUNX - 75) + "px;top:" + (cy - 75) + "px";
+  sb.innerHTML = '<div class="evilhide">' + evil(150) + '</div><div class="sunbody" id="sunbody"></div><span class="pl sunl">☀️ השמש · ' + Math.max(0, S.best[N - 1]) + "/" + QN + "</span>";
+  sb.addEventListener("click", () => selectPlanet(N - 1));
+  const eh = sb.querySelector(".evilhide"); eh.style.cursor = "pointer";
+  eh.addEventListener("click", e => { e.stopPropagation(); evilTaunt(eh, sb); });   // tap him: he talks and grins
+  inn.appendChild(sb);
+  // planets
+  for (let i = 0; i < N - 1; i++) {
+    const p = pos[i], open = isOpen(i), size = 92, res = rescued(i);
+    const b = document.createElement("button");
+    b.className = "planet " + (res ? "light" : "dark") + (!open ? " lock" : "") + (i === selPlanet ? " sel" : "");
+    b.dataset.i = i;
+    b.style.cssText = "left:" + (p.x - size / 2) + "px;top:" + (p.y - size / 2) + "px";
+    b.innerHTML = planetSvg(i, open ? STAGES[i].icon : "🔒") + (perfect(i) ? '<span class="accb">' + K[i].acc.e + "</span>" : "") + '<span class="pl">' + esc(STAGES[i].name) + "</span>" + (open ? cntPill(i) : "");
+    b.addEventListener("click", () => selectPlanet(i));
+    inn.appendChild(b);
+    if (!res) { const w = document.createElement("div"); w.className = "wait" + (open ? "" : " lock"); w.style.cssText = "left:" + (p.x + 30) + "px;top:" + (p.y - 78) + "px"; w.innerHTML = alien(i, open ? "help" : "idle", 50); inn.appendChild(w); }
+  }
+  // Lulu on the ship, with the rescued aliens in a ring around it: on the free side of the current planet, clear of every name
+  const to = laneFor(cur, g), from = S.shipAt === undefined ? cur : S.shipAt;
+  const fleet = document.createElement("div"); fleet.className = "fleet"; fleet.style.cssText = "left:" + to.lx + "px;top:" + to.ly + "px";
+  fleet.innerHTML = '<div class="ship" style="left:0;top:12px"><span class="rk">🚀</span></div><div class="crew lulu" style="left:-17px;top:-30px">' + lulu(34) + "</div>";
+  const crew = crewList(), rx = 64, ry = 50, s = Math.max(22, 36 - crew.length * 1.6);   // the more friends, the smaller
+  crew.forEach((ci, n) => {
+    const a = n / Math.max(1, crew.length) * Math.PI * 2 - Math.PI / 2;
+    fleet.insertAdjacentHTML("beforeend", '<div class="crew" style="left:' + (rx * Math.cos(a) - s / 2) + "px;top:" + (ry * Math.sin(a) - s / 2) + "px;animation-delay:" + (-n * .6) + 's">' + alien(ci, "idle", s, perfect(ci)) + "</div>");
+  });
+  inn.appendChild(fleet);
+  fleet.querySelectorAll(".crew").forEach(c => c.addEventListener("click", () => { c.classList.remove("hop"); void c.offsetWidth; c.classList.add("hop"); setTimeout(() => c.classList.remove("hop"), 1100); }));   // tap = jump
+  if (!S.hintSeen) { const h = document.createElement("div"); h.className = "scrollhint"; h.innerHTML = "<span>⬅ גללו כדי לטוס אל השמש</span>"; $("map").appendChild(h); setTimeout(() => h.remove(), 5000); S.hintSeen = true; save(); }
+  renderInfo(selPlanet);
+  const focusX = (selPlanet === N - 1 ? SUNX : pos[selPlanet].x);
+  wrap.scrollLeft = first ? Math.max(0, focusX - wrap.clientWidth / 2) : prevScroll;
+  const was = S.shipAt; S.shipAt = cur; save();
+  if (was !== undefined && was !== cur) { const f = laneFor(was, g); wrap.scrollLeft = Math.max(0, f.lx - wrap.clientWidth / 2); setTimeout(() => flyFleet(fleet, f, to, opts.then), 350); }
+  else if (opts.then) opts.then();
+}
+// the ship flies to the next planet and leaves a glowing trail
+function flyFleet(fleet, from, to, then) {
+  const wrap = $("mapwrap"), inn = $("mapin");
+  // the path bows upward (names hang BELOW the planets), so the ship stays clear of them
+  const dx = from.lx - to.lx, dy = from.ly - to.ly, lift = -Math.min(90, 40 + Math.abs(dx) * .15);
+  const anim = fleet.animate([{ transform: "translate(" + dx + "px," + dy + "px)" }, { transform: "translate(" + dx / 2 + "px," + (dy / 2 + lift) + "px)", offset: .5 }, { transform: "translate(0,0)" }], { duration: 5600, easing: "ease-in-out", fill: "both" });
+  let stopped = false; window._flightStop = () => { stopped = true; anim.cancel(); window._flightStop = null; };
+  const rk = fleet.querySelector(".rk"), ang = Math.atan2(to.ly - from.ly, to.lx - from.lx) * 180 / Math.PI;
+  rk.style.transform = "rotate(" + (ang + 45) + "deg)";   // the rocket emoji points up-right: turn it to face the planet
+  let last = 0;
+  (function loop(t) {
+    const r = fleet.getBoundingClientRect(), m = inn.getBoundingClientRect(), x = r.left - m.left, y = r.top - m.top + 12;
+    if (t - last > 22) {
+      last = t;
+      for (let i = 0; i < 2; i++) {
+        const d = document.createElement("div"); d.className = "trail" + (Math.random() < .25 ? " sp" : "");
+        d.style.left = (x + (Math.random() - .5) * 14) + "px"; d.style.top = (y + (Math.random() - .5) * 14) + "px";
+        inn.appendChild(d); setTimeout(() => d.remove(), 1000);
+      }
+    }
+    wrap.scrollLeft += ((x - wrap.clientWidth / 2) - wrap.scrollLeft) * .12;
+    if (stopped || !fleet.isConnected) { anim.cancel(); return; }
+    if (anim.playState !== "finished") requestAnimationFrame(loop);
+    else { rk.style.transform = "rotate(0deg)"; sndWin(); if (then) setTimeout(then, 700); }
+  })(0);
+}
+function cntPill(i) {
+  const n = Math.max(0, S.best[i]), all = need5(i);
+  return '<span class="cnt ' + (n >= all ? "g5" : n >= PASS ? "g3" : "") + '">' + n + "/" + all + "</span>";
+}
+function selectPlanet(i) {
+  selPlanet = i;
+  document.querySelectorAll(".planet").forEach(e => e.classList.toggle("sel", +e.dataset.i === i));
+  renderInfo(i);
+}
+function renderInfo(i) {
+  const box = $("info");
+  if (i === N - 1) {
+    const open = isOpen(i), beaten = rescued(i);
+    box.innerHTML = '<div class="iart">' + evil(70, beaten) + '<span class="nametag">החייזר הרע</span></div><div class="it"><b>' + (beaten ? "✅ הובס!" : "☀️ הקרב האחרון") + '</b> · כוכב <bdi dir="ltr">' + N + "/" + N + "</bdi><br>השמש ידידותית - <b>החייזר הרע מסתתר מאחוריה</b>.<br>" + (open ? "הביסו אותו עם " + PASS + " תשובות נכונות מתוך " + QN + "." : "קודם נסו את כל הכוכבים.") + "</div>" +
+      '<button class="gold go"' + (open ? "" : " disabled") + ' id="goBtn">' + (beaten ? "🏆 לניצחון" : open ? "לקרב! 🚀" : "🔒") + "</button>";
+  } else {
+    const kk = K[i], n = Math.max(0, S.best[i]), open = isOpen(i), res = n >= PASS, fullN = need5(i);
+    box.innerHTML = '<div class="iart">' + alien(i, res ? "cheer" : "help", 70, perfect(i)) + '<span class="nametag">' + kk.n + '</span></div><div class="it"><b>' + (res ? "✅ שוחרר" : open ? "🔒 תפוס בערפל" : "🔒 נעול") + '</b> · כוכב <bdi dir="ltr">' + (i + 1) + "/" + (N - 1) + "</bdi><br>נושא: <b>" + esc(STAGES[i].name) + "</b><br>טיפ: " + TIPS[i] +
+      "<br>ענו נכון: <b>" + n + "/" + fullN + "</b> · " + (perfect(i) ? "יש לו " + kk.acc.n + " " + kk.acc.e : PASS + " משחררים, " + fullN + " = " + kk.acc.n + " " + kk.acc.e) + "</div>" +
+      '<button class="gold go"' + (open ? "" : " disabled") + ' id="goBtn">' + (open ? "טוסו! 🚀" : "🔒") + "</button>";
+  }
+  const gb = $("goBtn"); if (gb && !gb.disabled) gb.addEventListener("click", () => (i === N - 1 && rescued(i)) ? showEnd() : startStage(i));
+}
+let rsz; addEventListener("resize", () => { clearTimeout(rsz); rsz = setTimeout(() => { if (S && !$("map").classList.contains("hidden")) renderMap(); }, 250); });
+// ---------- the sun (shiny, friendly) ----------
+// (drawn with CSS: see .sunbody)
+// ---------- the evil alien talks and grins when touched ----------
+const TAUNTS = ["חה חה חה! 😈", "השמש שלי, והחברים שלכם שלי!", "אף פעם לא תנצחו אותי!", "הערפל שלי חזק מכם!", "אתם לא תגיעו אליי... 😏", "תנסו, תנסו... חה חה!", "אני אוהב את הערפל! הוא כל כך חשוך 🌫️"];
+function evilTaunt(host, box) {
+  const size = host.querySelector("svg").getAttribute("width");
+  host.innerHTML = evil(+size, false, true);
+  let b = box.querySelector(".evilsay");
+  if (!b) { b = document.createElement("div"); b.className = "evilsay"; box.appendChild(b); }
+  b.textContent = pick(TAUNTS); b.classList.add("on"); beep(110, .15, "sawtooth"); beep(98, .25, "sawtooth", .15);
+  clearTimeout(host._t); host._t = setTimeout(() => { host.innerHTML = evil(+size); b.classList.remove("on"); }, 2800);
+}
+$("helperArt").addEventListener("click", () => {   // in the battle too
+  if (!st || !st.boss) return;
+  talk(pick(TAUNTS)); $("helperArt").innerHTML = evil(96, false, true); beep(110, .15, "sawtooth");
+  clearTimeout(st._gt); st._gt = setTimeout(() => { if (st && st.boss) $("helperArt").innerHTML = evil(96); }, 1800);
+});
+// ---------- prelude (first visit; replay from the ? button) ----------
+const PRE = [
+  { art: () => lulu(190), t: "היי! אני <b>לוּלוּ</b> 💫<br>החברים שלי, החייזרים החמודים, נלקחו מכוכבי הלכת!" },
+  { art: () => '<div class="presun"><div class="evilhide2">' + evil(130) + '</div><div class="sunbody nr"></div></div>', t: "חייזר רע מסתתר מאחורי השמש. הוא כישף כל כוכב בערפל כהה ותפס את החברים שלי 😢" },
+  { art: () => '<div style="display:flex;gap:2px">' + [0, 3, 6].map(i => alien(i, "help", 62)).join("") + "</div>", t: "עזרו לי לשחרר אותם! פתרו שאלות באנגלית, שחררו חבר בכל כוכב - ובסוף ננצח אותו! 🚀 אני אטוס איתכם!" }];
+let preI = 0;
+function openPrelude() { preI = 0; renderPre(); $("preOv").classList.remove("hidden"); }
+function renderPre() {
+  $("preArt").innerHTML = PRE[preI].art(); $("preText").innerHTML = PRE[preI].t;
+  $("preDots").innerHTML = PRE.map((_, i) => '<i class="' + (i === preI ? "on" : "") + '"></i>').join("");
+  $("preNext").textContent = preI === PRE.length - 1 ? "יאללה, טסים! 🚀" : "הבא ⬅";
+}
+function closePrelude() { $("preOv").classList.add("hidden"); if (!S.seen) { S.seen = true; save(); } }
+$("preNext").addEventListener("click", () => { if (preI >= PRE.length - 1) closePrelude(); else { preI++; renderPre(); } });
+$("preSkip").addEventListener("click", closePrelude);
+$("helpBtn").addEventListener("click", openPrelude);
+// ---------- the rules: short cards, Lulu explains ----------
+const ex = h => '<div class="ex">' + h + "</div>";
+const RULE_CARDS = [
+  { t: "שני זמנים - שתי תמונות!", h: '<div class="big">🔁 📸</div><div class="rc"><div class="tag">Present Simple</div>' + ex("I <b>play</b> every day") + '<div class="tag">שגרה, הרגלים, עובדות</div></div><div class="rc"><div class="tag">Present Progressive</div>' + ex("I <b>am playing</b> now") + '<div class="tag">קורה עכשיו</div></div>' },
+  { t: "Present Simple - מתי משתמשים?", h: '<div class="big">🔁</div><div class="rc"><div class="tag">כל יום / בדרך כלל / תמיד</div>' + ex("She <b>plays</b> tennis on Monday") + '</div><div class="rc"><div class="tag">עובדות</div>' + ex("The sun <b>rises</b> in the east") + '</div><div class="rc small"><bdi dir="ltr">always · usually · often · sometimes · never · every day</bdi></div>' },
+  { t: "ככה בונים: + - ?", h: '<div class="big">➕ ➖ ❓</div><div class="rc"><div class="tag">I / you / we / they</div>' + ex("I play · I <b>don't</b> play · <b>Do</b> you play?") + '</div><div class="rc"><div class="tag">he / she / it</div>' + ex("He play<b>s</b> · He <b>doesn't</b> play · <b>Does</b> he play?") + '</div><div class="rc small">אחרי don\'t / doesn\'t / do / does - הפועל <b>בלי s</b></div>' },
+  { t: "מוסיפים s ל-he / she / it", h: '<div class="big">s</div><div class="rc"><div class="tag">רוב הפעלים</div>' + ex("play → play<b>s</b>") + '</div><div class="rc"><div class="tag">s · sh · ch · x · z · o</div>' + ex("watch → watch<b>es</b> · go → go<b>es</b>") + '</div><div class="rc"><div class="tag">y אחרי עיצור</div>' + ex("study → stud<b>ies</b>") + '</div><div class="rc"><div class="tag">יוצא דופן</div>' + ex("have → <b>has</b>") + "</div>" },
+  { t: "Present Progressive - מתי?", h: '<div class="big">📸</div><div class="rc"><div class="tag">עכשיו! Look! Listen!</div>' + ex("The dog <b>is barking</b>") + '</div><div class="rc small"><bdi dir="ltr">now · right now · at the moment · today</bdi></div>' },
+  { t: "am / is / are + ing", h: '<div class="big">am · is · are</div><div class="rc"><div class="tag">+</div>' + ex("I <b>am</b> / He <b>is</b> / They <b>are</b> playing") + '</div><div class="rc"><div class="tag">-</div>' + ex("She <b>isn't</b> playing") + '</div><div class="rc"><div class="tag">?</div>' + ex("<b>Are</b> they playing?") + "</div>" },
+  { t: "מוסיפים ing", h: '<div class="big">ing</div><div class="rc"><div class="tag">רגיל</div>' + ex("play → play<b>ing</b>") + '</div><div class="rc"><div class="tag">נגמר ב-e: מוחקים e</div>' + ex("make → mak<b>ing</b>") + '</div><div class="rc"><div class="tag">עיצור-תנועה-עיצור: מכפילים</div>' + ex("run → run<b>ning</b> · sit → sit<b>ting</b>") + '</div><div class="rc"><div class="tag">ie → ying</div>' + ex("lie → l<b>ying</b>") + "</div>" },
+  { t: "פעלי מצב - בלי ing!", h: '<div class="big">🧠</div><div class="rc">' + ex("I <b>know</b> ✅ &nbsp; I am knowing ❌") + '</div><div class="rc small"><bdi dir="ltr">like · love · hate · want · need · know · understand · believe · have</bdi></div><div class="rc"><div class="tag">have = לאכול - כן!</div>' + ex("I <b>am having</b> lunch") + "</div>" }];
+const RULE_FOR_STAGE = [3, 6, 1, 0, 2, 2, 5, 7, 0];   // which card to open from which planet
+let ri = 0;
+function renderRule() {
+  const c = RULE_CARDS[ri];
+  $("rulesBub").innerHTML = c.t; $("rulesCard").innerHTML = c.h;
+  $("rdots").innerHTML = RULE_CARDS.map((_, i) => '<i class="' + (i === ri ? "on" : "") + '"></i>').join("");
+  $("rnext").textContent = ri === RULE_CARDS.length - 1 ? "אני מוכן! 🚀" : "הבא ⬅";
+  $("rprev").style.visibility = ri === 0 ? "hidden" : "visible";
+}
+function openRules(i) { ri = Math.max(0, Math.min(RULE_CARDS.length - 1, i || 0)); $("rulesLulu").innerHTML = lulu(70); renderRule(); $("rulesOv").classList.remove("hidden"); }
+$("rnext").addEventListener("click", () => { if (ri >= RULE_CARDS.length - 1) $("rulesOv").classList.add("hidden"); else { ri++; renderRule(); } });
+$("rprev").addEventListener("click", () => { ri = Math.max(0, ri - 1); renderRule(); });
+$("rulesX").addEventListener("click", () => $("rulesOv").classList.add("hidden"));
+$("rulesBtn").addEventListener("click", () => openRules(0));
+$("rulesBtn2").addEventListener("click", () => openRules(st && !st.boss ? RULE_FOR_STAGE[st.s] : 0));
+(function swipeRules() {   // swipe the card sideways to turn the page
+  let sx = null; const el = $("rulesCard");
+  el.addEventListener("pointerdown", e => { sx = e.clientX; });
+  el.addEventListener("pointerup", e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 60) $(dx > 0 ? "rprev" : "rnext").click(); });
+})();
+// ---------- secret test code: 3 taps on the aliens counter, then 3 taps on the "don't know" sign opens every stage ----------
+let cheatSeq = [], cheatT = 0;
+function toast(t) { const d = document.createElement("div"); d.className = "toast"; d.textContent = t; document.body.appendChild(d); setTimeout(() => d.remove(), 2600); }
+function cheatTap(k) {
+  cheatSeq.push(k); if (cheatSeq.length > 6) cheatSeq.shift();
+  clearTimeout(cheatT); cheatT = setTimeout(() => { cheatSeq = []; }, 3000);
+  if (cheatSeq.join("") === "CCCKKK") { cheatSeq = []; S.cheat = true; save(); toast("🔓 כל הכוכבים פתוחים (מצב בדיקה)"); if (!$("map").classList.contains("hidden")) renderMap(); }
+}
+$("chipCrew").addEventListener("click", () => cheatTap("C"));
+$("chipSkips").addEventListener("click", () => cheatTap("K"));
+// ---------- go ----------
+S = load();
+applyGender();
+renderMap();
+if (!S.seen) openPrelude();
+
+</script>
+</body>
+</html>
