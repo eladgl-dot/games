@@ -18,6 +18,7 @@
     { grade: 2, topic: "english", dir: "words-b-home",    icon: "🏠", color: "blue",   title: "הרפתקת המילים: משפחה ובית",   desc: EN2, date: "2026-10-30", isNew: 1 },
     { grade: 2, topic: "english", dir: "words-b-body",    icon: "👕", color: "purple", title: "הרפתקת המילים: גוף ובגדים",   desc: EN2, date: "2026-10-30", isNew: 1 },
     { grade: 2, topic: "hebrew",  dir: "shoresh-b-2",     icon: "👕", color: "green",  title: "הכתבה 2: השורש ל.ב.שׁ", desc: "שורש וניקוד", date: "2026-11-09", isNew: 1 },
+    { grade: 2, topic: "hebrew",  dir: "shoresh-b-3",     icon: "🧙‍♂️", color: "green",  title: "הכתבה 3: השורש ק.ס.מ", desc: "שורש וניקוד", date: "2026-11-09", isNew: 1 },
     { grade: 2, topic: "hebrew",  dir: "shoresh-b",       icon: "🧩", color: "orange", title: "הכתבה 1: השורש שׂ.ח.ק", desc: "שורש וניקוד", date: "2026-11-02", isNew: 1 },
     { grade: 6, topic: "math",    dir: "math-adventure",  icon: "➗", color: "blue",   title: "הרפתקת המתמטיקה", desc: "שברים, עשרוניים וגיאומטריה", date: "2026-10-30", isNew: 1 },
     { grade: 6, topic: "english", dir: "english-test", icon: "🚀", color: "blue", title: "משימת המבחן באנגלית", desc: "Present Simple & Progressive · חזרה למבחן", date: "2026-11-12", isNew: 1 },
