@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+html_content = r'''<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-<title>הכתבה: השורש ק.ס.מ - כיתה ב</title>
+<title>הכתבה 3: השורש ק.ס.מ - כיתה ב</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
@@ -204,14 +204,14 @@ canvas#fx { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
 <div class="wrap">
   <div id="top">
     <div id="who"><button data-g="boy">👦 בן</button><button data-g="girl">👧 בת</button></div>
-    <div class="chip" id="chipStars">⭐ <span id="tally">0</span>/<span id="maxStars">30</span></div>
+    <div class="chip" id="chipStars">⭐ <span id="tally">0</span>/<span id="maxStars">24</span></div>
     <div class="chip" id="chipNext"></div>
     <div class="chip" id="chipSkips">🤷 <span id="skipsLeft">2</span></div>
     <button class="chip btn" id="avBtn" title="החלף אווטאר">🐱</button>
     <button class="chip btn" id="partyTop" title="מסיבת חברים">🎉</button>
     <button class="chip btn" id="newBtn" title="הרפתקה חדשה">🔄</button>
   </div>
-  <h1>🗺️ הכתבה: השורש ק.ס.מ</h1>
+  <h1>🗺️ הכתבה 3: השורש ק.ס.מ</h1>
 
   <section class="card hidden" id="start">
     <h2 data-b="בחר חבר להרפתקה!" data-g="בחרי חבר להרפתקה!"></h2>
@@ -299,16 +299,14 @@ canvas#fx { position: fixed; inset: 0; pointer-events: none; z-index: 30; }
 window.WORDS = [
   // word = המילה עם ניקוד מלא | hint = הסבר בלי ניקוד | tense = past / present / (ריק לשם עצם)
   // sent = משפט עם ___ | wrong = 3 תשובות לא נכונות למשפט | emoji = אימוג'י
+  { word: "קֶסֶם",     hint: "מעשה פלאים",                  tense: "",        emoji: "✨",   sent: "הקוסם עשה ___ מדהים עם כובע.",      wrong: ["קְסָמִים", "קוֹסֵם", "קָסוּם"] },
   { word: "קוֹסֵם",    hint: "הוא קוסם (שם עצם או הווה)",   tense: "",        emoji: "🧙‍♂️", sent: "ביום ההולדת הופיע ___ מצחיק.",      wrong: ["קוֹסֶמֶת", "קֶסֶם", "קוֹסְמִים"] },
-  { word: "קוֹסֶמֶת",  hint: "היא קוסמת (שם עצם או הווה)",  tense: "",        emoji: "🧙‍♀️", sent: "הילדה התחפשה ל___ בפורים.",        wrong: ["קוֹסֵם", "קָסְמָה", "מַקְסִימָה"] },
-  { word: "קֶסֶם",     hint: "מעשה פלאים",                  tense: "",        emoji: "✨",   sent: "הקוסם עשה ___ מדהים עם כובע.",      wrong: ["קְסָמִים", "קָסַם", "קוֹסֵם"] },
-  { word: "קְסָמִים",  hint: "הרבה מעשי פלאים",             tense: "",        emoji: "🪄",   sent: "בספר יש סיפורים על ___ ודרקונים.",  wrong: ["קֶסֶם", "קוֹסְמִים", "קָסַמְנוּ"] },
-  { word: "קָסַם",     hint: "הוא קסם (מצא חן)",            tense: "past",    emoji: "🌟",   sent: "הרעיון החדש ___ לכולם.",            wrong: ["קוֹסֵם", "קָסְמָה", "קֶסֶם"] },
-  { word: "קָסְמָה",   hint: "היא קסמה (מצאה חן)",          tense: "past",    emoji: "💫",   sent: "המתנה היפה ___ לילדה.",            wrong: ["קָסַם", "קוֹסֶמֶת", "מַקְסִימָה"] },
-  { word: "קוֹסְמִים", hint: "הם עושים קסמים עכשיו",        tense: "present", emoji: "🎩",   sent: "עכשיו הילדים ___ על הבמה.",         wrong: ["קְסָמִים", "קָסַמְנוּ", "קוֹסֵם"] },
-  { word: "קָסַמְנוּ", hint: "אנחנו קסמנו",                 tense: "past",    emoji: "🎭",   sent: "אתמול במופע ___ לקהל.",            wrong: ["קוֹסְמִים", "קָסַם", "קְסָמִים"] },
-  { word: "מַקְסִים",  hint: "נפלא ומיוחד (זכר)",           tense: "",        emoji: "😍",   sent: "איזה ציור ___ ציירת!",              wrong: ["מַקְסִימָה", "קוֹסֵם", "קֶסֶם"] },
-  { word: "מַקְסִימָה", hint: "נפלאה ומיוחדת (נקבה)",        tense: "",        emoji: "💖",   sent: "דנה היא חברה טובה ו___.",           wrong: ["מַקְסִים", "קוֹסֶמֶת", "קָסְמָה"] }
+  { word: "קְסָמִים",  hint: "הרבה מעשי פלאים",             tense: "",        emoji: "🪄",   sent: "בספר יש סיפורים על ___ ודרקונים.",  wrong: ["קֶסֶם", "קוֹסְמִים", "קָסוּם"] },
+  { word: "קוֹסְמוֹת", hint: "הן עושות קסמים עכשיו",        tense: "present", emoji: "🧚‍♀️", sent: "הילדות ___ על הבמה בהצגה.",        wrong: ["קוֹסְמִים", "קוֹסֶמֶת", "קְסָמִים"] },
+  { word: "קוֹסֶמֶת",  hint: "היא קוסמת (שם עצם או הווה)",  tense: "",        emoji: "🧙‍♀️", sent: "הילדה התחפשה ל___ בפורים.",        wrong: ["קוֹסֵם", "קוֹסְמוֹת", "קֶסֶם"] },
+  { word: "קוֹסְמִים", hint: "הם עושים קסמים עכשיו",        tense: "present", emoji: "🎩",   sent: "עכשיו הילדים ___ עם קלפים.",         wrong: ["קוֹסְמוֹת", "קְסָמִים", "קוֹסֵם"] },
+  { word: "קוֹסְמֶת",  hint: "היא קוסמת (בכתיב הכתה)",       tense: "present", emoji: "🌟",   sent: "היא ___ לקהל במופע.",                wrong: ["קוֹסֵם", "קוֹסְמוֹת", "קוֹסְמִים"] },
+  { word: "קָסוּם",    hint: "מלא קסם ונפלא",               tense: "",        emoji: "🏰",   sent: "הגענו ליער ___ באגדות.",            wrong: ["קֶסֶם", "קוֹסֵם", "קְסָמִים"] }
 ];
 </script>
 <script>
@@ -607,7 +605,8 @@ const FINAL = { "ך": "כ", "ם": "מ", "ן": "נ", "ף": "פ", "ץ": "צ" };
 const baseOf = c => FINAL[c] || c;
 const pick = a => a[Math.floor(Math.random() * a.length)];
 const VOWEL = /[ְ-ֻ]/, VOWELS = ["ְ", "ֲ", "ִ", "ֵ", "ֶ", "ַ", "ָ"];
-const NOT_WRONG = new Set();
+// allow both standard קוֹסֶמֶת and the teacher's board spelling קוֹסְמֶת so neither is marked as a wrong spelling
+const NOT_WRONG = new Set(["קוֹסֶמֶת", "קוֹסְמֶת"].map(s => s.normalize("NFC")));
 // wrong spellings of a word: another vowel, a missing vowel, or shin turned into sin
 function wrongSpellings(w, n) {
   const out = new Set([w.word]); let guard = 0;
@@ -644,7 +643,7 @@ function renderQuestion() {
     buildLetters(hard ? "hard" : mid ? "normal" : "easy");
   } else if (type === "swipeRoot") {
     const yes = Math.random() < .5, d = pick(NOT_ROOT), shown = yes ? word.word : d.t;
-    $("ptext").textContent = "האם המילה מהשורש " + ROOT + " ?";
+    $("ptext").textContent = "האם המילה מהשורש " + ROOT + " ?";
     say("החליקו את הכרטיס ימינה (כן) או שמאלה (לא)");
     speakText = shown; if (!yes) doneEmoji = "🚫";
     feedback = '<span class="nk">' + shown + "</span><br>" + (yes ? "כן! זו מילה מהשורש " + ROOT + " ✅" : "לא! השורש שלה " + d.r + " ❌");
@@ -655,7 +654,7 @@ function renderQuestion() {
     feedback = '<span class="nk">' + word.word + "</span><br>" + word.hint + (word.tense === "past" ? " - זה עבר ⏪" : " - זה הווה ▶️");
     buildSwipe(word.word, "⏪ עבר", "▶️ הווה", word.tense === "past");
   } else if (type === "findRoot") {
-    $("ptext").innerHTML = 'מה השורש של <span class="nk">' + word.word + "</span> ?";
+    $("ptext").innerHTML = 'מה השורש של <span class="nk">' + word.word + "</span> ?";
     say("בחרו את השורש הנכון");
     feedback = '<span class="nk">' + word.word + "</span><br>השורש: " + ROOT;
     buildOptions([{ t: ROOT, ok: true }].concat(shuffle(OTHER_ROOTS.slice()).slice(0, 3).map(t => ({ t }))));
@@ -1000,4 +999,9 @@ applyGender();
 route();
 </script>
 </body>
-</html>
+</html>'''
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Updated index.html successfully")
