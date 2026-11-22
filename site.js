@@ -22,7 +22,7 @@
     { grade: 2, topic: "hebrew",  dir: "shoresh-b",       icon: "🧩", color: "orange", title: "הכתבה 1: השורש שׂ.ח.ק", desc: "שורש וניקוד", date: "2026-11-02", isNew: 1 },
     { grade: 6, topic: "math",    dir: "math-adventure",  icon: "➗", color: "blue",   title: "הרפתקת המתמטיקה", desc: "שברים, עשרוניים וגיאומטריה", date: "2026-10-30", isNew: 1 },
     { grade: 6, topic: "english", dir: "english-test", icon: "🚀", color: "blue", title: "משימת המבחן באנגלית", desc: "Present Simple & Progressive · חזרה למבחן", date: "2026-11-12", isNew: 1 },
-    { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3", desc: "אנגלית", date: "2026-11-05", isNew: 1 },
+    { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3 - הכתבה 26.11", desc: "אנגלית · explain, impossible, arrive...", date: "2026-11-22", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure-2", icon: "🔤", color: "pink",   title: "הרפתקת המילים 2", desc: "אנגלית", date: "2026-10-31", isNew: 1 },
     { grade: 6, topic: "english", dir: "words-adventure", icon: "🔤", color: "pink",   title: "הרפתקת המילים",   desc: "אנגלית", date: "2026-10-28" },
     { grade: 6, topic: "science", dir: "science-adventure", icon: "🔬", color: "green", title: "הרפתקת המדע", desc: "אנרגיה ומערכות טכנולוגיות", date: "2026-11-07", isNew: 1 },
