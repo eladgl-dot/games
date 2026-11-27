@@ -840,8 +840,8 @@ $("listBtn").addEventListener("click", () => {
 });
 $("listClose").addEventListener("click", () => $("listOv").classList.add("hidden"));
 $("speakBtn").addEventListener("click", () => { speak(); if (!solved) focusNext(-1); });
-$("nextQ").addEventListener("click", () => { st.q++; if (st.q >= 3) finishStage(); else renderQuestion(); });
-document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden")) $("nextQ").click(); });
+$("nextQ").addEventListener("click", () => { if (!solved) return; st.q++; if (st.q >= 3) finishStage(); else renderQuestion(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && !$("stage").classList.contains("hidden") && $("endOv").classList.contains("hidden")) { e.preventDefault(); $("nextQ").click(); } });
 $("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
 
 // ---------- end of stage ----------
@@ -852,7 +852,7 @@ function finishStage() {
   const prevBest = Math.max(0, S.best[st.s]), before = total();
   S.best[st.s] = Math.min(STARS_MAX, Math.max(S.best[st.s], earned));
   const after = total(), gained = after - before;
-  const justFinished = !S.finished && S.best.every(b => b >= 0);
+  const justFinished = !S.finished && S.best.every(b => b >= 0) && S.best[N - 1] > 0;
   if (justFinished) S.finished = true;
   reinsertWeak();
   save();
@@ -908,7 +908,7 @@ $("winParty").addEventListener("click", openParty);
 const MEL  = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
 const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
 const ARP  = [523, 659, 784, 1046];
-let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+let partyStartT = null, partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
 const SAYS = {
   "🐱": ["מיאו מיאו! 💕", "איזה כיף! 😻", "פורר... פורר... 🎶", "בואו נרקוד עד הבוקר! 🌙"],
   "🐶": ["הב הב! איזה כיף! 🐾", "מכשכש בזנב מרוב שמחה! 🐕", "בואו נרוץ ונרקוד! 🦴", "הב! הב! עוד שיר! 🎵"],
@@ -961,7 +961,7 @@ function openParty() {
   // friends roam further and faster as the party gets wilder, and keep chatting
   clearInterval(partyMoveT); clearInterval(partySayT);
   const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
-  setTimeout(() => {
+  clearTimeout(partyStartT); partyStartT = setTimeout(() => {
     dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     const move = () => dancers.forEach(d => {
@@ -975,14 +975,14 @@ function openParty() {
   }, 120);
   const sayOne = () => {
     for (let c = 0; c < 1 + Math.floor(k / 2); c++) {
-      const d = dancers[Math.floor(Math.random() * dancers.length)], lines = SAYS[d.dataset.e];
+      const d = dancers[Math.floor(Math.random() * dancers.length)], lines = SAYS[d.dataset.e] || ["🎉", "💃", "🎶"];
       d.querySelector(".fbub").textContent = lines[Math.floor(Math.random() * lines.length)];
       d.classList.add("say"); setTimeout(() => d.classList.remove("say"), 2300);
     }
   };
   sayOne(); partySayT = setInterval(sayOne, Math.max(900, 2600 - k * 350));
 }
-function closeParty() { clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT); partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden"); }
+function closeParty() { clearTimeout(partyStartT); clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT); partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden"); }
 $("partyBtn").addEventListener("click", openParty);
 $("partyTop").addEventListener("click", openParty);
 $("partyClose").addEventListener("click", closeParty);

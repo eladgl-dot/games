@@ -11,6 +11,7 @@
   --font:"Varela Round","Arial Rounded MT Bold","Comic Sans MS","Segoe UI",Arial,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
 html,body{margin:0;height:100%;overflow:hidden;font-family:var(--font);color:var(--ink);user-select:none;-webkit-user-select:none}
 body{
   background:linear-gradient(135deg,#ffd1f0,#c9b8ff,#b8ecff,#d3ffd9);
@@ -1055,7 +1056,7 @@ function g10() {
     const best = items.reduce((a, b) => (big ? b.v > a.v : b.v < a.v) ? b : a);
     return {
       t: "mc", em: "🏆", ask: 'איזה מספר ' + (big ? 'הכי גדול' : 'הכי קטן') + '?',
-      opts: shuffle(items.map(x => ({ h: x.h, ok: x === best }))), inline: items.every(x => !x.h.includes("fr")) ? 0 : 0,
+      opts: shuffle(items.map(x => ({ h: x.h, ok: x === best }))), inline: 0,
       why: 'הופכים הכול למספרים עשרוניים ומשווים: ' + items.map(x => x.h.includes("fr") ? ltr(x.h + '=' + dec(x.v)) : ltr(dec(x.v))).join(' , ') + '.'
     };
   }
@@ -1570,7 +1571,7 @@ addEventListener("keydown", e => {
   if (!numCtl || locked || (ADV && document.querySelector(".ov:not(.hidden):not(#boardOv)"))) return;
   if (/^[0-9.,]$/.test(e.key)) numCtl.key(e.key);
   else if (e.key === "Backspace") numCtl.key("⌫");
-  else if (e.key === "Enter") numCtl.check();
+  else if (e.key === "Enter") { e.preventDefault(); numCtl.check(); }
 });
 
 
@@ -2070,7 +2071,7 @@ $("winParty").onclick = () => { $("endOv").classList.add("hidden"); cur = null; 
 const MEL = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
 const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
 const ARP = [523, 659, 784, 1046];
-let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+let partyStartT = null, partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
 function partyTick(){
   const i = partyStep++ % 16, n = partyLvl + 3;
   if (MEL[i]) beep([MEL[i]], .2);
@@ -2107,7 +2108,7 @@ function openParty(){
   confetti(150);
   clearInterval(partyMoveT); clearInterval(partySayT);
   const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
-  setTimeout(() => {
+  clearTimeout(partyStartT); partyStartT = setTimeout(() => {
     dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     const move = () => dancers.forEach(d => {
@@ -2131,7 +2132,7 @@ function openParty(){
   sayOne(); partySayT = setInterval(sayOne, Math.max(2000, 3000 - k * 150));
 }
 function closeParty(){
-  clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT);
+  clearTimeout(partyStartT); clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT);
   partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden");
 }
 /* ===================== מחשבון ולוח ציור (רק בתוך שלב) ===================== */
@@ -2155,7 +2156,7 @@ function calcKey(k){
   } else if (k === "="){
     if (calc.op !== null){ calc.cur = fmtCalc(calcRun()); calc.a = calc.op = null; calc.fresh = true; }
   } else if (k === "C"){ calc.a = calc.op = null; calc.cur = "0"; calc.fresh = true; }
-  else if (k === "⌫" && !calc.fresh){ calc.cur = calc.cur.length > 1 ? calc.cur.slice(0, -1) : "0"; }
+  else if (k === "⌫" && !calc.fresh){ const c = calc.cur.slice(0, -1); calc.cur = c === "" || c === "-" || c === "−" ? "0" : c; }
   $("calcScr").textContent = calc.cur;
   $("calcExp").textContent = calc.op !== null ? fmtCalc(calc.a) + " " + calc.op : "";
 }
@@ -2219,7 +2220,8 @@ if (/demo/.test(location.hash)){
 route();
 {
   const m = /#(?:demo)?w(\d)(?:s(\d))?/.exec(location.hash);
-  if (m && S.avatar && +m[1] < WORLDS.length){ const wi = +m[1]; if (m[2] !== undefined && +m[2] <= STAGES) startStage(wi, +m[2]); else openWorld(wi); }
+  if (m && S.avatar && +m[1] < WORLDS.length){ const wi = +m[1]; const si = +m[2];
+    if (m[2] !== undefined && si <= STAGES && (noSave || (si < STAGES ? stageOpen(wi, si) : bossOpen(wi)))) startStage(wi, si); else openWorld(wi); }
 }
 
 </script>

@@ -547,7 +547,7 @@ function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.fl
 // ---------- constants ----------
 const KEY = "spaceTest2", PASS = 3, QN = 5;          // PASS correct (first try) out of QN frees the alien
 const N = STAGES.length;                              // 9 planets + the sun
-const SIG = "space2|" + STAGES.map(x => x.name).join("|") + "|" + ITEMS.length;   // a changed bank = a new mission
+const SIG = "space2|" + STAGES.map(x => x.name).join("|");   // new planets = a new mission; adding questions keeps progress
 const PLANET_COL = ["#4fc3f7", "#ef5350", "#ffca28", "#7e57c2", "#26a69a", "#ff8a65", "#ab47bc", "#66bb6a", "#42a5f5"];
 // ---------- the aliens (drawn in code) ----------
 const K = [
@@ -654,7 +654,7 @@ function freshState() { return { sig: SIG, best: Array(N).fill(-1), skips: 2, de
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && s.sig === SIG && s.best.length === N) return Object.assign(freshState(), s);
+    if (s && (s.sig === SIG || String(s.sig).startsWith(SIG + "|")) && s.best.length === N) return Object.assign(freshState(), s);
   } catch (e) {}
   return freshState();
 }
@@ -732,8 +732,8 @@ function speak(text) {
 
 let revealFn = null, feedback = "", speakText = null, doneEmoji = null, swipeChoose = null;
 // the same sentence written differently is still right: don't = do not, isn't = is not, I'm = I am, case and final punctuation ignored
-const normTxt = s => String(s).toLowerCase().replace(/[’`]/g, "'").replace(/\b(do|does|is|are|was|were|did|can|could|would|have|has)n't\b/g, "$1 not")
-  .replace(/\bi'm\b/g, "i am").replace(/[.?!,;]+/g, " ").replace(/\s+/g, " ").trim();
+const normTxt = s => String(s).toLowerCase().replace(/[’`]/g, "'").replace(/\b(do|does|is|are|was|were|did|can|could|would|have|has)n'?t\b/g, "$1 not").replace(/\bwon'?t\b/g, "will not").replace(/\bcan'?t\b|\bcannot\b/g, "can not")
+  .replace(/\bi'?m\b/g, "i am").replace(/\b(he|she|it|that|there|what)'s\b/g, "$1 is").replace(/\b(he|she|that|there|what)s\b/g, "$1 is").replace(/\b(we|you|they)'re\b/g, "$1 are").replace(/[.?!,;]+/g, " ").replace(/\s+/g, " ").trim();
 function setPrompt(inst, en, he) {
   $("ptext").innerHTML = (inst ? '<div class="inst">' + inst + "</div>" : "") +
     (he ? '<div class="he">' + he + "</div>" : "") + (en ? '<div class="en" dir="ltr">' + esc(en) + "</div>" : "");
@@ -905,6 +905,7 @@ function buildRead(it) {
   function face(flipped) {
     st.flipped = flipped;
     fl.classList.toggle("flipped", flipped); front.inert = flipped; back.inert = !flipped;
+    front.style.pointerEvents = flipped ? "none" : ""; back.style.pointerEvents = flipped ? "" : "none";   // older phones without inert
     btn.textContent = flipped ? "📖 חזרה לטקסט" : "❓ לשאלה";
   }
   face(st.q > 0);   // first question: the text first; after that the question side, the text stays on the other side
@@ -1039,8 +1040,8 @@ $("skipBtn").addEventListener("click", () => {
   done(true, true);
 });
 $("speakBtn").addEventListener("click", () => speak());
-$("nextQ").addEventListener("click", () => { st.q++; if (st.q >= st.n) finishStage(); else renderQuestion(); });
-document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden") && $("rulesOv").classList.contains("hidden") && $("preOv").classList.contains("hidden")) $("nextQ").click(); });
+$("nextQ").addEventListener("click", () => { if (!solved) return; st.q++; if (st.q >= st.n) finishStage(); else renderQuestion(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden") && $("rulesOv").classList.contains("hidden") && $("preOv").classList.contains("hidden") && !$("stage").classList.contains("hidden")) { e.preventDefault(); $("nextQ").click(); } });
 $("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
 $("newBtn").addEventListener("click", () => {
   if (!confirm("להתחיל את המשימה מחדש? כל החייזרים יחזרו לכוכבים.")) return;

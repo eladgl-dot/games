@@ -86,7 +86,8 @@ h1{margin:6px 0 2px;font-size:34px;text-align:center;color:var(--purple);text-sh
 #progress{height:12px;background:#fff9;border-radius:99px;overflow:hidden;margin:4px 0 6px}
 #bar{height:100%;width:0;background:linear-gradient(90deg,var(--pink),var(--yellow));border-radius:99px;transition:width .4s}
 #qinfo{text-align:center;font-size:15px;margin-bottom:6px}
-#stage{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;min-height:0;position:relative}
+#stage{flex:1;display:flex;flex-direction:column;justify-content:flex-start;gap:12px;min-height:0;position:relative;overflow-y:auto;overscroll-behavior:contain;padding-bottom:8px}
+#stage>:first-child{margin-top:auto}#stage>:last-child{margin-bottom:auto}
 .card{background:var(--card);border-radius:28px;padding:20px 14px;text-align:center;box-shadow:0 8px 0 #8e5cff22,0 14px 28px #8e5cff33;touch-action:pan-y}
 .card .emoji{font-size:64px;line-height:1.1;display:block;animation:float 3.5s ease-in-out infinite}
 .card .phrase{font-size:38px;font-weight:bold;margin-top:6px}
@@ -339,7 +340,7 @@ const G3 = [
   ["מפתח","הדלת","🔑","masc"],
   ["מכונה","כביסה","🧺","he"],["פינה","החדר","📐","he"],["תחנה","האוטובוס","🚌","he"],["בריכה","השחייה","🏊","he"],
   ["קופסה","הצבעים","🖍️","he"],["מפה","העולם","🗺️","he"],["מגירה","השולחן","🗃️","he"],["פרה","המשק","🐄","he"],
-  ["עוגיה","שוקולד","🍪","he"],
+  ["עוגייה","שוקולד","🍪","he"],
   ["חיילים","הצבא","🪖","im"],["שכנים","הבניין","🏢","im"],["גנים","העיר","🌳","im"],["תפוחים","העץ","🍎","im"],
   ["בגדים","הילדים","👕","im"],["צבעים","הקשת","🌈","im"],["ימים","השבוע","📅","im"],["חודשים","השנה","🗓️","im"],
   ["עיניים","הילד","👀","im"],["ידיים","הסבתא","🤲","im"],["אוזניים","הארנב","🐰","im"],
@@ -564,7 +565,7 @@ function tick(){
 const ROUND = 10;
 let score = 0, best = 0;
 try { best = +localStorage.getItem("smichutBest") || 0; } catch(e){}
-let mode = 0, qs = [], idx = 0, okCount = 0, streak = 0, locked = false, advTimer = 0;
+let mode = 0, qs = [], idx = 0, okCount = 0, streak = 0, locked = false;
 
 function mult(){ return streak >= 6 ? 3 : streak >= 3 ? 2 : 1; }
 function updateHud(){
@@ -596,14 +597,14 @@ function applyGender(){
 $("gGirl").onclick = () => { boy = false; applyGender(); };
 $("gBoy").onclick = () => { boy = true; applyGender(); };
 applyGender();
-$("homeBtn").onclick = () => { clearTimeout(advTimer); show("menu"); };
+$("homeBtn").onclick = () => show("menu");
 $("learnBtn").onclick = () => { $("learn").scrollTop = 0; show("learn"); confetti(30); };
 $("learnGo").onclick = () => show("menu");
 $("toMenu").onclick = () => show("menu");
 $("again").onclick = () => start(mode);
 
 function start(m){
-  mode = m; idx = 0; okCount = 0; streak = 0; locked = false;
+  mode = m; idx = 0; okCount = 0; streak = 0; score = 0; locked = false;
   qs = [];
   for (let i=0;i<ROUND;i++){
     const g = m === 0 ? 1 + (i % 5) : m;   // מיקס: חלוקה שווה
@@ -625,7 +626,7 @@ function nextQ(){
 function tipBox(st){
   const t = document.createElement("div"); t.id = "tip"; st.appendChild(t);
   const n = document.createElement("button"); n.id = "next"; n.textContent = G("הבנתי, ממשיכה ←", "הבנתי, ממשיך ←"); st.appendChild(n);
-  n.onclick = () => { clearTimeout(advTimer); idx++; nextQ(); };
+  n.onclick = () => { if (n.dataset.used) return; n.dataset.used = 1; idx++; nextQ(); locked = true; const at = idx; setTimeout(() => { if (idx === at) locked = false; }, 350); };   // answers stay locked for 350ms
   return { t, n };
 }
 
@@ -737,7 +738,7 @@ function renderG3(st){
   const [base, som, em, type] = draw("g3", G3);
   let right, wr;
   if (type === "he"){ const s = base.slice(0,-1); right = s + "ת"; wr = [base, "ה" + s + "ת"]; }
-  else if (type === "im"){ const s = base.slice(0,-2); right = s + "י"; wr = [base, s + "ות"]; }
+  else if (type === "im"){ const s = base.slice(0, base.endsWith("יים") ? -3 : -2); right = s + "י"; wr = [base, s + "ות"]; }   // נעליים → נעלי, ילדים → ילדי
   else if (type === "fem"){ const s = base.slice(0,-2); right = base; wr = [s + "י", s + "ים"]; }
   else { right = base; wr = [base + "ת", base + "י"]; }
   const full = w => w + " " + som;

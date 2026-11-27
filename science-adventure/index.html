@@ -562,7 +562,7 @@ const inExam = p => (p >= 8 && p <= 25) || (p >= 28 && p <= 43);
 const refLabel = p => !p ? "🌍 העשרה: לא מהספר" : inExam(p) ? "📖 עמוד " + p + " בספר" : "📖 העשרה: עמוד " + p + " בספר";
 function subjectsOf(q){
   const text = q.ask + " " + (q.right || "");
-  return SUBJECTS.filter(x => new RegExp("(?<![\u05D0-\u05EA])[\u05D1\u05DC\u05D4\u05DE\u05D5\u05E9]{0,2}" + x + "(?![\u05D0-\u05EA])").test(text));
+  return SUBJECTS.filter(x => new RegExp("(?:^|[^\u05D0-\u05EA])[\u05D1\u05DC\u05D4\u05DE\u05D5\u05E9]{0,2}" + x + "(?![\u05D0-\u05EA])").test(text));
 }
 /* בוחר שאלה: קודם כל שאלה שעוד לא הופיעה. רק כשכל הקבוצה הופיעה מתחילים סיבוב חדש,
    ובו שאלות שטעו בהן באות ראשונות. stage: { ids, subs } של השלב הנוכחי */
@@ -737,7 +737,7 @@ const POOL = {
   SORT("מיינו: אנרגיית תנועה או אנרגיית קול?", [["m", "🏃 תנועה"], ["s", "🔊 קול"]], [["מכונית נוסעת", "m"], ["מטוס ממריא", "m"], ["מים זורמים בנחל", "m"], ["רוח נושבת", "m"], ["רעם", "s"], ["פעמון מצלצל", "s"], ["קולות מהטלוויזיה", "s"]], "בגופים בתנועה יש אנרגיית תנועה. בקולות יש אנרגיית קול.", 13),
   SORT("מיינו: אנרגיה כימית או אנרגיית תנועה?", [["c", "🧪 כימית"], ["m", "🏃 תנועה"]], [["פחם", "c"], ["נפט", "c"], ["עץ", "c"], ["פחמימות בגוף", "c"], ["שומנים בגוף", "c"], ["רוח נושבת", "m"], ["מים זורמים", "m"], ["ילדה שרצה", "m"]], "אנרגיה כימית נמצאת בחומרים. אנרגיית תנועה נמצאת בגופים שזזים.", 13),
   SORT("מיינו לשלושה סוגי אנרגיה", [["e", "🔌 חשמלית"], ["c", "🧪 כימית"], ["s", "🔊 קול"]], [["הזרם בכבל החשמל", "e"], ["הזרם שמפעיל מזגן", "e"], ["גז טבעי", "c"], ["פחם אבן", "c"], ["קול הרעם", "s"], ["צלצול הפעמון", "s"]], "כל סוג אנרגיה מופיע בתופעות אחרות.", 13),
-  SORT("מיינו לפי המקור", [["h", "🔥 נותן אנרגיית חום"], ["s", "🔊 נותן קול"]], [["השמש", "h"], ["מעמקי הקרקע", "h"], ["נביעת מים חמים", "h"], ["פעמון בדלת", "s"], ["ברק ורעם", "s"], ["טלוויזיה", "s"]], "אנרגיית חום מגיעה מהשמש וממעמקי הקרקע. קול מגיע מדברים שמשמיעים צלילים.", 13),
+  SORT("מיינו לפי המקור", [["h", "🔥 נותן אנרגיית חום"], ["s", "🔊 נותן קול"]], [["השמש", "h"], ["מעמקי הקרקע", "h"], ["נביעת מים חמים", "h"], ["פעמון בדלת", "s"], ["רעם", "s"], ["רדיו", "s"]], "אנרגיית חום מגיעה מהשמש וממעמקי הקרקע. קול מגיע מדברים שמשמיעים צלילים.", 13),
   M("איזה משפט נכון?", "השמש נותנת גם אנרגיית חום וגם אנרגיית אור", ["השמש נותנת רק אור", "השמש נותנת רק אנרגיית חום", "השמש אינה מקור אנרגיה"], "השמש היא המקור הטבעי הגדול ביותר של אנרגיית חום ושל אנרגיית אור.", 13, "☀️"),
   M("כמה סוגי אנרגיה למדנו בפרק?", "שישה", ["שניים", "שלושה", "עשרה"], "חשמלית, אנרגיית חום, אור, כימית, תנועה וקול.", 13, "6️⃣"),
   M("מה מהבאים אינו סוג אנרגיה?", "אנרגיית שולחן", [ELEC, CHEM, SOUND], "ששת הסוגים: חשמלית, אנרגיית חום, אור, כימית, תנועה וקול.", 13, "🤔"),
@@ -1470,7 +1470,7 @@ const WORLDS = [
     pond: ["#3b9fd6", "#bfe6ff", "⛵"], top: "🌋",
     decos: [["☀️", 2.8, 1], ["🌴", 3, 1], ["🌳", 2.8, 1], ["🌬️", 2, 1], ["⛵", 2.4, 1], ["🪨", 1.6, 0], ["🛢️", 2, 0], ["🐂", 2.4, 0], ["🌿", 1.8, 1], ["🌻", 1.8, 1], ["💧", 1.5, 1], ["🌊", 2.4, 1], ["🌾", 1.8, 1]],
     bg: ["☀️", "🌬️", "💧", "🛢️", "🌴", "🌊", "♻️", "🔆", "🌾", "⛵"],
-    boss: { e: "🛢️", n: "ענק הנפט", say: ["אשרוף את כל הדלק שבעולם! 🛢️", "עוד לא נגמר לי הנפט! 🔥", "אוי... התכליתי! ♻️"] },
+    boss: { e: "🛢️", n: "ענק הנפט", say: ["אשרוף את כל הדלק שבעולם! 🛢️", "עוד לא נגמר לי הנפט! 🔥", "אוי... נגמר לי הנפט! ♻️"] },
     friends: [{ e: "🐢", n: "צב החול" }, { e: "🐬", n: "דולפין הגלים" }],
     bossFriend: { e: "🦁", n: "אריה השמש", key: "magnet", pn: "☀️ מגנט שמש", pd: "אוטומטי: שלב שנגמר עם 2 כוכבים הופך ל־3" },
     facts: ["🏞️ טחנת הרוח במשכנות שאננים בירושלים נבנתה בשנת 1858 בידי משה מונטיפיורי.", "🐂 גם היום יש איכרים, למשל בהודו, שחורשים את השדה בעזרת כוח השרירים של בעלי חיים.", "🛢️ נפט נוצר במשך מיליוני שנים משאריות של יצורים קטנים ששקעו לקרקעית הים.", "🏠 בישראל דוד שמש הוא חובה בחוק ברוב הבניינים החדשים למגורים כבר מאז שנות ה־80.", "🗼 במגדל השמש באשלים שבנגב, בגובה של כ־240 מטר, מראות רבות מרכזות את אור השמש כדי להפיק חשמל.", "🌋 באיסלנד רוב הבתים מחוממים בעזרת אנרגיית חום ממעמקי הקרקע.", "🇨🇳 סכר שלושת הערוצים בסין הוא תחנת הכוח הגדולה בעולם שמנצלת מים זורמים.", "🌬️ בדנמרק הרוח מספקת כמחצית מהחשמל של המדינה."] },
@@ -1519,7 +1519,7 @@ const SAYS = {
 const KEY = "sciAdvState1";
 let boy = false;
 try { boy = localStorage.getItem("sciBoy") === "1"; } catch(e){}
-let locked = false, advTimer = 0, skipHook = null, sonarHook = null;
+let locked = false, skipHook = null, sonarHook = null;
 const gt = (m, f) => boy ? m : f;
 
 /* ---------- מצב שמור ---------- */
@@ -1527,7 +1527,7 @@ const fresh = () => ({ avatar: null, won: false, weak: [], seen: [], w: WORLDS.m
 const nStages = i => WORLDS[i].stages.length;
 const wMax = i => (nStages(i) + 1) * STAR_MAX;
 const bossNeed = i => nStages(i) * 2;
-let S = fresh(), noSave = false, cw = 0, cur = null;
+let S = fresh(), cw = 0, cur = null;
 function load(){
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
@@ -1535,7 +1535,7 @@ function load(){
   } catch(e){}
   return fresh();
 }
-function save(){ if (noSave) return; try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){} }
 const wStars = i => S.w[i].best.reduce((a, b) => a + Math.max(0, b), 0);
 const wTotal = i => wStars(i) + Math.max(0, S.w[i].boss);
 const total = () => WORLDS.reduce((a, _, i) => a + wTotal(i), 0);
@@ -1595,7 +1595,7 @@ function route(){
   if (!S.avatar){ buildAvGrid($("startGrid"), true); setTheme(null); show("start"); }
   else renderHome();
 }
-$("homeBtn").onclick = () => { closeTools(); closeParty(); clearTimeout(advTimer); cur = null; closeLearn(); if (S.avatar) renderHome(); };
+$("homeBtn").onclick = () => { closeParty(); cur = null; closeLearn(); if (S.avatar) renderHome(); };
 
 /* ---------- בחירת חבר ---------- */
 function lockText(f){
@@ -1756,7 +1756,6 @@ function startStage(wi, s){
   $("pav").textContent = S.avatar;
   $("bossRow").classList.toggle("hidden", !boss);
   if (boss){ $("boss").textContent = w.boss.e; updateHearts(); bossSay(w.boss.say[0]); }
-  closeTools();
   show("qscreen");
   say(() => boss ? gt("בוא נראה אותך! 💪", "בואי נראה אותך! 💪") : gt("שלב " + (s + 1) + " - בהצלחה, אלוף! 💪", "שלב " + (s + 1) + " - בהצלחה, אלופה! 💪"));
   renderQ();
@@ -1866,7 +1865,7 @@ $("skipBtn").onclick = () => {
   if (W.skips <= 0) return;
   W.skips--; save(); qSkipped = true; skipHook(); updateTools();
 };
-$("backMap").onclick = () => { closeTools(); clearTimeout(advTimer); cur = null; openWorld(cw); };
+$("backMap").onclick = () => { cur = null; openWorld(cw); };
 function closeLearn(){ $("learnOv").classList.add("hidden"); }
 $("learnBtn").onclick = () => {
   const t = TOPICS.find(x => x.id === WORLDS[cur.wi].topic);
@@ -1879,7 +1878,6 @@ $("learnClose").onclick = closeLearn;
 
 /* ---------- סוף שלב ---------- */
 function finishStage(){
-  closeTools();
   const wi = cur.wi, sIdx = cur.s, W = S.w[wi], w = WORLDS[wi], boss = cur.boss;
   endCtx = { wi, s: sIdx };
   let earned = cur.stars.reduce((a, b) => a + b, 0), magnet = false;
@@ -1942,7 +1940,7 @@ $("winParty").onclick = () => { $("endOv").classList.add("hidden"); cur = null; 
 const MEL = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
 const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
 const ARP = [523, 659, 784, 1046];
-let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+let partyStartT = null, partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
 function partyTick(){
   const i = partyStep++ % 16, n = partyLvl + 3;
   if (MEL[i]) beep([MEL[i]], .2);
@@ -1979,7 +1977,7 @@ function openParty(){
   confetti(150);
   clearInterval(partyMoveT); clearInterval(partySayT);
   const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
-  setTimeout(() => {
+  clearTimeout(partyStartT); partyStartT = setTimeout(() => {
     dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     const move = () => dancers.forEach(d => {
@@ -2003,10 +2001,9 @@ function openParty(){
   sayOne(); partySayT = setInterval(sayOne, Math.max(2000, 3000 - k * 150));
 }
 function closeParty(){
-  clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT);
+  clearTimeout(partyStartT); clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT);
   partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden");
 }
-function closeTools(){}
 
 $("partyBtn").onclick = openParty;
 $("partyBtn2").onclick = openParty;

@@ -390,7 +390,10 @@ function womanVoice() {
   const male = /david|mark|guy|daniel|george|james|ryan|alex|fred|\bmale\b/i;
   return en.find(v => female.test(v.name) && /en[-_]US/i.test(v.lang)) || en.find(v => female.test(v.name)) || en.find(v => !male.test(v.name));
 }
+let speakT = null;
+function speakSoon() { clearTimeout(speakT); speakT = setTimeout(() => speak(), 300); }
 function speak(text) {
+  clearTimeout(speakT);
   if (!("speechSynthesis" in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text || (word && word.english));
@@ -602,7 +605,7 @@ function renderQuestion() {
     $("pemoji").textContent = "❓"; $("ptext").textContent = e2h ? word.english : word.hebrew;
     say(e2h ? "מה פירוש המילה הזאת בעברית?" : "איך אומרים את זה באנגלית?");
     buildQuiz(e2h, hard ? 6 : 4, mid);
-    if (e2h) setTimeout(() => speak(), 300);
+    if (e2h) speakSoon();
   }
 }
 function buildQuiz(e2h, count, smart) {
@@ -622,8 +625,8 @@ function buildQuiz(e2h, count, smart) {
 function buildLetters(level) {
   slots = [];
   const letters = word.english.replace(/ /g, "");
-  const hide = level === "hard" ? letters.length - 1 : Math.round(letters.length * (level === "normal" ? 2 / 3 : 1 / 3));
-  const pool = [...Array(letters.length).keys()].filter(i => level !== "hard" || i > 0);
+  const hide = Math.max(1, level === "hard" ? letters.length - 1 : Math.round(letters.length * (level === "normal" ? 2 / 3 : 1 / 3)));
+  const pool = [...Array(letters.length).keys()].filter(i => level !== "hard" || i > 0 || letters.length < 2);
   const hideSet = new Set(shuffle(pool).slice(0, hide));
   let n = 0;
   word.english.split(" ").forEach(part => {
@@ -646,7 +649,7 @@ function buildLetters(level) {
   });
   fitTiles();
   focusNext(-1);
-  setTimeout(() => speak(), 300);
+  speakSoon();
 }
 // shrink the tiles so the longest word part always fits inside the card
 function fitTiles() {
@@ -673,7 +676,7 @@ function onType(slot) {
   } else {
     mistakes++; sndBad(); avatarReact("shake");
     slot.el.value = v.toUpperCase(); slot.el.classList.remove("wrong"); void slot.el.offsetWidth; slot.el.classList.add("wrong");
-    setTimeout(() => { if (!slot.done) { slot.el.value = ""; slot.el.classList.remove("wrong"); } }, 450);
+    clearTimeout(slot.t); slot.t = setTimeout(() => { if (!slot.done) { slot.el.value = ""; slot.el.classList.remove("wrong"); } }, 450);
     say(gt("כמעט! נסה אות אחרת 💪", "כמעט! נסי אות אחרת 💪"));
     if (st.boss) bossSay("חה חה, טעית! 😈");
   }
@@ -717,9 +720,9 @@ $("skipBtn").addEventListener("click", () => {
   done(true, true);
 });
 $("speakBtn").addEventListener("click", () => { speak(); if (!solved) focusNext(-1); });
-$("nextQ").addEventListener("click", () => { st.q++; if (st.q >= 3) finishStage(); else renderQuestion(); });
-document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && $("endOv").classList.contains("hidden")) $("nextQ").click(); });
-$("backMap").addEventListener("click", () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
+$("nextQ").addEventListener("click", () => { if (!solved) return; st.q++; if (st.q >= 3) finishStage(); else renderQuestion(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && solved && !$("nextQ").classList.contains("hidden") && !$("stage").classList.contains("hidden") && $("endOv").classList.contains("hidden")) { e.preventDefault(); $("nextQ").click(); } });
+$("backMap").addEventListener("click", () => { clearTimeout(speakT); if ("speechSynthesis" in window) speechSynthesis.cancel(); renderMap(); });
 
 // ---------- end of stage ----------
 function finishStage() {
@@ -729,7 +732,7 @@ function finishStage() {
   const prevBest = Math.max(0, S.best[st.s]), before = total();
   S.best[st.s] = Math.min(STARS_MAX, Math.max(S.best[st.s], earned));
   const after = total(), gained = after - before;
-  const justFinished = !S.finished && S.best.every(b => b >= 0);
+  const justFinished = !S.finished && S.best.every(b => b >= 0) && S.best[N - 1] > 0;
   if (justFinished) S.finished = true;
   reinsertWeak();
   save();
@@ -753,7 +756,7 @@ function finishStage() {
     (function tick(now) {
       const p = Math.min(1, (now - start) / dur);
       $("eoTally").textContent = "⭐ " + Math.round(before + gained * p) + " / " + TOTAL_MAX;
-      if (p < 1) requestAnimationFrame(tick);
+      if (p < 1) setTimeout(() => tick(performance.now()), 30);
       else {
         pulse($("eoTally")); updateTop(); pulse($("chipStars"));
         $("eoNote").textContent = gained > 0 ? "+" + gained + (earned > prevBest && prevBest > 0 ? " · שיא חדש! 🏅" : "")
@@ -785,8 +788,14 @@ $("winParty").addEventListener("click", openParty);
 const MEL  = [523, 0, 659, 784, 0, 659, 587, 0, 523, 659, 784, 1046, 784, 659, 587, 0];
 const BASS = [131, 0, 131, 0, 196, 0, 196, 0, 175, 0, 175, 0, 196, 0, 196, 0];
 const ARP  = [523, 659, 784, 1046];
-let partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
+let partyStartT = null, partyTimer = null, partyFx = null, partyMoveT = null, partySayT = null, partyStep = 0, partyLvl = 0;
 const SAYS = {
+  "🐻": ["דובי רוקד! 🍯", "חיבוק דובי לכולם! 🤗", "מסיבה מתוקה כמו דבש! 🍯"],
+  "🐨": ["קואלה במסיבה! 🌿", "נתלה על הכיף! 🎶", "אוקליפטוס ומוזיקה! 🌿"],
+  "🐸": ["קווא קווא! 🎶", "קופץ מעלה לעלה! 🍃", "איזו מסיבה! 🐸"],
+  "🐵": ["או או אה אה! 🍌", "בננות לכולם! 🍌", "מתנדנד לקצב! 🎶"],
+  "🐧": ["מחליק על הרחבה! ❄️", "ריקוד פינגווינים! 🐧", "קר בחוץ, חם במסיבה! 🎉"],
+  "🐹": ["אוגר בקצב! 🌻", "גלגל, גלגל, גלגל! 🎡", "גרעינים ומסיבה! 🌻"],
   "🐱": ["מיאו מיאו! 💕", "איזה כיף! 😻", "פורר... פורר... 🎶", "בואו נרקוד עד הבוקר! 🌙"],
   "🐶": ["הב הב! איזה כיף! 🐾", "מכשכש בזנב מרוב שמחה! 🐕", "בואו נרוץ ונרקוד! 🦴", "הב! הב! עוד שיר! 🎵"],
   "🐼": ["יאמי, במבוק ומסיבה! 🎋", "פנדות יודעות לרקוד! 💃", "חיבוק קבוצתי! 🤗", "מתגלגלים מרוב שמחה! 🐼"],
@@ -838,7 +847,7 @@ function openParty() {
   // friends roam further and faster as the party gets wilder, and keep chatting
   clearInterval(partyMoveT); clearInterval(partySayT);
   const T = Math.max(600, 2400 - k * 380), dancers = [...grid.children];
-  setTimeout(() => {
+  clearTimeout(partyStartT); partyStartT = setTimeout(() => {
     dancers.forEach(d => { const b = d.getBoundingClientRect(); d._home = { l: b.left, r: b.right, t: b.top, b: b.bottom }; d.style.transition = "translate " + T * .9 + "ms ease-in-out, rotate " + T * .9 + "ms ease-in-out"; });
     const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
     const move = () => dancers.forEach(d => {
@@ -852,14 +861,14 @@ function openParty() {
   }, 120);
   const sayOne = () => {
     for (let c = 0; c < 1 + Math.floor(k / 2); c++) {
-      const d = dancers[Math.floor(Math.random() * dancers.length)], lines = SAYS[d.dataset.e];
+      const d = dancers[Math.floor(Math.random() * dancers.length)], lines = SAYS[d.dataset.e] || ["🎉", "💃", "🎶"];
       d.querySelector(".fbub").textContent = lines[Math.floor(Math.random() * lines.length)];
       d.classList.add("say"); setTimeout(() => d.classList.remove("say"), 2300);
     }
   };
   sayOne(); partySayT = setInterval(sayOne, Math.max(900, 2600 - k * 350));
 }
-function closeParty() { clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT); partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden"); }
+function closeParty() { clearTimeout(partyStartT); clearInterval(partyTimer); clearInterval(partyFx); clearInterval(partyMoveT); clearInterval(partySayT); partyTimer = partyFx = partyMoveT = partySayT = null; $("party").classList.add("hidden"); }
 $("partyBtn").addEventListener("click", openParty);
 $("partyTop").addEventListener("click", openParty);
 $("partyClose").addEventListener("click", closeParty);
