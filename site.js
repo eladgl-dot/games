@@ -1,5 +1,5 @@
 // Game catalogue + topic selector for the grade pages (grade2/, grade6/).
-// To add a game: copy a line in GAMES. Grade pages and topic cards update by themselves.
+// To add a game / test / quiz: add a line in ../school.json. Grade pages and topic cards update by themselves.
 (function () {
   var TOPICS = {
     math:    { name: "מתמטיקה", icon: "➗", color: "blue" },
@@ -9,53 +9,20 @@
   };
   var TOPIC_ORDER = ["math", "english", "hebrew", "science"];
   var MONTHS = ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"];
-  var EN2 = "אנגלית · 20 מילים";
-  // grade, topic, folder, icon, color, title, desc, date (newest first inside a topic), isNew
-  var GAMES = [
-    { grade: 2, topic: "english", dir: "words-b-animals", icon: "🐱", color: "green",  title: "הרפתקת המילים: חיות",          desc: EN2, date: "2026-10-30", isNew: 1 },
-    { grade: 2, topic: "english", dir: "words-b-colors",  icon: "🎨", color: "pink",   title: "הרפתקת המילים: צבעים וצורות", desc: EN2, date: "2026-10-30", isNew: 1 },
-    { grade: 2, topic: "english", dir: "words-b-food",    icon: "🍎", color: "orange", title: "הרפתקת המילים: אוכל",          desc: EN2, date: "2026-10-30", isNew: 1 },
-    { grade: 2, topic: "english", dir: "words-b-home",    icon: "🏠", color: "blue",   title: "הרפתקת המילים: משפחה ובית",   desc: EN2, date: "2026-10-30", isNew: 1 },
-    { grade: 2, topic: "english", dir: "words-b-body",    icon: "👕", color: "purple", title: "הרפתקת המילים: גוף ובגדים",   desc: EN2, date: "2026-10-30", isNew: 1 },
-    { grade: 2, topic: "hebrew",  dir: "shoresh-b-2",     icon: "👕", color: "green",  title: "הכתבה 2: השורש ל.ב.שׁ", desc: "שורש וניקוד", date: "2026-11-09", isNew: 1 },
-    { grade: 2, topic: "hebrew",  dir: "shoresh-b-3",     icon: "🧙‍♂️", color: "green",  title: "הכתבה 3: השורש ק.ס.מ", desc: "שורש וניקוד", date: "2026-11-09", isNew: 1 },
-    { grade: 2, topic: "hebrew",  dir: "shoresh-b",       icon: "🧩", color: "orange", title: "הכתבה 1: השורש שׂ.ח.ק", desc: "שורש וניקוד", date: "2026-11-02", isNew: 1 },
-    { grade: 6, topic: "math",    dir: "math-adventure",  icon: "➗", color: "blue",   title: "הרפתקת המתמטיקה", desc: "שברים, עשרוניים וגיאומטריה", date: "2026-10-30", isNew: 1 },
-    { grade: 6, topic: "english", dir: "english-test", icon: "🚀", color: "blue", title: "משימת המבחן באנגלית", desc: '<bdi dir="ltr">Present Simple &amp; Progressive</bdi> · חזרה למבחן', date: "2026-11-12", isNew: 1 },
-    { grade: 6, topic: "english", dir: "words-adventure-4", icon: "🔤", color: "pink",   title: "הרפתקת המילים 4 - הכתבה 17.12", desc: 'אנגלית · <bdi dir="ltr">problem, improve...</bdi>', date: "2026-11-27", isNew: 1 },
-    { grade: 6, topic: "english", dir: "words-adventure-3", icon: "🔤", color: "pink",   title: "הרפתקת המילים 3 - הכתבה 26.11", desc: 'אנגלית · <bdi dir="ltr">explain, arrive...</bdi>', date: "2026-11-22", isNew: 1 },
-    { grade: 6, topic: "english", dir: "words-adventure-2", icon: "🔤", color: "pink",   title: "הרפתקת המילים 2", desc: "אנגלית", date: "2026-10-31", isNew: 1 },
-    { grade: 6, topic: "english", dir: "words-adventure", icon: "🔤", color: "pink",   title: "הרפתקת המילים",   desc: "אנגלית", date: "2026-10-28" },
-    { grade: 6, topic: "science", dir: "science-adventure", icon: "🔬", color: "green", title: "הרפתקת המדע", desc: "אנרגיה ומערכות טכנולוגיות", date: "2026-11-07", isNew: 1 },
-    { grade: 6, topic: "hebrew",  dir: "smichut",         icon: "📖", color: "purple", title: "משחק הסמיכות",    desc: "עברית",  date: "2026-10-25" }
-  ];
-
-  // Test schedule (from the school's PDF). One line per test; dates per class.
-  // dir = game folder for "לשחק"; leave it out and the test shows "בקרוב".
+  // Games, tests and quizzes live in school.json (shared with the homework app).
   var CLASSES = ["מעוף", "דיאלוג", "מקוריות", "חדשנות"];
   var HALVES = { 1: "מחצית ראשונה", 2: "מחצית שנייה" };
-  var TESTS = [
-    { grade: 6, half: 1, topic: "hebrew",  note: "שכבתי", dates: { "מעוף": "2026-10-30", "דיאלוג": "2026-10-30", "מקוריות": "2026-10-30", "חדשנות": "2026-10-30" } },
-    { grade: 6, half: 1, topic: "math",    dir: "math-adventure", dates: { "מעוף": "2026-11-12", "דיאלוג": "2026-11-08", "מקוריות": "2026-11-10", "חדשנות": "2026-11-11" } },
-    { grade: 6, half: 1, topic: "english", dir: "english-test", dates: { "מעוף": "2026-11-18", "דיאלוג": "2026-11-18", "מקוריות": "2026-11-19", "חדשנות": "2026-11-19" } },
-    { grade: 6, half: 1, topic: "science", dir: "science-adventure", dates: { "מעוף": "2026-12-01", "דיאלוג": "2026-11-30", "מקוריות": "2026-11-29", "חדשנות": "2026-12-03" } },
-    { grade: 6, half: 1, topic: "hebrew",  dates: { "מעוף": "2026-12-16", "דיאלוג": "2026-12-18", "מקוריות": "2026-12-15", "חדשנות": "2026-12-14" } },
-    { grade: 6, half: 1, topic: "math",    dates: { "מעוף": "2026-12-31", "דיאלוג": "2026-12-27", "מקוריות": "2026-12-29", "חדשנות": "2026-12-30" } },
-    { grade: 6, half: 1, topic: "english", dates: { "מעוף": "2027-01-13", "דיאלוג": "2027-01-13", "מקוריות": "2027-01-14", "חדשנות": "2027-01-14" } }
-  ];
   var DAYS = ["א'", "ב'", "ג'", "ד'", "ה'", "ו'", "ש'"];
   var SHORT_MONTHS = ["ינו'","פבר'","מרץ","אפר'","מאי","יוני","יולי","אוג'","ספט'","אוק'","נוב'","דצמ'"];
 
   var GRADE_NAMES = { 2: "כיתה ב'", 6: "כיתה ו'" };
   var grade = +document.body.getAttribute("data-grade");
   var app = document.getElementById("app");
-  var games = GAMES.filter(function (g) { return g.grade === grade; });
-  var topics = TOPIC_ORDER.filter(function (t) { return games.some(function (g) { return g.topic === t; }); });
+  var games = [], topics = [], tests = [];
 
   function fmt(d) { var p = d.split("-"); return +p[2] + " ב" + MONTHS[+p[1] - 1] + " " + p[0]; }
   function count(n) { return n === 1 ? "משחק אחד" : n + " משחקים"; }
 
-  var tests = TESTS.filter(function (x) { return x.grade === grade; });
   var KEY = "games-class-" + grade;
   function getClass() { try { var c = localStorage.getItem(KEY); return CLASSES.indexOf(c) >= 0 ? c : ""; } catch (e) { return ""; } }
   function setClass(c) { try { localStorage.setItem(KEY, c); } catch (e) {} }
@@ -65,18 +32,22 @@
   function daysLeft(s) { var n = new Date(); n = new Date(n.getFullYear(), n.getMonth(), n.getDate()); return Math.round((day(s) - n) / 864e5); }
   function leftText(n) { return n === 0 ? "היום!" : n === 1 ? "מחר!" : "עוד " + n + " ימים"; }
   function testsFor(c) {
-    return tests.map(function (x) { return { t: x, date: x.dates[c], left: daysLeft(x.dates[c]) }; })
-      .sort(function (a, b) { return a.left - b.left; });
+    return tests.map(function (x) { var d = x.dates[c] || x.dates["*"]; return d ? { t: x, date: d, left: daysLeft(d) } : null; })
+      .filter(Boolean).sort(function (a, b) { return a.left - b.left; });
   }
   function nextTest(c) { return testsFor(c).filter(function (r) { return r.left >= 0; })[0]; }
 
+  // Tests keep the topic name (as before); quizzes show their own title.
+  function label(x) { return x.kind === "quiz" ? x.title : TOPICS[x.topic].name; }
+  function halfOf(x, date) { if (x.half) return x.half; var m = +date.split("-")[1]; return m >= 2 && m <= 8 ? 2 : 1; }
+
   function testCard(r, isNext) {
     var d = day(r.date), x = r.t, tp = TOPICS[x.topic];
-    var go = x.dir ? '<a class="go" href="../' + x.dir + '/">🎮 לשחק</a>' : r.left < 0 ? "" : '<span class="go soon">בקרוב</span>';
-    var sub = "משימת הערכה" + (r.left > 1 && !isNext ? ' · <span class="nw">' + leftText(r.left) + "</span>" : "");
+    var go = x.game ? '<a class="go" href="../' + x.game + '/">🎮 לשחק</a>' : r.left < 0 ? "" : '<span class="go soon">בקרוב</span>';
+    var sub = (x.kind === "quiz" ? "בוחן" : "משימת הערכה") +(r.left > 1 && !isNext ? ' · <span class="nw">' + leftText(r.left) + "</span>" : "");
     return '<div class="test' + (isNext ? " next" : "") + (r.left < 0 ? " past" : "") + '">' +
       '<span class="date" style="background:var(--' + tp.color + ')"><b>' + d.getDate() + '</b><span>' + SHORT_MONTHS[d.getMonth()] + " · " + DAYS[d.getDay()] + '</span></span>' +
-      '<span class="info"><span class="t">' + tp.icon + " " + tp.name + (x.note ? " (" + x.note + ")" : "") +
+      '<span class="info"><span class="t">' + tp.icon + " " + label(x) + (x.note ? " (" + x.note + ")" : "") +
       (isNext ? ' <span class="badge">' + leftText(r.left) + "</span>" : "") + '</span><span class="d">' + sub + "</span></span>" + go + "</div>";
   }
 
@@ -88,7 +59,7 @@
     }).join("") + "</div>";
     var rows = testsFor(c), nxt = rows.filter(function (r) { return r.left >= 0; })[0];
     Object.keys(HALVES).forEach(function (half) {
-      var hr = rows.filter(function (r) { return String(r.t.half) === half; });
+      var hr = rows.filter(function (r) { return String(halfOf(r.t, r.date)) === half; });
       if (!hr.length) return;
       var up = hr.filter(function (r) { return r.left >= 0; }), past = hr.filter(function (r) { return r.left < 0; }).reverse();
       h += '<h2 class="half">' + HALVES[half] + '</h2><div class="grid">';
@@ -112,7 +83,7 @@
     if (!picked) line = "מתי המבחן הבא? בחרו כיתה";
     else {
       var n = nextTest(picked);
-      line = n ? picked + " · הבא: " + TOPICS[n.t.topic].name + ' · <span class="nw">' + leftText(n.left) + "</span>" : picked + " · אין מבחנים קרובים";
+      line = n ? picked + " · הבא: " + label(n.t) + ' · <span class="nw">' + leftText(n.left) + "</span>" : picked + " · אין מבחנים קרובים";
     }
     return '<a class="tests-btn" href="#tests"><span class="ic">📅</span><span><b>לוח מבחנים</b><small>' + line + "</small></span></a>";
   }
@@ -143,6 +114,14 @@
     app.innerHTML = h + "</div>";
     scrollTo(0, 0);
   }
-  addEventListener("hashchange", render);
-  render();
+  function start(data) {
+    games = (data.games || []).filter(function (g) { return g.grade === grade; });
+    topics = TOPIC_ORDER.filter(function (t) { return games.some(function (g) { return g.topic === t; }); });
+    // The tests view has class tabs, so only grade 6 (split into CLASSES) gets it.
+    tests = grade === 6 ? (data.items || []).filter(function (x) { return x.grade === grade && TOPICS[x.topic]; }) : [];
+    addEventListener("hashchange", render);
+    render();
+  }
+  fetch("../school.json").then(function (r) { if (!r.ok) throw r; return r.json(); }).then(start)
+    .catch(function (e) { console.error(e); app.innerHTML = '<a class="pill" href="../">⬅ כל הכיתות</a><h1>' + GRADE_NAMES[grade] + '</h1><p class="sub">לא הצלחנו לטעון את רשימת המשחקים. נסו לרענן את הדף.</p>'; });
 })();
