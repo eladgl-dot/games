@@ -22,7 +22,9 @@
     { "kind": "quiz", "grade": 6, "half": 1, "topic": "english", "title": "הכתבה באנגלית",
       "dates": { "*": "2026-12-17" }, "game": "words-adventure-4" },
     { "kind": "quiz", "grade": 2, "topic": "hebrew", "title": "הכתבה 3: השורש ק.ס.מ",
-      "dates": { "*": "2026-11-26" }, "game": "shoresh-b-3" }
+      "dates": { "*": "2026-11-26" }, "game": "shoresh-b-3" },
+    { "kind": "quiz", "grade": 2, "topic": "hebrew", "title": "הכתבה 4: השורש ד.ל.ק",
+      "dates": { "*": "2026-11-30" }, "game": "shoresh-b-4" }
   ],
   "games": [
     { "grade": 2, "topic": "english", "dir": "words-b-animals", "icon": "🐱", "color": "green",  "title": "הרפתקת המילים: חיות",          "desc": "אנגלית · 20 מילים", "date": "2026-10-30", "isNew": 1 },
@@ -30,8 +32,9 @@
     { "grade": 2, "topic": "english", "dir": "words-b-food",    "icon": "🍎", "color": "orange", "title": "הרפתקת המילים: אוכל",          "desc": "אנגלית · 20 מילים", "date": "2026-10-30", "isNew": 1 },
     { "grade": 2, "topic": "english", "dir": "words-b-home",    "icon": "🏠", "color": "blue",   "title": "הרפתקת המילים: משפחה ובית",   "desc": "אנגלית · 20 מילים", "date": "2026-10-30", "isNew": 1 },
     { "grade": 2, "topic": "english", "dir": "words-b-body",    "icon": "👕", "color": "purple", "title": "הרפתקת המילים: גוף ובגדים",   "desc": "אנגלית · 20 מילים", "date": "2026-10-30", "isNew": 1 },
+    { "grade": 2, "topic": "hebrew",  "dir": "shoresh-b-4",     "icon": "🔥", "color": "orange", "title": "הכתבה 4: השורש ד.ל.ק", "desc": "שורש וניקוד", "date": "2026-11-27", "isNew": 1 },
     { "grade": 2, "topic": "hebrew",  "dir": "shoresh-b-2",     "icon": "👕", "color": "green",  "title": "הכתבה 2: השורש\u00a0ל.ב.שׁ", "desc": "שורש וניקוד", "date": "2026-11-09", "isNew": 1 },
-    { "grade": 2, "topic": "hebrew",  "dir": "shoresh-b-3",     "icon": "🧙‍♂️", "color": "green",  "title": "הכתבה 3: השורש\u00a0ק.ס.מ", "desc": "שורש וניקוד", "date": "2026-11-09", "isNew": 1 },
+    { "grade": 2, "topic": "hebrew",  "dir": "shoresh-b-3",     "icon": "🧙‍♂️", "color": "green",  "title": "הכתבה 3: השורש\u00a0ק.ס.מ", "desc": "שורש וניקוד", "date": "2026-11-21", "isNew": 1 },
     { "grade": 2, "topic": "hebrew",  "dir": "shoresh-b",       "icon": "🧩", "color": "orange", "title": "הכתבה 1: השורש\u00a0שׂ.ח.ק", "desc": "שורש וניקוד", "date": "2026-11-02", "isNew": 1 },
     { "grade": 6, "topic": "math",    "dir": "math-adventure",  "icon": "➗", "color": "blue",   "title": "הרפתקת המתמטיקה", "desc": "שברים, עשרוניים וגיאומטריה", "date": "2026-10-30", "isNew": 1 },
     { "grade": 6, "topic": "english", "dir": "english-test",    "icon": "🚀", "color": "blue",   "title": "משימת המבחן באנגלית", "desc": "<bdi dir=\"ltr\">Present Simple &amp; Progressive</bdi> · חזרה למבחן", "date": "2026-11-12", "isNew": 1 },
